@@ -1,0 +1,52 @@
+[
+  {
+    "id": "builtin_single-choice-ujgNtb",
+    "formData": {
+      "dropdownPlaceholder$en": "Select...",
+      "choices$en": [
+        {
+          "title": "Hide Chat",
+          "value": "HIDE_CHAT"
+        },
+        {
+          "title": "Unhide Chat",
+          "value": "Unhide_CHAT"
+        },
+        {
+          "title": "Test Interaction",
+          "value": "TEST_INTERACTION"
+        }
+      ],
+      "markdown$en": true,
+      "disableFreeText$en": false,
+      "typing$en": true,
+      "text$en": "What do you want to do?"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:21:25.517Z",
+    "modifiedOn": "2021-03-24T14:02:41.980Z"
+  },
+  {
+    "id": "builtin_single-choice-sAp2Cm",
+    "formData": {
+      "dropdownPlaceholder$en": "Select...",
+      "choices$en": [
+        {
+          "title": "Say hey",
+          "value": "SAY_HEY"
+        },
+        {
+          "title": "Go Back",
+          "value": "GO_BACK"
+        }
+      ],
+      "markdown$en": true,
+      "disableFreeText$en": false,
+      "typing$en": true,
+      "text$en": "Select:"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:38:48.712Z",
+    "modifiedOn": "2021-03-24T14:02:49.035Z"
+  }
+]

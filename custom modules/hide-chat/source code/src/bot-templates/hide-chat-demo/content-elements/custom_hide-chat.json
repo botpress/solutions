@@ -1,0 +1,20 @@
+[
+  {
+    "id": "custom_hide-chat-0faErK",
+    "formData": {
+      "hidden$en": true
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-24T13:55:03.384Z",
+    "modifiedOn": "2021-03-24T13:55:03.384Z"
+  },
+  {
+    "id": "custom_hide-chat-3pNcRH",
+    "formData": {
+      "hidden$en": false
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-24T13:57:45.196Z",
+    "modifiedOn": "2021-03-24T13:57:45.196Z"
+  }
+]

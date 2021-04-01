@@ -1,0 +1,17 @@
+{
+  "name": "hide-chat",
+  "version": "1.0.0",
+  "description": "Hide Chat",
+  "private": true,
+  "main": "dist/backend/index.js",
+  "scripts": {
+    "build": "node ../../build/module-builder/bin/entry build",
+    "watch": "node ../../build/module-builder/bin/entry watch",
+    "package": "node ../../build/module-builder/bin/entry package"
+  },
+  "author": "Botpress, Inc.",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "react-select": "^2.4.2"
+  }
+}

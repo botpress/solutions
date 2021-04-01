@@ -1,0 +1,57 @@
+[
+  {
+    "id": "builtin_text-D_UP0J",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "Welcome to the Hide Chat Example"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:19:30.213Z",
+    "modifiedOn": "2021-03-18T20:19:30.213Z"
+  },
+  {
+    "id": "builtin_text-kQ7aNy",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "Invalid Choice"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:20:27.389Z",
+    "modifiedOn": "2021-03-18T20:20:27.389Z"
+  },
+  {
+    "id": "builtin_text-f1mSLd",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "Chat in now hidden"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:22:03.168Z",
+    "modifiedOn": "2021-03-24T14:01:53.423Z"
+  },
+  {
+    "id": "builtin_text-paJd0t",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "Hey"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-18T20:39:31.402Z",
+    "modifiedOn": "2021-03-18T20:39:31.402Z"
+  },
+  {
+    "id": "builtin_text-oM6HN5",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "Chat Unhidden"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-03-24T13:58:46.460Z",
+    "modifiedOn": "2021-03-24T14:02:07.541Z"
+  }
+]

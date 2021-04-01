@@ -1,0 +1,129 @@
+{
+  "version": "0.0.1",
+  "catchAll": {
+    "onReceive": [],
+    "next": []
+  },
+  "startNode": "entry",
+  "nodes": [
+    {
+      "id": "entry",
+      "name": "entry",
+      "next": [
+        {
+          "condition": "true",
+          "node": "choice-14b859"
+        }
+      ],
+      "onEnter": [
+        "say #!builtin_text-D_UP0J",
+        "builtin/setVariable {\"type\":\"session\",\"name\":\"test\",\"value\":\"dawdawda\"}"
+      ],
+      "onReceive": null
+    },
+    {
+      "id": "skill-14b859",
+      "type": "skill-call",
+      "skill": "choice",
+      "name": "choice-14b859",
+      "flow": "skills/choice-14b859.flow.json",
+      "next": [
+        {
+          "caption": "User picked [HIDE_CH...]",
+          "condition": "temp['skill-choice-ret-69fwfwmykh'] == \"HIDE_CHAT\"",
+          "node": "hide-chat"
+        },
+        {
+          "caption": "User picked [Unhide_...]",
+          "condition": "temp['skill-choice-ret-69fwfwmykh'] == \"Unhide_CHAT\"",
+          "node": "unhide-chat"
+        },
+        {
+          "caption": "User picked [TEST_IN...]",
+          "condition": "temp['skill-choice-ret-69fwfwmykh'] == \"TEST_INTERACTION\"",
+          "node": "choice-a14123"
+        },
+        {
+          "caption": "On failure",
+          "condition": "true",
+          "node": "entry"
+        }
+      ],
+      "onEnter": null,
+      "onReceive": null
+    },
+    {
+      "id": "4bdbeeac06",
+      "name": "hide-chat",
+      "next": [
+        {
+          "condition": "true",
+          "node": "choice-14b859"
+        }
+      ],
+      "onEnter": [
+        "say #!custom_hide-chat-0faErK",
+        "say #!builtin_text-f1mSLd"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    },
+    {
+      "id": "ffa6d21f13",
+      "name": "unhide-chat",
+      "next": [
+        {
+          "condition": "true",
+          "node": "choice-14b859"
+        }
+      ],
+      "onEnter": [
+        "say #!custom_hide-chat-3pNcRH",
+        "say #!builtin_text-oM6HN5"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    },
+    {
+      "id": "skill-a14123",
+      "type": "skill-call",
+      "skill": "choice",
+      "name": "choice-a14123",
+      "flow": "skills/choice-a14123.flow.json",
+      "next": [
+        {
+          "caption": "User picked [SAY_HEY]",
+          "condition": "temp['skill-choice-ret-b8dg63odcm'] == \"SAY_HEY\"",
+          "node": "node-7215"
+        },
+        {
+          "caption": "User picked [GO_BACK]",
+          "condition": "temp['skill-choice-ret-b8dg63odcm'] == \"GO_BACK\"",
+          "node": "choice-14b859"
+        },
+        {
+          "caption": "On failure",
+          "condition": "true",
+          "node": "node-7215"
+        }
+      ],
+      "onEnter": null,
+      "onReceive": null
+    },
+    {
+      "id": "7fccc61ead",
+      "name": "node-7215",
+      "next": [
+        {
+          "condition": "true",
+          "node": "choice-a14123"
+        }
+      ],
+      "onEnter": [
+        "say #!builtin_text-paJd0t"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    }
+  ]
+}

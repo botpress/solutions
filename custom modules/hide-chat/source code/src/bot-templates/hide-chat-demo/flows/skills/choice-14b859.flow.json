@@ -1,0 +1,103 @@
+{
+  "version": "0.0.1",
+  "catchAll": {
+    "next": []
+  },
+  "startNode": "entry",
+  "skillData": {
+    "randomId": "69fwfwmykh",
+    "contentId": "builtin_single-choice-ujgNtb",
+    "invalidContentId": "builtin_text-kQ7aNy",
+    "keywords": {
+      "HIDE_CHAT": [
+        "HIDE_CHAT",
+        "Hide Chat"
+      ],
+      "Unhide_CHAT": [
+        "Unhide_CHAT",
+        "Unhide Chat"
+      ],
+      "TEST_INTERACTION": [
+        "TEST_INTERACTION",
+        "Test Interaction"
+      ]
+    },
+    "config": {
+      "nbMaxRetries": 3,
+      "repeatChoicesOnInvalid": true
+    }
+  },
+  "nodes": [
+    {
+      "name": "entry",
+      "onEnter": [
+        "say #!builtin_single-choice-ujgNtb {\"skill\":\"choice\"}"
+      ],
+      "next": [
+        {
+          "condition": "true",
+          "node": "parse"
+        }
+      ],
+      "id": "360188"
+    },
+    {
+      "name": "parse",
+      "onReceive": [
+        "basic-skills/choice_parse_answer {\"randomId\":\"69fwfwmykh\",\"contentId\":\"builtin_single-choice-ujgNtb\",\"invalidContentId\":\"builtin_text-kQ7aNy\",\"keywords\":{\"HIDE_CHAT\":[\"HIDE_CHAT\",\"Hide Chat\"],\"Unhide_CHAT\":[\"Unhide_CHAT\",\"Unhide Chat\"],\"TEST_INTERACTION\":[\"TEST_INTERACTION\",\"Test Interaction\"]},\"config\":{\"nbMaxRetries\":3,\"repeatChoicesOnInvalid\":true}}"
+      ],
+      "next": [
+        {
+          "condition": "temp['skill-choice-valid-69fwfwmykh'] === true",
+          "node": "#"
+        },
+        {
+          "condition": "true",
+          "node": "invalid"
+        }
+      ],
+      "triggers": [
+        {
+          "conditions": [
+            {
+              "id": "always"
+            }
+          ]
+        }
+      ],
+      "onEnter": [],
+      "id": "465079"
+    },
+    {
+      "name": "invalid",
+      "onEnter": [
+        "basic-skills/choice_invalid_answer {\"randomId\":\"69fwfwmykh\"}"
+      ],
+      "next": [
+        {
+          "condition": "Number(temp['skill-choice-invalid-count-69fwfwmykh']) > Number(3)",
+          "node": "#"
+        },
+        {
+          "condition": "true",
+          "node": "sorry"
+        }
+      ],
+      "id": "579550"
+    },
+    {
+      "name": "sorry",
+      "onEnter": [
+        "say #!builtin_text-kQ7aNy {}",
+        "say #!builtin_single-choice-ujgNtb {\"skill\":\"choice\"}"
+      ],
+      "next": [
+        {
+          "condition": "true",
+          "node": "parse"
+        }
+      ],
+      "id": "600666"
+    }
+  ]
+}
