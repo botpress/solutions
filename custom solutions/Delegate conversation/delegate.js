@@ -1,3 +1,6 @@
+const axios = require("axios");
+const _ = require("lodash");
+
 const exec = async (botId) => {
   // If the user types something with the intent of exiting the conversation with bot 2
   // We dont execute the function and just return, this intent can be changed
