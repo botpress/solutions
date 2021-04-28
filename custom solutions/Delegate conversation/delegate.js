@@ -49,7 +49,7 @@ const exec = async (botId) => {
       }
     }
   } else {
-    // Sends to the user what the target bot responded
+    // In case of error, send a message
     responses.push(
       ...(await bp.cms.renderElement(
         "builtin_text",
