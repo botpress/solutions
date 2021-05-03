@@ -16,11 +16,9 @@ We need to create a loop to always execute the action in order to keep talking w
 
 ![image](https://user-images.githubusercontent.com/13484138/113348746-60091d00-930d-11eb-9289-54cef0bfcf78.png)
 
-
 In Bot 2 we have a simple selection/loop flow in order to test the input delegation.
 
 ![image](https://user-images.githubusercontent.com/13484138/113348802-7911ce00-930d-11eb-9b6c-2dae149df398.png)
-
 
 To reset the conversation with bot 2, we can use an action (reset_conversation.js)
 
@@ -32,13 +30,12 @@ In the example below, we are resetting our conversation when we enter the conver
 
 ![image](https://user-images.githubusercontent.com/13484138/113348859-8af37100-930d-11eb-8542-8d6eac060b1e.png)
 
-
 ### Example Bots:
 
 Import both bots and start talking with bot 1
 
 Bot 1:
-https://drive.google.com/file/d/1DyiGO8tZn-ekeCZjliAu3AdxQRXzvm7S/view?usp=sharing
+https://drive.google.com/file/d/1EW-N8UpfATsK-tyCRJmRNjIyi4o2DccL/view?usp=sharing
 
 Bot2:
 https://drive.google.com/file/d/1K0V8MRLy1Dw_rDNtD9e2O2UUBbJlnzKT/view?usp=sharing

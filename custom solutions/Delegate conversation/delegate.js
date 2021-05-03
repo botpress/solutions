@@ -1,3 +1,6 @@
+const axios = require("axios");
+const _ = require("lodash");
+
 const exec = async (botId) => {
   // If the user types something with the intent of exiting the conversation with bot 2
   // We dont execute the function and just return, this intent can be changed
@@ -24,7 +27,7 @@ const exec = async (botId) => {
   // Sends the user input to the target bot
   const res = await axios
     .post(
-      `/converse/${delegation.uniqueUserId}/secured`,
+      `/converse/${delegation.uniqueUserId}`,
       {
         type: "text",
         text: event.preview,
@@ -36,16 +39,30 @@ const exec = async (botId) => {
 
   // Process
   const responses = [];
-  for (let response of res.data.responses) {
-    if (response.type != "custom" || event.channel != "telegram") {
-      responses.push(response);
-    } else if (response.component == "QuickReplies") {
-      // This will fix the issue caused by an outgoing hook from channel-web
-      responses.push({
-        ...response.wrapped,
-        quick_replies: response.quick_replies,
-      });
+  if (res && res.data && res.data.responses) {
+    for (let response of res.data.responses) {
+      if (response.type != "custom" || event.channel != "telegram") {
+        responses.push(response);
+      } else if (response.component == "QuickReplies") {
+        // This will fix the issue caused by an outgoing hook from channel-web
+        responses.push({
+          ...response.wrapped,
+          quick_replies: response.quick_replies,
+        });
+      }
     }
+  } else {
+    // In case of error, send a message
+    responses.push(
+      ...(await bp.cms.renderElement(
+        "builtin_text",
+        {
+          text: "Bot didn`t respond correctly",
+          typing: true,
+        },
+        event
+      ))
+    );
   }
 
   // Sends to the user what the target bot responded
