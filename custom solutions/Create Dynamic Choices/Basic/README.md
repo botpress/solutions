@@ -4,7 +4,7 @@
 
 ### Create an Action
 
-The easiest way to create a dynamic single-choice is to use custom action.
+The easiest way to create a dynamic single-choice is to use a custom action.
 
 ![Image1](Images/image1.png)
 
