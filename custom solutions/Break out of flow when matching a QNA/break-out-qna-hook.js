@@ -6,6 +6,14 @@ function hook(
 ) {
   /** Your code starts below */
 
+  const _ = require("lodash");
+
+  async function findLastNode() {
+    const jumpPoints = event.state && event.state.context && event.state.context.jumpPoints;
+    const prevJumpPoint = _.findLast(jumpPoints, (j) => !j.used);
+    return prevJumpPoint || {};
+  }
+
   async function hook() {
     if (!suggestions.length || !suggestions[0].decision) {
       return;
@@ -23,12 +31,12 @@ function hook(
         // The QnA will be answered to the user instead of continuing the flow
         decision.status = "elected";
         decision.reason = "Direct Q&A question detected - calling up answer.";
-        // and we are making the bot move into an action right after answering the
-        // users questions
-        suggestion.payloads = [
-          ...suggestion.payloads,
-          { type: "redirect", flow: "main.flow.json", node: "entry" },
-        ];
+        // and we are making the bot move into the main flow after answering the question
+        let doAfter = { type: "redirect", flow: "main.flow.json", node: "entry" };
+        // In case you don`t want to go back to the previous node and execute it again,
+        // uncomment the line below
+        doAfter = { ...doAfter, ...(await findLastNode()) };
+        suggestion.payloads = [...suggestion.payloads, doAfter];
       }
     }
   }
