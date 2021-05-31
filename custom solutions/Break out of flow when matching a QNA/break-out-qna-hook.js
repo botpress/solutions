@@ -34,7 +34,7 @@ function hook(
         // and we are making the bot move into the main flow after answering the question
         let doAfter = { type: "redirect", flow: "main.flow.json", node: "entry" };
         // In case you don`t want to go back to the previous node and execute it again,
-        // uncomment the line below
+        // comment the line below
         doAfter = { ...doAfter, ...(await findLastNode()) };
         suggestion.payloads = [...suggestion.payloads, doAfter];
       }
