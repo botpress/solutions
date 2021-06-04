@@ -220,8 +220,8 @@ class FuzzySearch {
 
 const axios = require("axios");
 /**
- * Parses the movie name for a best match
- * @title Parse Movie Name
+ * Parses user input for a best match
+ * @title Parse dropdown input
  * @category Custom
  * @author Charles Catta
  */
@@ -229,20 +229,26 @@ const myAction = async () => {
   const { data } = await axios.get("<YOUR API ENDPOINT>");
 
   // We only want an array of string to give to the searcher
-  const movieNames = data.map((m) => m.title);
+  const names = data.map((m) => m.title);
 
-  const searcher = new FuzzySearch(movieNames);
+  const searcher = new FuzzySearch(names);
+  // Return type is:
+  // [{
+  //    score: <match score between 0.0 and 1.0>,
+  //    value: "<full string of match>"
+  //  }, ...]
+  // Will return null if no matches are found
   const results = searcher.find(event.payload.text);
 
   if (!results) {
-    session.movie = null;
+    session.match = null;
     return;
   }
 
   // get the top score
   const result = results.sort((a, b) => b.score - a.score)[0];
-  const id = data.filter((m) => m.title == result.value)[0].id;
-  session.movie = { ...result, id };
+
+  session.match = result;
 };
 
 return myAction();
