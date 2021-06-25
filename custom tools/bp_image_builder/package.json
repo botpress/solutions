@@ -1,0 +1,41 @@
+{
+  "name": "bp_image_builder",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node ./out/index.js",
+    "package": "yarn build && pkg ."
+  },
+  "dependencies": {
+    "JSONStream": "^1.3.5",
+    "chalk": "^4.1.1",
+    "commander": "^8.0.0",
+    "dockerode": "^3.3.0",
+    "fs-extra": "^10.0.0",
+    "gunzip-maybe": "^1.4.2",
+    "loglevel": "^1.7.1",
+    "node-fetch": "^2.6.1",
+    "tar-stream": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/dockerode": "^3.2.3",
+    "@types/fs-extra": "^9.0.11",
+    "@types/node-fetch": "^2.5.10",
+    "@types/tar-stream": "^2.2.0",
+    "pkg": "^5.2.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.4"
+  },
+  "pkg": {
+    "scripts": "out/**/*.js",
+    "targets": [
+      "node12-linux-x64",
+      "node12-macos-x64",
+      "node12-win-x64"
+    ],
+    "outputPath": "bin"
+  },
+  "bin": "./out/index.js"
+}
