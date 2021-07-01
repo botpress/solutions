@@ -6,7 +6,15 @@ import fetch from "node-fetch";
 import logger from "loglevel";
 import path from "path";
 import JSONStream from "JSONStream";
-import { processTar, makeDockerfile, getLatestBotpressTag } from "./utils";
+import {
+  processTar,
+  makeDockerfile,
+  getLatestBotpressImageTag,
+  DockerCLIOpts,
+  parseDockerOptions,
+  defaultDockerOpts,
+  getCurrentBotpressImageTag,
+} from "./utils";
 import chalk from "chalk";
 
 const BP_PULL_ENDPOINT = "/api/v2/admin/management/versioning/export";
@@ -15,10 +23,6 @@ interface BPPullConfig {
   url: string;
   authToken: string;
 }
-
-const defaultDockerOpts: DockerOptions = {
-  socketPath: "/var/run/docker.sock",
-};
 
 export class BuildManager {
   private parentWorkDir: string;
@@ -38,14 +42,15 @@ export class BuildManager {
     await fs.emptyDir(this.parentWorkDir);
   }
 
-  async create(name: string = null) {
+  async create(opts: Partial<DockerCLIOpts> = null, name: string = null) {
     await fs.ensureDir(this.parentWorkDir);
     if (!name) {
       name = `${Date.now()}`;
     }
     const buildDir = path.join(this.parentWorkDir, name);
     await fs.ensureDir(buildDir);
-    const build = new Build(buildDir, name);
+    const dockerOpts = parseDockerOptions(opts);
+    const build = new Build(buildDir, name, dockerOpts);
     this.builds.push(build);
     return build;
   }
@@ -101,12 +106,13 @@ class Build {
     outputTag: string = null
   ): Promise<string> {
     await this.docker.ping();
+
     if (!outputTag) {
       outputTag = `bpexport:${this.name}`;
     }
 
     if (!baseImageTag) {
-      baseImageTag = await getLatestBotpressTag();
+      baseImageTag = await getLatestBotpressImageTag();
     }
 
     logger
@@ -114,21 +120,32 @@ class Build {
       .info(`Creating docker image ${outputTag} based on ${baseImageTag}`);
 
     const dockerfile = makeDockerfile(baseImageTag);
+
     const tarStream = processTar(
       contextStream,
       dockerfile,
       logger.getLogger("build-context-stream")
     );
+
     logger.getLogger("docker").info("Building image...");
+
     const buildStream = await this.docker.buildImage(tarStream, {
       t: outputTag,
     });
+
     buildStream.pipe(JSONStream.parse("stream")).on("data", (d: string) => {
       logger.getLogger("docker").info(chalk.blue(d));
     });
-    await new Promise((resolve) => {
-      this.docker.modem.followProgress(buildStream, resolve);
+
+    await new Promise<void>((resolve) => {
+      this.docker.modem.followProgress(buildStream, (err: Error, _) => {
+        if (err) {
+          throw err;
+        }
+        resolve();
+      });
     });
+
     return outputTag;
   }
 }
