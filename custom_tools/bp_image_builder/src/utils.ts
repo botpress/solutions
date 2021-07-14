@@ -5,6 +5,7 @@ import path from "path";
 import { PassThrough } from "stream";
 import { Logger } from "loglevel";
 import { DockerOptions } from "dockerode";
+import chalk from "chalk";
 
 const FALLBACK_VERSION = "botpress/server:v12_22_2";
 
@@ -14,9 +15,9 @@ interface FileEntry {
 }
 
 export interface DockerCLIOpts {
-  socket_path?: string;
-  docker_url?: string;
-  certs_path?: string;
+  dockerSocket?: string;
+  dockerUrl?: string;
+  dockerCerts?: string;
 }
 
 export const defaultDockerOpts: DockerOptions = {
@@ -53,15 +54,14 @@ export function processTar(
   logger.info(`Processing tar stream...`);
   extractor.on("entry", (header, rstream, next) => {
     header.name = path.join("data", header.name);
-    logger.debug(`Added ${header.name}`);
+    logger.debug(chalk.green`+ ${header.name}`);
     rstream.pipe(compressor.entry(header, next));
   });
 
   compressor.entry(dockerfile.headers, dockerfile.content, (err) => {
-    logger.debug(`Added ${dockerfile.headers.name}`);
-    logger.debug(`Added dockerfile to tar stream`);
+    logger.debug(chalk.green`+ ${dockerfile.headers.name}`);
     if (err) {
-      console.error(
+      logger.error(
         `Unable to write ${dockerfile.headers.name}: ${err.message}`
       );
     }
@@ -111,18 +111,18 @@ export function parseDockerOptions(
   if (!opts) {
     return defaultDockerOpts;
   }
-  console.log(opts);
+
   return {
-    socketPath: opts.socket_path || defaultDockerOpts.socketPath,
-    host: opts.socket_path ? opts.docker_url : undefined,
-    ca: opts.certs_path
-      ? fs.readFileSync(path.join(opts.certs_path, "cert.pem"))
+    socketPath: opts.dockerSocket || defaultDockerOpts.socketPath,
+    host: opts.dockerSocket ? opts.dockerUrl : undefined,
+    ca: opts.dockerCerts
+      ? fs.readFileSync(path.join(opts.dockerCerts, "ca.pem"))
       : null,
-    cert: opts.certs_path
-      ? fs.readFileSync(path.join(opts.certs_path, "cert.pem"))
+    cert: opts.dockerCerts
+      ? fs.readFileSync(path.join(opts.dockerCerts, "cert.pem"))
       : null,
-    key: opts.certs_path
-      ? fs.readFileSync(path.join(opts.certs_path, "key.pem"))
+    key: opts.dockerCerts
+      ? fs.readFileSync(path.join(opts.dockerCerts, "key.pem"))
       : null,
   };
 }

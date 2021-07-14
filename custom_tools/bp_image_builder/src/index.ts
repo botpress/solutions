@@ -4,12 +4,31 @@ import promptly from "promptly";
 import log from "loglevel";
 import { getCurrentBotpressImageTag } from "./utils";
 import auth, { JWT } from "./auth";
+import chalk from "chalk";
 
 log.setDefaultLevel(log.levels.INFO);
-
+if (process.env.DEBUG) {
+  log.setDefaultLevel(log.levels.TRACE);
+}
 program
   .command("build <bp_url>")
   .description("build an image")
+  .addOption(
+    new Option(
+      "-ds, --docker-socket [socket_path]",
+      "docker socket path"
+    ).default("/var/run/docker.sock")
+  )
+  .option(
+    "-durl, --docker-url [docker_url]",
+    "the HTTP(S) url of the docker daemon to use for building",
+    null
+  )
+  .option(
+    "-dc, --docker-certs [certs_path]",
+    "https certificate directory for connecting to the docker daemon via HTTPS",
+    null
+  )
   .addOption(
     new Option(
       "-it, --image-tag [image_tag]",
@@ -59,15 +78,21 @@ program
       if (!options.imageTag) {
         options.imageTag = await getCurrentBotpressImageTag(url);
       }
+      let outputTag = null;
+      try {
+        outputTag = await builder.build(
+          bpData,
+          options.imageTag,
+          options.outputTag
+        );
+      } catch (err) {
+        throw new Error(
+          `An error occured during the docker build: ${err.message}`
+        );
+      }
 
-      const outputTag = await builder.build(
-        bpData,
-        options.imageTag,
-        options.outputTag
-      );
-
-      log.info(`Image has been built with tag ${outputTag}`);
-      log.info(`to try it out run: docker run -it -p 3000:3000 ${outputTag}`);
+      log.info(chalk.greenBright`Image has been built with tag ${outputTag}`);
+      log.info(`\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`);
     } catch (err) {
       log.error(err.message);
     }
@@ -82,31 +107,17 @@ program
     }
     const jwt = await auth.login("basic", url, { email, password });
     if (jwt) {
-      log.info(`Logged in successfully as ${email}`);
+      log.info(chalk.green`Logged in successfully as ${email}`);
       return;
     }
-    log.error(`Unable to login due to an unknown error`);
+    log.error(
+      chalk.redBright`Unable to login due to an unknown error: The token was empty`
+    );
   });
 
 program
   .name("bp_image_build")
+  .version("1.0.0")
   .description("Builds a docker image out of a botpress instance")
-  .addOption(
-    new Option(
-      "-ds, --docker-socket [socket_path]",
-      "docker socket path"
-    ).default("/var/run/docker.sock")
-  )
-  .option(
-    "-durl, --docker-url [docker_url]",
-    "the HTTP(S) url of the docker daemon to use for building",
-    null
-  )
-  .option(
-    "-dc, --docker-certs [certs_path]",
-    "https certificate directory for connecting to the docker daemon via HTTPS",
-    null
-  )
-  .addHelpCommand();
 
-program.parse(process.argv);
+  .parse(process.argv);
