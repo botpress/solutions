@@ -1,76 +1,57 @@
-import fetch from "node-fetch";
+import os from "os";
+import { join as j } from "path";
 import { JsonDB } from "node-json-db";
-
-interface JWT {
+import { loginBasic } from "./strategies/basic";
+export interface JWT {
   jwt: string;
   exp: number;
 }
 
-export async function loginBasic(
-  url: string,
-  email: string,
-  password: string
-): Promise<string> {
-  const endpoint = new URL("/api/v2/admin/auth/login/basic/default", url);
-
-  const res = await fetch(endpoint.href, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      password,
-    }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(`Unable to login: ${res.status} ${data.message}`);
-  }
-  if (!data.payload) {
-    throw new Error(`Unable to retrieve token`);
-  }
-
-  return data.payload.jwt;
-}
+type loginStrategy = (url: string, payload: any) => Promise<JWT>;
 
 class AuthManager {
   private _db: JsonDB;
-  init() {
-    this._db = new JsonDB("tokens.db", true, false);
+  private _strategies = new Map<string, loginStrategy>();
+  public init() {
+    const dbpath = j(os.homedir(), ".bp_image_builder", "auth.db");
+    this._db = new JsonDB(dbpath, true, false);
   }
 
-  async loginBasic(url: string, email: string, password: string): Promise<JWT> {
-    const endpoint = new URL("/api/v2/admin/auth/login/basic/default", url);
-    const jwt = this._db.getObject<JWT>(`/${endpoint.host}`);
-    if (jwt) {
-      return jwt;
-    }
-    const res = await fetch(endpoint.href, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    const data = await res.json();
+  public registerStrategy(name: string, handler: loginStrategy): void {
+    this._strategies.set(name, handler);
+  }
 
-    if (!res.ok) {
-      throw new Error(`Unable to login: ${res.status} ${data.message}`);
+  public async login(
+    strategy: string,
+    url: string,
+    payload: any
+  ): Promise<JWT> {
+    if (!this._strategies.has(strategy)) {
+      throw new Error(
+        `Login strategy ${strategy} does not exist or is not registered`
+      );
     }
-    if (!data.payload) {
-      throw new Error(`Unable to retrieve token`);
-    }
+    const { host } = new URL(url);
+    const handler = this._strategies.get(strategy);
 
-    this._db.push(`/${endpoint.host}`, {
-      jwt: data.payload.jwt,
-      exp: Date.now() + data.payload.exp * 1000,
-    });
-    return data.payload.jwt;
+    const jwt = await handler(url, payload);
+    this._db.push(`/${host}`, jwt);
+    return jwt;
+  }
+
+  public getToken(url: string): JWT {
+    const { host } = new URL(url);
+    const jwt = this._db.getObject<JWT>(`/${host}`);
+    if (jwt.exp <= Date.now()) {
+      throw new Error(`The token for ${host} has expired, please login again`);
+    }
+    return jwt;
   }
 }
+
+const manager = new AuthManager();
+
+manager.init();
+manager.registerStrategy("basic", loginBasic);
+
+export default manager;

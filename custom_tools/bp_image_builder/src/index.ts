@@ -3,7 +3,7 @@ import { Option, program } from "commander";
 import promptly from "promptly";
 import log from "loglevel";
 import { getCurrentBotpressImageTag } from "./utils";
-import { loginBasic } from "./auth";
+import auth, { JWT } from "./auth";
 
 log.setDefaultLevel(log.levels.INFO);
 
@@ -34,7 +34,27 @@ program
       await m.initialize();
       const builder = await m.create(options);
 
-      const bpData = await builder.readBP({ url, authToken: options.token });
+      let jwt: JWT | undefined;
+
+      try {
+        jwt = auth.getToken(url);
+      } catch (err) {
+        if (!options.token) {
+          throw err;
+        }
+      }
+
+      const authToken = jwt ? jwt.jwt : options.token;
+      if (!authToken) {
+        throw new Error(
+          "You need to authenticate with Botpress to build an image, either authenticate using the login command or specify an auth token with the -t flag"
+        );
+      }
+
+      const bpData = await builder.readBP({
+        url,
+        authToken,
+      });
 
       if (!options.imageTag) {
         options.imageTag = await getCurrentBotpressImageTag(url);
@@ -47,6 +67,7 @@ program
       );
 
       log.info(`Image has been built with tag ${outputTag}`);
+      log.info(`to try it out run: docker run -it -p 3000:3000 ${outputTag}`);
     } catch (err) {
       log.error(err.message);
     }
@@ -59,14 +80,12 @@ program
     if (!password) {
       password = await promptly.password(`Enter password for ${email}: `);
     }
-    let token = "";
-    try {
-      token = await loginBasic(url, email, password);
-    } catch (err) {
-      log.error(err.message);
+    const jwt = await auth.login("basic", url, { email, password });
+    if (jwt) {
+      log.info(`Logged in successfully as ${email}`);
       return;
     }
-    log.info(`TOKEN:\n\n${token}\n\n`);
+    log.error(`Unable to login due to an unknown error`);
   });
 
 program
