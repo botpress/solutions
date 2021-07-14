@@ -41,7 +41,12 @@ class AuthManager {
 
   public getToken(url: string): JWT {
     const { host } = new URL(url);
-    const jwt = this._db.getObject<JWT>(`/${host}`);
+    let jwt: JWT | undefined;
+    try {
+      jwt = this._db.getObject<JWT>(`/${host}`);
+    } catch (err) {
+      return null;
+    }
     if (jwt.exp <= Date.now()) {
       throw new Error(`The token for ${host} has expired, please login again`);
     }
