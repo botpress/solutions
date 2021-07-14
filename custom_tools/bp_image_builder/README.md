@@ -1,8 +1,19 @@
 # Botpress Docker Image Builder
 
+### Table of contents
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Authentication](#authentication)
+  - [Building an image](#building-an-image)
+    - [Build Flags](#build-flags)
+  - [Development](#development)
+
+----
+
 Generate a Docker image replica from an existing Botpress server.
+
+
 ## Requirements
-- NodeJS v12.13 or greater
 - Docker engine running locally or remotely v20.10 or greater
 ## Installation
 
