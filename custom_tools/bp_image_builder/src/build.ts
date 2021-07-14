@@ -1,6 +1,7 @@
 import Docker, { DockerOptions } from "dockerode";
 import gunzip from "gunzip-maybe";
 import os from "os";
+import randomWords from "random-words";
 import fs from "fs-extra";
 import fetch from "node-fetch";
 import logger from "loglevel";
@@ -13,7 +14,6 @@ import {
   DockerCLIOpts,
   parseDockerOptions,
   defaultDockerOpts,
-  getCurrentBotpressImageTag,
 } from "./utils";
 import chalk from "chalk";
 
@@ -29,7 +29,7 @@ export class BuildManager {
   public builds: Build[] = [];
 
   constructor(baseDir: string = os.tmpdir()) {
-    this.parentWorkDir = path.join(baseDir, "bp_docker_builder");
+    this.parentWorkDir = path.join(baseDir, "bp_image_builder");
   }
 
   async initialize(purge: boolean = true) {
@@ -43,13 +43,21 @@ export class BuildManager {
   }
 
   async create(opts: Partial<DockerCLIOpts> = null, name: string = null) {
-    await fs.ensureDir(this.parentWorkDir);
+    try {
+      await fs.ensureDir(this.parentWorkDir);
+    } catch (err) {
+      throw new Error(
+        `Unable to create temporary build directory: ${err.message}`
+      );
+    }
+
     if (!name) {
-      name = `${Date.now()}`;
+      name = randomWords({ exactly: 3, join: "_" });
     }
     const buildDir = path.join(this.parentWorkDir, name);
     await fs.ensureDir(buildDir);
     const dockerOpts = parseDockerOptions(opts);
+
     const build = new Build(buildDir, name, dockerOpts);
     this.builds.push(build);
     return build;
@@ -105,7 +113,13 @@ class Build {
     baseImageTag: string = null,
     outputTag: string = null
   ): Promise<string> {
-    await this.docker.ping();
+    try {
+      await this.docker.ping();
+    } catch (err) {
+      throw new Error(
+        `Could not communicate with the Docker daemon: ${err.message}`
+      );
+    }
 
     if (!outputTag) {
       outputTag = `bpexport:${this.name}`;
@@ -124,7 +138,7 @@ class Build {
     const tarStream = processTar(
       contextStream,
       dockerfile,
-      logger.getLogger("build-context-stream")
+      logger.getLogger("build")
     );
 
     logger.getLogger("docker").info("Building image...");
@@ -137,10 +151,17 @@ class Build {
       logger.getLogger("docker").info(chalk.blue(d));
     });
 
-    await new Promise<void>((resolve) => {
+    let dockerError = null;
+
+    buildStream.pipe(JSONStream.parse("error")).on("data", (d: string) => {
+      logger.getLogger("docker").info(chalk.redBright(d));
+      dockerError = new Error(d);
+    });
+
+    await new Promise<void>((resolve, reject) => {
       this.docker.modem.followProgress(buildStream, (err: Error, _) => {
-        if (err) {
-          throw err;
+        if (err || dockerError) {
+          reject(err || dockerError);
         }
         resolve();
       });
