@@ -126,3 +126,13 @@ export function parseDockerOptions(
       : null,
   };
 }
+
+export function isURL(url: string): boolean {
+  debugger;
+  try {
+    new URL(url);
+  } catch (err) {
+    return false;
+  }
+  return true;
+}

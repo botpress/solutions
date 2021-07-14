@@ -2,7 +2,11 @@ import { BuildManager } from "./build";
 import { Option, program } from "commander";
 import promptly from "promptly";
 import log from "loglevel";
-import { getCurrentBotpressImageTag } from "./utils";
+import {
+  getCurrentBotpressImageTag,
+  getLatestBotpressImageTag,
+  isURL,
+} from "./utils";
 import auth, { JWT } from "./auth";
 import chalk from "chalk";
 
@@ -53,46 +57,46 @@ program
       await m.initialize();
       const builder = await m.create(options);
 
-      let jwt: JWT | undefined;
+      let token: string | undefined = options.token;
 
-      try {
-        jwt = auth.getToken(url);
-      } catch (err) {
-        if (!options.token) {
-          throw err;
+      const validURL = isURL(url);
+
+      if (!token && validURL) {
+        const jwt = auth.getToken(url);
+        if (!jwt) {
+          throw new Error(
+            "You need to authenticate with Botpress to build an image, either authenticate using the login command or specify an auth token with the -t flag"
+          );
         }
+        token = jwt.jwt;
       }
 
-      const authToken = jwt ? jwt.jwt : options.token;
-      if (!authToken) {
-        throw new Error(
-          "You need to authenticate with Botpress to build an image, either authenticate using the login command or specify an auth token with the -t flag"
+      const bpData = await builder.read(url, token);
+
+      if (!options.imageTag && validURL) {
+        options.imageTag = await getCurrentBotpressImageTag(url);
+      } else if (!options.imageTag) {
+        options.imageTag = await getLatestBotpressImageTag();
+        log.warn(
+          chalk.yellowBright`No botpress version could be detected and no image_tag was specified, defaulting to latest release: ${options.imageTag}`
         );
       }
 
-      const bpData = await builder.readBP({
-        url,
-        authToken,
-      });
-
-      if (!options.imageTag) {
-        options.imageTag = await getCurrentBotpressImageTag(url);
-      }
-      let outputTag = null;
       try {
-        outputTag = await builder.build(
+        const outputTag = await builder.build(
           bpData,
           options.imageTag,
           options.outputTag
+        );
+        log.info(chalk.greenBright`Image has been built with tag ${outputTag}`);
+        log.info(
+          `\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`
         );
       } catch (err) {
         throw new Error(
           `An error occured during the docker build: ${err.message}`
         );
       }
-
-      log.info(chalk.greenBright`Image has been built with tag ${outputTag}`);
-      log.info(`\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`);
     } catch (err) {
       log.error(err.message);
     }
@@ -100,7 +104,7 @@ program
 
 program
   .command("login <bp_url> <email> [password]")
-  .description("Generate a token using your Botpress credentials")
+  .description("Login using your Botpress credentials")
   .action(async (url, email, password) => {
     if (!password) {
       password = await promptly.password(`Enter password for ${email}: `);

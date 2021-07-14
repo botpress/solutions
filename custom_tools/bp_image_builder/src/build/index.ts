@@ -1,9 +1,7 @@
 import Docker, { DockerOptions } from "dockerode";
-import gunzip from "gunzip-maybe";
 import os from "os";
 import randomWords from "random-words";
 import fs from "fs-extra";
-import fetch from "node-fetch";
 import logger from "loglevel";
 import path from "path";
 import JSONStream from "JSONStream";
@@ -14,15 +12,16 @@ import {
   DockerCLIOpts,
   parseDockerOptions,
   defaultDockerOpts,
-} from "./utils";
+  isURL,
+} from "../utils";
 import chalk from "chalk";
+import { AbstractMultiStrategy } from "../multistrategy";
+import ReadFSStrategy, { ReadFSOpts } from "./fs";
+import BPPullStrategy, { BPPullOpts } from "./bppull";
 
-const BP_PULL_ENDPOINT = "/api/v2/admin/management/versioning/export";
-
-interface BPPullConfig {
-  url: string;
-  authToken: string;
-}
+export type BPDataReadStrategy = (
+  opts: ReadFSOpts | BPPullOpts
+) => Promise<NodeJS.ReadableStream>;
 
 export class BuildManager {
   private parentWorkDir: string;
@@ -64,13 +63,16 @@ export class BuildManager {
   }
 }
 
-class Build {
+class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
   docker: Docker;
   constructor(
     private _dir: string,
     public name: string,
     dockerOpts: DockerOptions = defaultDockerOpts
   ) {
+    super();
+    this.registerStrategy("pull", BPPullStrategy);
+    this.registerStrategy("fs", ReadFSStrategy);
     this.docker = new Docker(dockerOpts);
   }
 
@@ -78,34 +80,18 @@ class Build {
     return this._dir;
   }
 
-  async readFS(archivePath: string): Promise<NodeJS.ReadableStream> {
-    const exists = await fs.pathExists(archivePath);
-    if (!exists) {
-      throw new Error(`Path ${archivePath} does not exist`);
+  public async read(
+    urlOrPath: string,
+    authToken?: string
+  ): Promise<NodeJS.ReadableStream> {
+    if (isURL(urlOrPath)) {
+      logger.info("Pulling using bp pull strategy");
+      const reader = this._strategies.get("pull");
+      return await reader({ url: urlOrPath, authToken });
     }
-    logger.getLogger("reader").info(`Reading ${archivePath}`);
-    return fs.createReadStream(archivePath).pipe(gunzip());
-  }
-
-  async readBP(config: BPPullConfig): Promise<NodeJS.ReadableStream> {
-    const endpoint = new URL(BP_PULL_ENDPOINT, config.url);
-    const res = await fetch(endpoint, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${config.authToken}` },
-      size: 0,
-      timeout: 500000,
-    });
-    logger
-      .getLogger("reader")
-      .info(`Downloading data from Botpress BPFS hosted at ${config.url}`);
-    if (!res.ok) {
-      const error = await res.json();
-
-      throw new Error(
-        `Archive download failed with error code ${res.status}: ${error.message}`
-      );
-    }
-    return res.body.pipe(gunzip());
+    logger.info(`Reading ${urlOrPath} from filesystem`);
+    const reader = this._strategies.get("fs");
+    return await reader({ archivePath: urlOrPath });
   }
 
   async build(

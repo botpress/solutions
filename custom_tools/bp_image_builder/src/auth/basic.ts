@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { JWT } from "../auth";
+import { JWT } from ".";
 
 export async function loginBasic(
   url: string,

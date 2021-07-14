@@ -1,24 +1,21 @@
 import os from "os";
 import { join as j } from "path";
 import { JsonDB } from "node-json-db";
-import { loginBasic } from "./strategies/basic";
+import { loginBasic } from "./basic";
+import { AbstractMultiStrategy } from "../multistrategy";
+
 export interface JWT {
   jwt: string;
   exp: number;
 }
 
-type loginStrategy = (url: string, payload: any) => Promise<JWT>;
+type LoginStrategy = (url: string, payload: any) => Promise<JWT>;
 
-class AuthManager {
+class AuthManager extends AbstractMultiStrategy<LoginStrategy> {
   private _db: JsonDB;
-  private _strategies = new Map<string, loginStrategy>();
   public init() {
     const dbpath = j(os.homedir(), ".bp_image_builder", "auth.db");
     this._db = new JsonDB(dbpath, true, false);
-  }
-
-  public registerStrategy(name: string, handler: loginStrategy): void {
-    this._strategies.set(name, handler);
   }
 
   public async login(
