@@ -16,8 +16,20 @@ Generate a Docker image replica from an existing Botpress server.
 ## Requirements
 - Docker engine running locally or remotely v20.10 or greater
 ## Installation
+Head over to the [releases page](https://github.com/botpress/solutions/releases) and download the BP image builder for your platform:
 
-_Please note that image building with a Docker for Windows daemon is not currently supported_
+```sh
+chmod +x bp_image_builder-<your platform>
+mv bp_image_builder-<your platform> bp_image_builder
+```
+
+Execute the program:
+```sh
+./bp_image_builder
+```
+You may move the binary to a folder set in your `$PATH` to access the tool from anywhere
+
+_Please note that image building is not currently supported on Windows_
 
 ## Authentication
 
