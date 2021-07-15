@@ -31,7 +31,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          name: ${{ steps.package-version.outputs.prop }}
+          name: v${{ steps.package-version.outputs.prop }}
           files: |
             ${{ github.workspace }}/custom_tools/bp_image_builder/bin/*
         env:
