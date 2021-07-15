@@ -5,13 +5,14 @@ on:
 
 name: Release BP Image Builder
 
+defaults:
+  run:
+    working-directory: ./custom_tools/bp_image_builder/
+
 jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./custom_tools/bp_image_builder/
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
