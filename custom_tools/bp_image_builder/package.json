@@ -1,7 +1,10 @@
 {
   "name": "bp_image_builder",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=12.13"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
@@ -37,8 +40,7 @@
     "scripts": "out/**/*.js",
     "targets": [
       "node12-linux-x64",
-      "node12-macos-x64",
-      "node12-win-x64"
+      "node12-macos-x64"
     ],
     "outputPath": "bin"
   },
