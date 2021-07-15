@@ -56,7 +56,7 @@ Alternatively, a `.tgz` archive originating from BP Pull can be specified:
 ```sh
 bp_image_builder build <path to archive.tgz> -it botpress/server:v12_23_0
 ```
-*Note: With this strategy, the Botpress version cannot be detected, if none is specified with the -it flag, the latest release will be used*
+*Note: With this strategy, the Botpress version cannot be detected, if none is specified with the -it flag, the latest release of Botpress will be used*
 
 ### Build Flags
 | flag            | shorthand | default              | description                                                                                                          |   |
