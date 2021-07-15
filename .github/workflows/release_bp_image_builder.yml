@@ -7,7 +7,7 @@ name: Release BP Image Builder
 
 defaults:
   run:
-    working-directory: ./custom_tools/bp_image_builder/
+    working-directory: custom_tools/bp_image_builder/
 
 jobs:
   build:
