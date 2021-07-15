@@ -9,6 +9,9 @@ jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./custom_tools/bp_image_builder/
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,13 +21,11 @@ jobs:
           node-version: "12.13"
           cache: "yarn"
       - name: Build
-        working-directory: ./custom_tools/bp_image_builder/
         run: yarn && yarn package
       - name: get-npm-version
         id: package-version
         working-directory: ./custom_tools/bp_image_builder/
         uses: martinbeentjes/npm-get-version-action@master
-        run: echo ${{ steps.package-version.outputs.current-version}}
       - name: Create release
         uses: softprops/action-gh-release@v1
         working-directory: ./custom_tools/bp_image_builder/
