@@ -59,11 +59,11 @@ bp_image_builder build <path to archive.tgz> -it botpress/server:v12_23_0
 *Note: With this strategy, the Botpress version cannot be detected, if none is specified with the -it flag, the latest release of Botpress will be used*
 
 ### Build Flags
-| Flag            | Shorthand | Default              | Description                                                                                                          |   |
-|-----------------|-----------|----------------------|----------------------------------------------------------------------------------------------------------------------|
-| &#x2011;&#x2011;docker&#x2011;socket | -ds       | /var/run/docker.sock | Docker socket path to use to communicate with the docker daemon                                                           |
-| &#x2011;&#x2011;docker&#x2011;url    | -durl     | null                 | HTTP url of the docker daemon to use, if the daemon is protected by HTTPS, the docker-certs flag must be specified           |
-| &#x2011;&#x2011;docker&#x2011;certs  | -dc       | null                 | HTTPS certificate directory for connecting to the docker daemon via HTTPS, must contain `ca.pem`, `cert.pem` and `key.pem` |
+| Flag | Shorthand | Default | Description |
+|------|-----------|---------|-------------|
+| &#x2011;&#x2011;docker&#x2011;socket | -ds | /var/run/docker.sock | Docker socket path to use to communicate with the docker daemon |
+| &#x2011;&#x2011;docker&#x2011;url | -durl | null | HTTP url of the docker daemon to use, if the daemon is protected by HTTPS, the docker-certs flag must be specified |
+| &#x2011;&#x2011;docker&#x2011;certs | -dc | null | HTTPS certificate directory for connecting to the docker daemon via HTTPS, must contain `ca.pem`, `cert.pem` and `key.pem` |
 | &#x2011;&#x2011;token | -t | null | Botpress JWT token to bypass the `login` function, the token can be found in the version control page of the Botpress UI |
 | &#x2011;&#x2011;image&#x2011;tag | -it | null | Docker image tag to base the output image on, defaults to `botpress/server` with the detected version of Botpress |
 | &#x2011;&#x2011;output&#x2011;tag | -ot | bpexport:three_random_words | Tag of the built image |
