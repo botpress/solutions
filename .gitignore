@@ -2,3 +2,5 @@ node_modules
 dist
 assets
 .DS_Store
+.idea/
+.idea
