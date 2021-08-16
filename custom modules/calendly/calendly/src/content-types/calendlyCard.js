@@ -47,8 +47,7 @@ module.exports = {
       },
       url: {
         type: 'string',
-        title: 'The URL to your calendly',
-        default: "https://calendly.com/your_account/15min"
+        title: 'The URL to your calendly'
       },
       hideEventTypeDetails: {
         type: 'boolean',
@@ -64,7 +63,11 @@ module.exports = {
     }
   },
 
-  uiSchema: {},
+  uiSchema: {
+    url: {
+      "ui:placeholder": "https://calendly.com/your_account/15min"
+    }
+  },
   computePreviewText: formData => `Calendly: ${formData.url}`,
 
   renderElement
