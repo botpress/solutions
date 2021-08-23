@@ -11,7 +11,7 @@
 
 ---
 
-Generate a Docker image replica from an existing Botpress server.
+Pack and Upload a Botpress bot folder to a target Botpress server
 
 ## Requirements
 
