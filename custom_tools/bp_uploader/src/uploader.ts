@@ -6,43 +6,24 @@ import { Logger } from "loglevel";
 import path from "path";
 import tarstream from "tar-stream";
 
-const getUploadURL = (
-  baseURL: string,
-  botID: string,
-  overwrite: boolean = false
-): URL => {
-  return new URL(
-    `/api/v2/admin/workspace/bots/${botID}/import?overwrite=${overwrite}`,
-    baseURL
-  );
+global.botId = null;
+
+const getUploadURL = (baseURL: string, botID: string, overwrite: boolean = false): URL => {
+  return new URL(`/api/v2/admin/workspace/bots/${botID}/import?overwrite=${overwrite}`, baseURL);
 };
 
-const sanitizeBotId = (text: string): string =>
-  text
-    .toLowerCase()
-    .replace(/\s/g, "-")
-    .replace(/[^a-z0-9_-]/g, "");
-
-const generateBotId = (filename: string): string => {
-  const noExt = filename.substr(0, filename.indexOf("."));
-  const matches = noExt.match(/bot_(.*)_[0-9]+/);
-  return sanitizeBotId(matches && matches[1]) || noExt;
-};
-
-const getFolderAsTarStream = async (
-  folderPath: string,
-  logger: Logger
-): Promise<NodeJS.ReadableStream> => {
-  logger.debug(`Resolved path ${path.resolve(folderPath)}`);
+const getFolderAsTarStream = async (folderPath: string, logger: Logger): Promise<NodeJS.ReadableStream> => {
+  const pathString = path.resolve(folderPath).replace(/\\/g, "/");
+  logger.debug(`Resolved path ${pathString}`);
   const stat = await fs.stat(folderPath);
   if (!stat.isDirectory()) {
     throw new Error(`${folderPath} is not a directory`);
   }
   const tarStream = tarstream.pack();
-  const files = await glob(`/**/*`, {
-    // dot: true,
+  const files = await glob(`./**/*`, {
+    dot: true,
     followSymbolicLinks: false,
-    cwd: folderPath,
+    cwd: pathString,
     onlyFiles: true,
   });
 
@@ -50,10 +31,24 @@ const getFolderAsTarStream = async (
 
   for (let file of files) {
     logger.debug(`Adding ${file} to archive`);
+    if (file == "bot.config.json") {
+      try {
+        global.botId = JSON.parse(await fs.readFile(path.join(folderPath, file), { encoding: "utf8" })).id;
+      } catch (e) {
+        logger.error(`Error reading bot.config.json`);
+        throw e;
+      }
+    }
     const buffer = await fs.readFile(path.join(folderPath, file));
     tarStream.entry({ name: file }, buffer).on("error", (err: Error) => {
       logger.error(`An error occured while adding ${file}: `, err);
     });
+  }
+
+  if (global.botId == undefined) {
+    throw new Error(
+      "The file bot.config.json was not found in the folder, or the present id property is not valid."
+    );
   }
 
   tarStream.finalize();
@@ -67,11 +62,11 @@ export const upload = async (
   url: string,
   folderPath: string,
   authToken: string,
-  logger: Logger
+  logger: Logger,
+  botId: string
 ) => {
-  const folderName = path.dirname(folderPath);
   const data = await getFolderAsTarStream(folderPath, logger);
-  const endpoint = getUploadURL(url, generateBotId(folderName));
+  const endpoint = getUploadURL(url, botId || global.botId);
 
   logger.debug(`Uploading to ${endpoint.href}`);
 

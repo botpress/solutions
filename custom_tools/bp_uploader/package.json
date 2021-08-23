@@ -34,7 +34,8 @@
     "scripts": "out/**/*.js",
     "targets": [
       "node12-linux-x64",
-      "node12-macos-x64"
+      "node12-macos-x64",
+      "node12-windows-x64"
     ],
     "outputPath": "bin"
   },
