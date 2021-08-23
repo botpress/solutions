@@ -55,7 +55,7 @@ To upload a bot folder with the `upload-bot` command, make sure you have authent
 bp_uploader upload-bot <target botpress url> <path to folder containing the bot>
 ```
 
-In the example below the bot is in the same folder as the bp_uploader tool
+In the example below the bot folder is in the same folder as the bp_uploader tool
 
 ```sh
 bp_uploader upload-bot http://localhost:3000 ./bot_example
