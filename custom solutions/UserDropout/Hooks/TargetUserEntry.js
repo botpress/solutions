@@ -3,7 +3,7 @@ function hook(bp: typeof sdk, event: sdk.IO.IncomingEvent) {
 
 //BEFORE INCOMING MIDDLEWARE
   
-  const DATABASE_TABLE = 'JIO_DB'
+  const DATABASE_TABLE = 'Example_DB'
 
   if(event.type === 'visit'){
     bp.logger.info('User Visit' , event)
