@@ -12,7 +12,7 @@ function action(bp: typeof sdk, event: sdk.IO.IncomingEvent, args: any, { user, 
    */
 
   async function myAction(first, last, Node) {
-    await bp.database.insertAndRetrieve('jio', {
+    await bp.database.insertAndRetrieve('Example_DB', {
       UserName: first,
       LastName: last,
       CurrentNode: Node
