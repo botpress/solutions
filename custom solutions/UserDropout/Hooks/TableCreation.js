@@ -3,7 +3,7 @@ function hook(bp: typeof sdk) {
 
 
     function CreatTable(){
-      const tableName = 'JIO_DB'
+      const tableName = 'Example_DB'
       bp.database.CreatTableIfNotExists(tableName, function(table){
         table.increment('id').primary 
         table.string('FirstName')
