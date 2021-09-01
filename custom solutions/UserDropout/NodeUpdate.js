@@ -1,7 +1,7 @@
 function action(bp: typeof sdk, event: sdk.IO.IncomingEvent, args: any, { user, temp, session } = event.state) {
   /** Your code starts below */
 
-  const tableName = 'JIO_DB'
+  const tableName = 'Example_DB'
   this.knex = bp.database
 
   /**
