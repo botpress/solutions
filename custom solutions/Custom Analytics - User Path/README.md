@@ -13,4 +13,4 @@ Sends user path telemetry to a new custom table
 4 - Check results by quering the database (table 'custom-analytics') or making Curl request bellow (Change [BOTPRESS_URL], [BOT_ID] and [TOKEN]):
 
 curl --location --request GET '[BOTPRESS_URL]/api/v1/bots/[BOT_ID]/mod/custom-analytics/aggregate' \
---header 'authorization: Bearer [TOKEN]
+--header 'authorization: Bearer [TOKEN]'
