@@ -4,7 +4,7 @@ function hook(bp: typeof sdk) {
 
     function CreatTable(){
       const tableName = 'Example_DB'
-      bp.database.CreatTableIfNotExists(tableName, function(table){
+      bp.database.CreateTableIfNotExists(tableName, function(table){
         table.increment('id').primary 
         table.string('FirstName')
         table.string('LastName')
