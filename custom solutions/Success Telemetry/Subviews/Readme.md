@@ -1,0 +1,3 @@
+- Each folder is from a metric, each subfolder has an hook which will create a desired subview in a metric type
+- The hook can be created as an 'after_server_start' hook (recommended)
+- After creating/modifying the hook, restart the server.
