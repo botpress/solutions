@@ -39,6 +39,9 @@
 
     QNA_FOLDER_PATH
     : fill in the first part with where Botpress is installed on your machine
+    
+    JSON_MOD
+    : whether or not to remove redirects and content elements from the Q&As before testing. TRUE by default.
 
 4. Run the script with
 
