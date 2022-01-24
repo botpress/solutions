@@ -40,6 +40,7 @@ testPath = os.getenv("TEST_PATH")
 col_name = os.getenv('COL_NAME')
 resultsPath = os.getenv("RESULTS_PATH")
 qnaFolderPath = os.getenv("QNA_FOLDER_PATH")
+json_mod = qnaFolderPath = os.getenv("JSON_MOD")
 
 ####### Definitions #################
 
@@ -115,18 +116,12 @@ def cleanJSON():
         updateJsonFile(qnaFolderPath+filename)
         print(filename+" has been modified")
 
-def getGrade(y_act, y_pred):
-    f1 = sklearn.metrics.f1_score(y_act, y_pred, labels=np.unique(np.array(y_act)), average='macro')
-    prec = sklearn.metrics.precision_score(y_act, y_pred, labels=np.unique(np.array(y_act)), average='macro', zero_division=0)
-    rec = sklearn.metrics.recall_score(y_act, y_pred, labels=np.unique(np.array(y_act)), average='macro',zero_division=0)
-    print('\n')
-    print(f"------{col_name} NLU Scoring--------\n Precision Score: {prec} \n Recall Score: {rec} \n F1 Score: {f1}")
-
 # Step 1: Get the token
 token = getToken(endpoint, user, password)
 
 #Step 2: Clean the Q&A .json files
-cleanJSON()
+if(json_mod == 'TRUE'):
+    cleanJSON()
         
 #Step 3: Send utterances to the bot
 test_df = pandas.read_csv(testPath)
@@ -140,36 +135,35 @@ runner()
 results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name]) for i in results)
 test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_on='Utterance')
 
-#Step 4 Calculate scores
-getGrade( test_df['Expected'], test_df[col_name])
+#Step 4: Create confusion matrix & calculate scores
 
 #Save the data to a CSV before removing empties & errors
 test_df.to_csv(resultsPath, index=False)
 
-#Create the confusion matrix
+#Clean & sort the test data
 empties = test_df.loc[test_df[col_name]=='']
 errors = test_df.loc[test_df[col_name]=='ERROR']
-print(f"Removed {empties.size} empty lines and {errors.size} errors")
+print(f"Found {empties.size} empty lines and {errors.size} errors")
 test_df.drop(empties.index, inplace=True, axis=0)
 test_df.drop(errors.index, inplace=True, axis=0)
-labels = test_df[col_name].unique()
 
+labels = test_df[col_name].unique()
 y_pred = test_df[col_name].tolist()
 y_act = test_df["Expected"].tolist()
 
-#Creating the confusion metrix
-cm = sklearn.metrics.confusion_matrix(y_act, y_pred, labels=labels, normalize='true')
-cmp = sklearn.metrics.ConfusionMatrixDisplay(cm, display_labels=labels)
-fig, ax = plt.subplots(figsize=(15,15))
+#Create the confusion metrix
+fig, ax = plt.subplots(figsize=(20,15))
+cmp = sklearn.metrics.ConfusionMatrixDisplay.from_predictions(y_act, y_pred, labels=labels, normalize='true', xticks_rotation='vertical', ax=ax)
+
 
 #Calculate Scores
-f1 = sklearn.metrics.f1_score(y_act, y_pred, labels=labels, average='macro', zero_division=0)
-prec = sklearn.metrics.precision_score(y_act, y_pred, labels=labels, average='macro',zero_division=0)
-rec = sklearn.metrics.recall_score(y_act, y_pred, labels=labels, average='macro',zero_division=0)
+f1 = np.around(sklearn.metrics.f1_score(y_act, y_pred, labels=labels, average='macro', zero_division=0),4)
+prec = np.around(sklearn.metrics.precision_score(y_act, y_pred, labels=labels, average='macro',zero_division=0),4)
+rec = np.around(sklearn.metrics.recall_score(y_act, y_pred, labels=labels, average='macro',zero_division=0),4)
+print(f"------{col_name} NLU Scoring--------\n Precision Score: {prec} \n Recall Score: {rec} \n F1 Score: {f1}")
 
 #Add the scores in the plot's title
 ax.text(2.5,-1, f"------{col_name} NLU Scoring--------\n Precision Score: {prec} \n Recall Score: {rec} \n F1 Score: {f1}",
 size='large')
-
-#cmp.plot(ax=ax, xticks_rotation='vertical')
-plt.savefig(f"{col_name}_confusion_matrix.png", dpi=300)
+fig.tight_layout()
+fig.savefig(os.path.join(BASEDIR, f"{col_name}_confusion_matrix.png"), dpi=fig.dpi)
