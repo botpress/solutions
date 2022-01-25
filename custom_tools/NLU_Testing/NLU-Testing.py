@@ -40,7 +40,7 @@ testPath = os.getenv("TEST_PATH")
 col_name = os.getenv('COL_NAME')
 resultsPath = os.getenv("RESULTS_PATH")
 qnaFolderPath = os.getenv("QNA_FOLDER_PATH")
-json_mod = qnaFolderPath = os.getenv("JSON_MOD")
+json_mod = os.getenv("JSON_MOD")
 
 ####### Definitions #################
 
@@ -135,18 +135,16 @@ runner()
 results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name]) for i in results)
 test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_on='Utterance')
 
-#Step 4: Create confusion matrix & calculate scores
+# Repeat the test for any errors
+errors = test_df.loc[(test_df[col_name]=='ERROR' )|(test_df[col_name]=='')]
 
-#Save the data to a CSV before removing empties & errors
+for error in errors.Utterance.index:
+    test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
+
+#Save data to a csv
 test_df.to_csv(resultsPath, index=False)
 
-#Clean & sort the test data
-empties = test_df.loc[test_df[col_name]=='']
-errors = test_df.loc[test_df[col_name]=='ERROR']
-print(f"Found {empties.size} empty lines and {errors.size} errors")
-test_df.drop(empties.index, inplace=True, axis=0)
-test_df.drop(errors.index, inplace=True, axis=0)
-
+#Step 4: Create confusion matrix & calculate scores
 labels = test_df[col_name].unique()
 y_pred = test_df[col_name].tolist()
 y_act = test_df["Expected"].tolist()
@@ -154,7 +152,6 @@ y_act = test_df["Expected"].tolist()
 #Create the confusion metrix
 fig, ax = plt.subplots(figsize=(20,15))
 cmp = sklearn.metrics.ConfusionMatrixDisplay.from_predictions(y_act, y_pred, labels=labels, normalize='true', xticks_rotation='vertical', ax=ax)
-
 
 #Calculate Scores
 f1 = np.around(sklearn.metrics.f1_score(y_act, y_pred, labels=labels, average='macro', zero_division=0),4)
