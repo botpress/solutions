@@ -1,15 +1,13 @@
 # ////////////////////////////////////////////////////////////////////
-# This code does three things
+# This code does four things
 # 1. It uses your credentials to generate an access token
 # 2. It modifies the individual .json files for each Q&A to:
 #   a. Remove any redirection
 #   b. Set the answer to "Test Answer"
 # 3. Takes individual utterances from a test dataset and sends them via converse API to the bot and records the intent
-#   - If no intent is matched, it will record a blank entry
+#   - If no intent is matched, it will record 'No Intent Matched'
 #   - After all testing is done it will save the test results
-# Sometimes you may need to run the program twice- once to change the Q&A files, then train the bot,
-# and then a second time to test the utterances on the newly-trained bot
-# Writeen by Gordon Clark on Botpress 12.26.9
+# 4. It uses the results to create a confusion matrix that's saved in the base folder
 # /////////////////////////////////////////////////////////////////////
 
 import requests
@@ -44,12 +42,14 @@ json_mod = os.getenv("JSON_MOD")
 
 ####### Definitions #################
 
+# Gets the auth token
 def getToken(endpoint, email, password):
     try:
         return requests.post(f"{endpoint}/api/v1/auth/login/basic/default", data={"email":email, "password":password}).json()["payload"]["jwt"]
     except:
         print('Error retrieving auth token- check your credentials')
 
+# Uses the converse API to send an utterance to the bot and then records the top NLU suggestion
 def sendUtterance(utterance):
     user = uuid.uuid4()
     result_dict = {}
@@ -71,7 +71,7 @@ def sendUtterance(utterance):
    # print(f"Utterance: {utterance} \n Actual: {actual}")
     return result_dict
 
-# Renders a progress bar
+# Renders a progress bar in the terminal window
 def progress(count, total, status=''):
     bar_len = 60
     filled_len = int(round(bar_len * count / float(total)))
@@ -99,6 +99,7 @@ def updateJsonFile(path):
     jsonFile.write(json.dumps(data, indent=6))
     jsonFile.close()
 
+# Uses multithreading to send 10 utterances to the bot at once
 def runner():
     threads = []
     i = 0
@@ -110,18 +111,16 @@ def runner():
             progress(i, test_df.Utterance.size, status="Testing")
             results.append(task.result())
             i+=1
- 
-def cleanJSON():
-    for filename in os.listdir(qnaFolderPath):
-        updateJsonFile(qnaFolderPath+filename)
-        print(filename+" has been modified")
-
+# ############ End Definitions #############
+# Processing time!
 # Step 1: Get the token
 token = getToken(endpoint, user, password)
 
 #Step 2: Clean the Q&A .json files
 if(json_mod == 'TRUE'):
-    cleanJSON()
+    for filename in os.listdir(qnaFolderPath):
+        updateJsonFile(qnaFolderPath+filename)
+        print(filename+" has been modified")
         
 #Step 3: Send utterances to the bot
 test_df = pandas.read_csv(testPath)
@@ -137,7 +136,6 @@ test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_o
 
 # Repeat the test for any errors
 errors = test_df.loc[(test_df[col_name]=='ERROR' )|(test_df[col_name]=='')]
-
 for error in errors.Utterance.index:
     test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
 
@@ -145,7 +143,7 @@ for error in errors.Utterance.index:
 test_df.to_csv(resultsPath, index=False)
 
 #Step 4: Create confusion matrix & calculate scores
-labels = test_df[col_name].unique()
+labels = np.sort(test_df[col_name].unique())
 y_pred = test_df[col_name].tolist()
 y_act = test_df["Expected"].tolist()
 
@@ -159,7 +157,7 @@ prec = np.around(sklearn.metrics.precision_score(y_act, y_pred, labels=labels, a
 rec = np.around(sklearn.metrics.recall_score(y_act, y_pred, labels=labels, average='macro',zero_division=0),4)
 print(f"------{col_name} NLU Scoring--------\n Precision Score: {prec} \n Recall Score: {rec} \n F1 Score: {f1}")
 
-#Add the scores in the plot's title
+#Add the scores in the plot's title and save the confusion matrix as a PNG
 ax.text(2.5,-1, f"------{col_name} NLU Scoring--------\n Precision Score: {prec} \n Recall Score: {rec} \n F1 Score: {f1}",
 size='large')
 fig.tight_layout()
