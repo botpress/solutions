@@ -139,6 +139,9 @@ errors = test_df.loc[(test_df[col_name]=='ERROR' )|(test_df[col_name]=='')]
 for error in errors.Utterance.index:
     test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
 
+# Remove any duplicate utterances
+test_df.drop_duplicates(subset='Utterance', keep='last', ignore_index=True, inplace=True)
+
 #Save data to a csv
 test_df.to_csv(resultsPath, index=False)
 
