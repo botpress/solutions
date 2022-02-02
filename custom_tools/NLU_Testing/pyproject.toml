@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "botpress_nlu_testing"
+version = "0.1.1"
+description = "A package to test botpress bots and return performance informations."
+authors = ["Pierre Snell <pierre.snell@botpress.com>"]
+
+[tool.poetry.scripts]
+launch_bp_testing = "botpress_nlu_testing.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.22.1"
+pandas = "^1.4.0"
+requests = "^2.27.1"
+scikit-learn = "^1.0.2"
+dynaconf = "^3.1.7"
+rich = "^11.1.0"
+click = "^8.0.3"
+streamlit = "^1.5.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+black = "^21.12b0"
+mypy = "^0.931"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

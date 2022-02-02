@@ -1,0 +1,7 @@
+.venv
+dist
+__pycache__
+test_bots
+test_files
+.vscode
+.env
