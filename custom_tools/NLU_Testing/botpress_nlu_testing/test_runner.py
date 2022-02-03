@@ -1,11 +1,9 @@
-from botpress_nlu_testing.typings import Result
-
+from botpress_nlu_testing.typings import NluResult
 from typing import List
 from pathlib import Path
-
 from botpress_nlu_testing.api import BotpressApi
-from botpress_nlu_testing.typings import Test, NluResult
-from time import time
+from botpress_nlu_testing.typings import Test
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 import csv
 import json
 
@@ -48,21 +46,14 @@ def load_tests(test_path: Path) -> List[Test]:
         raise AssertionError("The test file is neither a json nor a tsv/csv")
 
 
-def run_tests(test_path: Path, api: BotpressApi) -> List[Result]:
-    results: List[Result] = []
-    for test in load_tests(test_path):
-        start = time()
-        res: NluResult = api.predict(test["utterance"])
-        predicted_time = time() - start
-
-        results.append(
-            Result(
-                utterance=test["utterance"],
-                expected=test["expected"],
-                confidence=res["confidence"],
-                predicted=res["predicted"],
-                time=predicted_time,
-            )
-        )
-
+def run_tests(test_path: Path, api: BotpressApi) -> List[NluResult]:
+    results: List[NluResult] = []
+    threads = []
+    tests: List[Test] = load_tests(test_path)
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        for test in tests:
+              f:Future[NluResult] = executor.submit(api.predict, test["utterance"], test["expected"])
+              threads.append(f)
+        [results.append(future.result()) for future in as_completed(threads)]
+    
     return results
