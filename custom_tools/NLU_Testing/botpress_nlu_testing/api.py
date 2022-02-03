@@ -106,7 +106,7 @@ class BotpressApi:
         except KeyError as err:
             raise ConnectionError(f"Cannot train:\n KeyError {err}")
 
-    def predict(self, utterance: str) -> NluResult:
+    def predict(self, utterance: str, expected: str) -> NluResult:
         """Run prediction on an utterance
 
         Parameters
@@ -116,8 +116,8 @@ class BotpressApi:
 
         Returns
         -------
-        Tuple[str, float]
-            The intent name and it's confidence
+        NluResult[utterance, expected, predicted, confidence]
+            The complete test results
 
         Raises
         ------
@@ -145,10 +145,12 @@ class BotpressApi:
             entities = predictions["entities"]  # type: ignore[misc]
             context = predictions["contexts"][0]
 
-            best_intent = NluResult(predicted="None", confidence=0.0)
+            best_intent = NluResult(utterance=utterance, expected=expected, predicted="None", confidence=0.0)
             for intent in context["intents"]:
                 if intent["confidence"] > best_intent["confidence"]:
                     best_intent = NluResult(
+                        utterance=utterance,
+                        expected=expected,
                         predicted=re.sub(r"__qna__[a-z0-9\d]+_", "", intent["name"]),
                         confidence=intent["confidence"],
                     )
