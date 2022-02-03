@@ -6,7 +6,8 @@ from botpress_nlu_testing.api import BotpressApi
 from pathlib import Path
 from dynaconf import settings
 import pandas as pd
-from sklearn.metrics import precision_score, f1_score, recall_score
+import matplotlib.pyplot as plt 
+from sklearn.metrics import precision_score, f1_score, recall_score, ConfusionMatrixDisplay
 import numpy as np
 from typing import Tuple, List, Optional
 
@@ -17,7 +18,16 @@ st.set_page_config(  # type: ignore[misc]
     initial_sidebar_state="auto",
     menu_items=None,
 )
+def show_matrix(data_frame: pd.DataFrame):
+    y_true: List[str] = data_frame["expected"].tolist()
+    y_pred: List[str] = data_frame["predicted"].tolist()
+    labels: List[str] = data_frame["expected"].unique().tolist()
 
+    fig, ax = plt.subplots(figsize=(20,15))
+
+    _cmp:ConfusionMatrixDisplay = ConfusionMatrixDisplay.from_predictions(y_true, y_pred, labels=labels, normalize='true', xticks_rotation='vertical', ax=ax)
+    
+    st.pyplot(fig)
 
 def compute_scores(data_frame: pd.DataFrame) -> Tuple[float, float, float]:
     y_true: List[str] = data_frame["expected"].tolist()
@@ -84,6 +94,7 @@ def launch_tests(test_path: BytesIO, api: BotpressApi) -> Optional[pd.DataFrame]
             results["passed"] = results.apply(check_result, axis=1)
 
             return results
+
     except AssertionError as err:
         st.error(err)
         return None
@@ -202,6 +213,7 @@ if test_file:
 
             if results is not None:
                 f1, precision, recall = compute_scores(results)
+                show_matrix(results)
                 st.write(f"F1        : {f1}")
                 st.write(f"Precision : {precision}")
                 st.write(f"Recall    : {recall}")
