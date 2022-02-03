@@ -219,6 +219,12 @@ if test_file:
                 st.write(f"Recall    : {recall}")
                 with st.expander("Detailed results"):
                     st.table(results)
+                st.download_button(
+                    label="Export CSV", 
+                    data=results.to_csv().encode('utf-8'),
+                    file_name=f"{api.bot_id}-NluResults.csv",
+                    mime="text/csv"
+                    )
 
         except AssertionError as err:
             st.error(err)
