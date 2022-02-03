@@ -1,3 +1,4 @@
+#from tokenize import String
 from typing import List, Dict, Union
 from typing_extensions import TypedDict, Literal
 
@@ -5,13 +6,6 @@ from typing_extensions import TypedDict, Literal
 class Test(TypedDict):
     utterance: str
     expected: str
-
-
-class Result(Test):
-    confidence: float
-    predicted: str
-    time: float
-
 
 class Slot(TypedDict):
     name: str
@@ -86,6 +80,8 @@ class Bot(TypedDict):
 
 
 class NluResult(TypedDict):
+    utterance: str  
+    expected: str
     confidence: float
     predicted: str
 
