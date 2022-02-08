@@ -60,14 +60,22 @@ def sendUtterance(utterance):
     auth= {"Authorization": "Bearer "+token}
     url = f"{endpoint}/api/v1/bots/{botId}/converse/{user}/secured?include=decision,nlu"
     response = requests.post(url, data=payload, headers=auth)
+    slots = ""
     try:
         actual = response.json()["nlu"]["intent"]["name"]
+        extracted = response.json()['nlu']['slots']
+        
+        if(len(extracted)>0):
+            slots = [f"{extracted[i]['name']} was extracted from \"{extracted[i]['source']}\" and normalized to {extracted[i]['value']}"
+                    for i in extracted]
+        else:
+            None
     except:
         actual = "ERROR"
     if (re.match(r"__qna__",actual)):
         actual = actual[18:]
     
-    result_dict[utterance] = "No Intent Matched" if actual == 'none' else actual
+    result_dict[utterance] = ["No Intent Matched", ''] if actual == 'none' else [actual,str(slots)]
    # print(f"Utterance: {utterance} \n Actual: {actual}")
     return result_dict
 
@@ -127,15 +135,15 @@ test_df = pandas.read_csv(testPath)
 
 # Overwrite any previous data with the same labels
 if( col_name in test_df.columns):
-    test_df.drop(col_name, axis=1, inplace=True)
+    test_df.drop([col_name,f"{col_name}_entities"], axis=1, inplace=True)
 results = []         
 print(f"Starting NLU test.... \n {test_df.Utterance.size} utterances detected")
 runner()
-results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name]) for i in results)
+results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_entities"]) for i in results)
 test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_on='Utterance')
 
 # Repeat the test for any errors
-errors = test_df.loc[(test_df[col_name]=='ERROR' )|(test_df[col_name]=='')]
+errors = test_df.loc[(test_df[col_name]==None)|(test_df[col_name]=='')]
 for error in errors.Utterance.index:
     test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
 
