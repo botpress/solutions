@@ -9,7 +9,9 @@
 
     `cd ~/NLU-Testing/`
 
-    `pip -r requirements.txt`
+    `pip3 -r requirements.txt`
+        
+    Microsoft Visual C++ 14.0 or greater is required for Pandas library on Windows. Get it with "Microsoft C++ Build Tools": https://visualstudio.microsoft.com/visual-cpp-build-tools/"
 
 3. Add the following information to the .env file:
 
@@ -46,10 +48,11 @@
 4. Run the script with
 
     `python3 NLU-Testing.py`
+    
 
 ### How it works
 
-This script uses multithreading to send 10 utterances at a time to the bot via Botpress Converse API.
+This script uses multithreading to send 10 utterances at a time to the bot via Botpress Converse API and then records the Q&A or intent chosen.
 
 Once an utterance is processed, the selected NLU intent name is saved alongside the utterance in the RESULTS_PATH file.
 
