@@ -3,3 +3,4 @@ pandas>=1.2.5
 python-dotenv>=0.19.2
 requests>=2.22.0
 scikit_learn>=1.0.2
+matplotlib>=3.5.0
