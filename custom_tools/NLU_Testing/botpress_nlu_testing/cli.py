@@ -4,6 +4,9 @@ from pathlib import Path
 
 
 def main() -> None:
+    """
+    Launch the streamlit app from the command line.
+    """
     sys.argv = [
         "streamlit",
         "run",
