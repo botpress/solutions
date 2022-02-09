@@ -12,7 +12,7 @@ from botpress_nlu_testing.typings import (
 
 import tarfile
 from tempfile import TemporaryDirectory
-from typing import List
+from typing import List, Optional
 
 import json
 
@@ -74,7 +74,7 @@ def load_folder_bot(bot_path: Path) -> Bot:
     )
 
 
-def load_tgz_bot(bot_path: Path) -> Bot:
+def load_tgz_bot(bot_path: Path, bot_lang: Optional[str]) -> Bot:
     if not tarfile.is_tarfile(bot_path):
         raise AssertionError(f"{bot_path} is not a tarfile")
 
