@@ -52,13 +52,13 @@ def load_folder_bot(bot_path: Path) -> Bot:
                     regex=raw_entity_data["pattern"],
                     examples=raw_entity_data["examples"],
                     sensitive=raw_entity_data["sensitive"],
-                    case_sensitive=raw_entity_data["case_sensitive"],
+                    case_sensitive=raw_entity_data["sensitive"],
                 )
             else:
                 entity = ListEntity(
                     name=raw_entity_data["name"],
                     type="list",
-                    values=raw_entity_data["occurences"],
+                    values=raw_entity_data["occurrences"],
                     fuzzy=raw_entity_data["fuzzy"],
                     sensitive=raw_entity_data["sensitive"],
                 )
