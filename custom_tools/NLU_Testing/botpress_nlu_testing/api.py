@@ -8,7 +8,6 @@ from botpress_nlu_testing.bot_utils import load_tgz_bot
 from botpress_nlu_testing.typings import NluResult, NluServerPredictions
 from typing import Optional
 
-
 class BotpressApi:
     def __init__(self, endpoint: str, bot_id: str):
         self.endpoint = endpoint
@@ -141,20 +140,19 @@ class BotpressApi:
 
         try:
             predictions: NluServerPredictions = response.json()["predictions"][0]
-            detected_lang = predictions["detectedLanguage"]  # type: ignore[misc]
+            _detected_lang = predictions["detectedLanguage"]  # type: ignore[misc]
             entities = predictions["entities"]  # type: ignore[misc]
             context = predictions["contexts"][0]
-
-            best_intent = NluResult(utterance=utterance, expected=expected, predicted="None", confidence=0.0)
+            best_intent = NluResult(utterance=utterance, expected=expected, entities=[], predicted="No Intent Matched", confidence=0.25)
             for intent in context["intents"]:
                 if intent["confidence"] > best_intent["confidence"]:
                     best_intent = NluResult(
                         utterance=utterance,
                         expected=expected,
+                        entities=intent['slots'],
                         predicted=re.sub(r"__qna__[a-z0-9\d]+_", "", intent["name"]),
                         confidence=intent["confidence"],
                     )
-
             return best_intent
 
         except KeyError as err:
