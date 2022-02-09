@@ -29,7 +29,7 @@
 
     TEST_PATH
     : the location of your file with test utterances. The file should be a .csv file with two columns like:
-    | Utterance | Expected Intent |
+    | Utterance | Expected        |
     | --------- | --------------- |
     | Hi        |   greeting      |
 
