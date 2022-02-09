@@ -43,7 +43,7 @@ class RawEntity(TypedDict):
     id: str
     name: str
     type: Literal["pattern", "list"]
-    occurences: List[ListItem]
+    occurrences: List[ListItem]
     fuzzy: float
     examples: List[str]
     pattern: str
@@ -82,9 +82,9 @@ class Bot(TypedDict):
 class NluResult(TypedDict):
     utterance: str  
     expected: str
+    entities: List[RawSlot]
     confidence: float
     predicted: str
-
 
 class NluServerIntents(TypedDict):
     extractor: str
