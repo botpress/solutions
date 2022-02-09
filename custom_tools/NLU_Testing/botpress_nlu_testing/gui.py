@@ -90,8 +90,49 @@ def launch_tests(test_path: BytesIO, api: BotpressApi) -> Optional[pd.DataFrame]
             test_results = run_tests(Path(temp_file.name), api)
             temp_file.close()
 
-            results = pd.DataFrame(test_results)
+            temp_df: pd.DataFrame = pd.DataFrame(test_results)
+            df2: pd.Series= temp_df['entities'].loc[temp_df['entities'].map(lambda d: len(d)) > 0] # type: ignore[str]
+            templist= []
+            
+            for index, item in df2.iteritems(): # type: ignore[str]
+                df1 = pd.json_normalize(item) # type: ignore[str]
+                df1["index_col"] = index
+                df1.dropna(inplace=True)
+                templist.append(df1)
+            df3: pd.DataFrame = pd.concat(templist).loc(axis=1)['index_col','entity.name', 'entity.value'] # type: ignore[str]
+            arr = []
+            for i in df3['index_col'].unique():
+                slots_df: pd.DataFrame = pd.DataFrame()
+                if df3.loc[df3['index_col'] == i].shape == (1,3):
+                    slots_df: pd.DataFrame = pd.DataFrame(data={
+                        'entity1.name':df3["entity.name"].loc[df3['index_col'] == i].iat[0],
+                        'entity1.value':df3["entity.value"].loc[df3['index_col'] == i].iat[0]},
+                         index=[i], columns=['entity1.name', 'entity1.value'])
+                elif df3.loc[df3['index_col'] == i].shape == (2,3):
+                        slots_df: pd.DataFrame = pd.DataFrame(data={
+                            'entity1.name':df3["entity.name"].loc[df3['index_col'] == i].iat[0],
+                            'entity1.value':df3["entity.value"].loc[df3['index_col'] == i].iat[0],
+                            'entity2.name':df3["entity.name"].loc[df3['index_col'] == i].iat[1],
+                            'entity2.value':df3["entity.value"].loc[df3['index_col'] == i].iat[1]},
+                            index=[i], columns=['entity1.name', 'entity1.value','entity2.name', 'entity2.value'])
+                elif df3.loc[df3['index_col'] == i].shape == (3,3):
+                        slots_df: pd.DataFrame = pd.DataFrame(data={
+                            'entity1.name':df3["entity.name"].loc[df3['index_col'] == i].iat[0],
+                            'entity1.value':df3["entity.value"].loc[df3['index_col'] == i].iat[0],
+                            'entity2.name':df3["entity.name"].loc[df3['index_col'] == i].iat[1],
+                            'entity2.value':df3["entity.value"].loc[df3['index_col'] == i].iat[1],
+                            'entity3.name':df3["entity.name"].loc[df3['index_col'] == i].iat[2],
+                            'entity3.value':df3["entity.value"].loc[df3['index_col'] == i].iat[2]},
+                            index=[i], columns=['entity1.name', 'entity1.value','entity2.name', 'entity2.value','entity3.name', 'entity3.value'])
+
+                arr.append(slots_df)
+
+            slots_df2 = pd.concat(arr)
+
+            results:pd.DataFrame = temp_df.loc(axis=1)['utterance', 'expected', 'predicted', 'confidence']
             results["passed"] = results.apply(check_result, axis=1)
+            results = results.merge(right=slots_df2, right_index=True, left_index=True, how='left')
+            print(results.head(10))
 
             return results
 
