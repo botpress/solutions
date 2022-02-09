@@ -4,7 +4,7 @@ from pathlib import Path
 from botpress_nlu_testing.api import BotpressApi
 from botpress_nlu_testing.typings import Test
 from concurrent.futures import ThreadPoolExecutor, as_completed, Future
-import csv
+import pandas
 import json
 
 # TODO: Make a class, yield result so we can have a progress bar
@@ -26,13 +26,10 @@ def load_xsv_tests(test_path: Path) -> List[Test]:
     tests: List[Test] = []
 
     with open(test_path, "r") as test_file:
-        reader = csv.reader(
-            test_file, delimiter="\t" if test_path.suffix == ".tsv" else ","
-        )
-        next(reader, None)  # Skip the headers
+        test_data: pandas.DataFrame = pandas.read_csv(test_file, delimiter=None, header=0, usecols=["Utterance", "Expected"]) #type: ignore[misc]
 
-        for utterance, expected in reader:
-            tests.append(Test(utterance=utterance.strip(), expected=expected.strip()))
+        for _index, values in test_data.iterrows() : # type: List[str]
+            tests.append(Test(utterance=str(values[0]).strip(), expected=str(values[1]).strip()))
 
     return tests
 
@@ -54,6 +51,6 @@ def run_tests(test_path: Path, api: BotpressApi) -> List[NluResult]:
         for test in tests:
               f:Future[NluResult] = executor.submit(api.predict, test["utterance"], test["expected"])
               threads.append(f)
-        [results.append(future.result()) for future in as_completed(threads)]
+        [results.append(future.result()) for future in as_completed(threads)] #type: ignore[Future[NluResult]]
     
     return results
