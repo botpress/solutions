@@ -11,6 +11,15 @@ from typing import Optional
 
 class BotpressApi:
     def __init__(self, endpoint: str, bot_id: str):
+        """Create the api to talk with a botpress NLU server
+
+        Parameters
+        ----------
+        endpoint : str
+            The url of the botpress NLU server (e.g http://localhost:3200)
+        bot_id : str
+            The name of the bot (arbitrary and used to keep track of the model)
+        """
         self.endpoint = endpoint
         self.bot_id = bot_id
         self.model_id = ""
@@ -30,6 +39,18 @@ class BotpressApi:
             raise ConnectionError(f"Language server is not running on {self.endpoint}")
 
     def get_model_for_bot(self) -> Optional[str]:
+        """Get the model for the bot if one was trained before
+
+        Returns
+        -------
+        Optional[str]
+            If a model is found, return the model_id
+
+        Raises
+        ------
+        ConnectionError
+            If there is any problem with the request
+        """
         self.is_up()
 
         response = requests.get(
@@ -47,6 +68,13 @@ class BotpressApi:
             return None
 
     def clean(self) -> None:
+        """Remove all models associated with this bot
+
+        Raises
+        ------
+        ConnectionError
+            If anything went wrong with the request
+        """
         self.is_up()
 
         response = requests.post(
@@ -56,7 +84,7 @@ class BotpressApi:
         if not response.json()["success"]:
             raise ConnectionError(f"Problem removing models:\n{response.text}")
 
-    def train(self, bot_path: Path) -> None:
+    def train(self, bot_path: Path, bot_lang: Optional[str]) -> None:
         """Run prediction on an utterance
 
         Parameters
@@ -72,7 +100,7 @@ class BotpressApi:
         self.is_up()
         self.clean()
 
-        bot_data = load_tgz_bot(bot_path)
+        bot_data = load_tgz_bot(bot_path, bot_lang)
         response = requests.post(
             f"{self.endpoint}/v1/train",
             json={
@@ -148,18 +176,24 @@ class BotpressApi:
 
         try:
             predictions: NluServerPredictions = response.json()["predictions"][0]
-            detected_lang = predictions["detectedLanguage"]  # type: ignore[misc]
-            entities = predictions["entities"]  # type: ignore[misc]
+            _detected_lang = predictions["detectedLanguage"]
+            _entities = predictions["entities"]
             context = predictions["contexts"][0]
 
             best_intent = NluResult(
-                utterance=utterance, expected=expected, predicted="None", confidence=0.0
+                utterance=utterance,
+                expected=expected,
+                entities=[],
+                predicted="none",
+                confidence=0.01,
             )
+
             for intent in context["intents"]:
                 if intent["confidence"] > best_intent["confidence"]:
                     best_intent = NluResult(
                         utterance=utterance,
                         expected=expected,
+                        entities=intent["slots"],
                         predicted=re.sub(r"__qna__[a-z0-9\d]+_", "", intent["name"]),
                         confidence=intent["confidence"],
                     )

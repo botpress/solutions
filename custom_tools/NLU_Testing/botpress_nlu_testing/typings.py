@@ -1,11 +1,12 @@
-#from tokenize import String
-from typing import List, Dict, Union
+# from tokenize import String
+from typing import List, Dict, Union, Optional
 from typing_extensions import TypedDict, Literal
 
 
 class Test(TypedDict):
     utterance: str
     expected: str
+
 
 class Slot(TypedDict):
     name: str
@@ -43,7 +44,7 @@ class RawEntity(TypedDict):
     id: str
     name: str
     type: Literal["pattern", "list"]
-    occurences: List[ListItem]
+    occurrences: List[ListItem]
     fuzzy: float
     examples: List[str]
     pattern: str
@@ -80,8 +81,9 @@ class Bot(TypedDict):
 
 
 class NluResult(TypedDict):
-    utterance: str  
+    utterance: str
     expected: str
+    entities: List[RawSlot]
     confidence: float
     predicted: str
 
@@ -105,3 +107,8 @@ class NluServerPredictions(TypedDict):
     contexts: List[NluServerContexts]
     spellchecked: str
     detectedLanguage: str
+
+
+class AnnotatedEntities(TypedDict):
+    token: str
+    name: Optional[str]
