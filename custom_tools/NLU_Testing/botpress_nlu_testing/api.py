@@ -16,10 +16,17 @@ class BotpressApi:
         self.model_id = ""
 
     def is_up(self) -> None:
-        response = requests.get(
-            f"{self.endpoint}/v1/info",
-        )
-        if response.status_code != 200:
+        try:
+            response = requests.get(
+                f"{self.endpoint}/v1/info",
+            )
+
+            if response.status_code != 200:
+                raise ConnectionError(
+                    f"Language server is not running on {self.endpoint}"
+                )
+
+        except:
             raise ConnectionError(f"Language server is not running on {self.endpoint}")
 
     def get_model_for_bot(self) -> Optional[str]:
@@ -145,7 +152,9 @@ class BotpressApi:
             entities = predictions["entities"]  # type: ignore[misc]
             context = predictions["contexts"][0]
 
-            best_intent = NluResult(utterance=utterance, expected=expected, predicted="None", confidence=0.0)
+            best_intent = NluResult(
+                utterance=utterance, expected=expected, predicted="None", confidence=0.0
+            )
             for intent in context["intents"]:
                 if intent["confidence"] > best_intent["confidence"]:
                     best_intent = NluResult(
