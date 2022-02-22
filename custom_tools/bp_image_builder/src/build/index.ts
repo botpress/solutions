@@ -16,12 +16,10 @@ import {
 } from "../utils";
 import chalk from "chalk";
 import { AbstractMultiStrategy } from "../multistrategy";
-import ReadFSStrategy, { ReadFSOpts } from "./fs";
+import ReadFSStrategy, { ReadFSOpts, readFile } from "./fs";
 import BPPullStrategy, { BPPullOpts } from "./bppull";
 
-export type BPDataReadStrategy = (
-  opts: ReadFSOpts | BPPullOpts
-) => Promise<NodeJS.ReadableStream>;
+export type BPDataReadStrategy = (opts: ReadFSOpts | BPPullOpts) => Promise<NodeJS.ReadableStream>;
 
 export class BuildManager {
   private parentWorkDir: string;
@@ -45,9 +43,7 @@ export class BuildManager {
     try {
       await fs.ensureDir(this.parentWorkDir);
     } catch (err) {
-      throw new Error(
-        `Unable to create temporary build directory: ${err.message}`
-      );
+      throw new Error(`Unable to create temporary build directory: ${err.message}`);
     }
 
     if (!name) {
@@ -65,11 +61,7 @@ export class BuildManager {
 
 class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
   docker: Docker;
-  constructor(
-    private _dir: string,
-    public name: string,
-    dockerOpts: DockerOptions = defaultDockerOpts
-  ) {
+  constructor(private _dir: string, public name: string, dockerOpts: DockerOptions = defaultDockerOpts) {
     super();
     this.registerStrategy("pull", BPPullStrategy);
     this.registerStrategy("fs", ReadFSStrategy);
@@ -80,10 +72,7 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
     return this._dir;
   }
 
-  public async read(
-    urlOrPath: string,
-    authToken?: string
-  ): Promise<NodeJS.ReadableStream> {
+  public async read(urlOrPath: string, authToken?: string): Promise<NodeJS.ReadableStream> {
     if (isURL(urlOrPath)) {
       logger.info("Pulling using bp pull strategy");
       const reader = this._strategies.get("pull");
@@ -97,14 +86,13 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
   async build(
     contextStream: NodeJS.ReadableStream,
     baseImageTag: string = null,
-    outputTag: string = null
+    outputTag: string = null,
+    info: { token: string; originHost: string }
   ): Promise<string> {
     try {
       await this.docker.ping();
     } catch (err) {
-      throw new Error(
-        `Could not communicate with the Docker daemon: ${err.message}`
-      );
+      throw new Error(`Could not communicate with the Docker daemon: ${err.message}`);
     }
 
     if (!outputTag) {
@@ -115,15 +103,16 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
       baseImageTag = await getLatestBotpressImageTag();
     }
 
-    logger
-      .getLogger("docker")
-      .info(`Creating docker image ${outputTag} based on ${baseImageTag}`);
+    logger.getLogger("docker").info(`Creating docker image ${outputTag} based on ${baseImageTag}`);
 
-    const dockerfile = makeDockerfile(baseImageTag);
+    const dockerfile = makeDockerfile(baseImageTag, null, info);
 
     const tarStream = processTar(
       contextStream,
-      dockerfile,
+      [
+        dockerfile,
+        { headers: { name: "after_build.sh" }, content: await readFile("./docker_hooks/after_build.sh") },
+      ],
       logger.getLogger("build")
     );
 
