@@ -27,4 +27,4 @@ These hooks will have access to the following environment variables
 
 ## Tips
 
--  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make http requests using wget from your hooks
+-  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make HTTP requests using wget from your hooks
