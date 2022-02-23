@@ -45,10 +45,6 @@ export function makeDockerfile(
         ${info.hasHooks ? "COPY ./docker_hooks/ /botpress/docker_hooks/" : ""}
         ${info.hasModules ? "COPY ./custom_modules/ /botpress/modules/" : ""}
         ${info.hasExtraFiles ? "COPY ./extra_files/ /botpress/extra_files/" : ""}
-        RUN ls
-        RUN ls docker_hooks
-        RUN ls modules
-        RUN ls extra_files
         ${info.hasModules ? "RUN ./bp extract" : ""}
         ${
           info.hasHooks
