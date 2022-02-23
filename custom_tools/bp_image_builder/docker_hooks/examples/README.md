@@ -15,3 +15,16 @@ Check below the list of available hooks.
 |Hook name|Example|Description|
 |---|---|---|
 |after_build|Link|Runs after everything has been executed in the docker build pipeline|
+
+## Environment variables
+
+These hooks will have access to the following environment variables
+
+|Name|Description|Example|
+|---|---|---|
+|BUILD_TOKEN|Baerer token used to authenticate in the origin server|eyJhbGciOiJIUzI1N...|
+|BUILD_ORIGIN_HOST|URL for the origin server specified as argument at the login and build command |http://192.168.150.128:3000|
+
+## Tips
+
+-  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make requests from your hooks
