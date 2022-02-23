@@ -26,13 +26,31 @@ export const defaultDockerOpts: DockerOptions = {
 
 export function makeDockerfile(
   image_tag: string,
-  content: string = null
+  content: string = null,
+  info: { token: string; originHost: string; hasHooks: boolean; hasModules: boolean; hasExtraFiles: boolean }
 ): FileEntry {
   content =
-    content ||
+    (content &&
+      content
+        .replace("{{imageTag}}", image_tag)
+        .replace("{{BUILD_TOKEN}}", info.token)
+        .replace("{{BUILD_ORIGIN_HOST}}", info.originHost)) ||
     `
         FROM ${image_tag}
         COPY ./data /botpress/data
+        ARG BUILD_TOKEN=${info.token}
+        ARG BUILD_ORIGIN_HOST=${info.originHost}
+        RUN mkdir /botpress/docker_hooks
+        RUN mkdir /botpress/extra_files
+        ${info.hasHooks ? "COPY ./docker_hooks/ /botpress/docker_hooks/" : ""}
+        ${info.hasModules ? "COPY ./custom_modules/ /botpress/modules/" : ""}
+        ${info.hasExtraFiles ? "COPY ./extra_files/ /botpress/extra_files/" : ""}
+        ${info.hasModules ? "RUN ./bp extract" : ""}
+        ${
+          info.hasHooks
+            ? "RUN chmod -R 777 /botpress/docker_hooks/* && /botpress/docker_hooks/after_build.sh;exit 0"
+            : ""
+        }
         WORKDIR /botpress
         CMD ./duckling & ./bp
     `;
@@ -46,7 +64,7 @@ export function makeDockerfile(
 
 export function processTar(
   tarSteam: NodeJS.ReadableStream,
-  dockerfile: FileEntry,
+  files: FileEntry[],
   logger: Logger
 ): NodeJS.ReadableStream {
   var extractor = tarstream.extract();
@@ -58,14 +76,14 @@ export function processTar(
     rstream.pipe(compressor.entry(header, next));
   });
 
-  compressor.entry(dockerfile.headers, dockerfile.content, (err) => {
-    logger.debug(chalk.green`+ ${dockerfile.headers.name}`);
-    if (err) {
-      logger.error(
-        `Unable to write ${dockerfile.headers.name}: ${err.message}`
-      );
-    }
-  });
+  for (const file of files) {
+    compressor.entry(file.headers, file.content, (err) => {
+      logger.debug(chalk.green`+ ${file.headers.name}`);
+      if (err) {
+        logger.error(`Unable to write ${file.headers.name}: ${err.message}`);
+      }
+    });
+  }
 
   extractor.on("finish", function () {
     compressor.finalize();
@@ -81,9 +99,7 @@ export function processTar(
 }
 
 export async function getLatestBotpressImageTag(): Promise<string> {
-  const res = await fetch(
-    "https://api.github.com/repos/botpress/botpress/releases"
-  );
+  const res = await fetch("https://api.github.com/repos/botpress/botpress/releases");
   if (!res.ok) {
     throw new Error(`Unable to fetch GitHub releases for Botpress`);
   }
@@ -96,18 +112,14 @@ export async function getLatestBotpressImageTag(): Promise<string> {
   return `botpress/server:${version}`;
 }
 
-export async function getCurrentBotpressImageTag(
-  botpressURL: string
-): Promise<string> {
+export async function getCurrentBotpressImageTag(botpressURL: string): Promise<string> {
   const versionEndpoint = new URL("/version", botpressURL);
   const res = await fetch(versionEndpoint);
   const version = await res.text();
   return `botpress/server:v${version.replace(/\./g, "_")}`;
 }
 
-export function parseDockerOptions(
-  opts: Partial<DockerCLIOpts> | null
-): DockerOptions {
+export function parseDockerOptions(opts: Partial<DockerCLIOpts> | null): DockerOptions {
   if (!opts) {
     return defaultDockerOpts;
   }
@@ -115,15 +127,9 @@ export function parseDockerOptions(
   return {
     socketPath: opts.dockerSocket || defaultDockerOpts.socketPath,
     host: opts.dockerSocket ? opts.dockerUrl : undefined,
-    ca: opts.dockerCerts
-      ? fs.readFileSync(path.join(opts.dockerCerts, "ca.pem"))
-      : null,
-    cert: opts.dockerCerts
-      ? fs.readFileSync(path.join(opts.dockerCerts, "cert.pem"))
-      : null,
-    key: opts.dockerCerts
-      ? fs.readFileSync(path.join(opts.dockerCerts, "key.pem"))
-      : null,
+    ca: opts.dockerCerts ? fs.readFileSync(path.join(opts.dockerCerts, "ca.pem")) : null,
+    cert: opts.dockerCerts ? fs.readFileSync(path.join(opts.dockerCerts, "cert.pem")) : null,
+    key: opts.dockerCerts ? fs.readFileSync(path.join(opts.dockerCerts, "key.pem")) : null,
   };
 }
 

@@ -2,11 +2,7 @@ import { BuildManager } from "./build";
 import { Option, program } from "commander";
 import promptly from "promptly";
 import log from "loglevel";
-import {
-  getCurrentBotpressImageTag,
-  getLatestBotpressImageTag,
-  isURL,
-} from "./utils";
+import { getCurrentBotpressImageTag, getLatestBotpressImageTag, isURL } from "./utils";
 import auth, { JWT } from "./auth";
 import chalk from "chalk";
 
@@ -18,10 +14,7 @@ program
   .command("build <bp_url>")
   .description("build an image")
   .addOption(
-    new Option(
-      "-ds, --docker-socket [socket_path]",
-      "docker socket path"
-    ).default("/var/run/docker.sock")
+    new Option("-ds, --docker-socket [socket_path]", "docker socket path").default("/var/run/docker.sock")
   )
   .option(
     "-durl, --docker-url [docker_url]",
@@ -40,16 +33,13 @@ program
     ).default(null, "latest botpress/server release")
   )
   .addOption(
-    new Option(
-      "-t, --token [auth_token]",
-      "JWT Auth Token to use to pull Botpress data"
-    ).default(null)
+    new Option("-t, --token [auth_token]", "JWT Auth Token to use to pull Botpress data").default(null)
   )
   .addOption(
-    new Option(
-      "-ot, --output-tag [output_tag]",
-      "tag of the built output image"
-    ).default(null, "randomly generated")
+    new Option("-ot, --output-tag [output_tag]", "tag of the built output image").default(
+      null,
+      "randomly generated"
+    )
   )
   .action(async (url, options) => {
     try {
@@ -83,19 +73,14 @@ program
       }
 
       try {
-        const outputTag = await builder.build(
-          bpData,
-          options.imageTag,
-          options.outputTag
-        );
+        const outputTag = await builder.build(bpData, options.imageTag, options.outputTag, {
+          token,
+          originHost: url,
+        });
         log.info(chalk.greenBright`Image has been built with tag ${outputTag}`);
-        log.info(
-          `\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`
-        );
+        log.info(`\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`);
       } catch (err) {
-        throw new Error(
-          `An error occured during the docker build: ${err.message}`
-        );
+        throw new Error(`An error occured during the docker build: ${err.message}`);
       }
     } catch (err) {
       log.error(err.message);
@@ -114,14 +99,12 @@ program
       log.info(chalk.green`Logged in successfully as ${email}`);
       return;
     }
-    log.error(
-      chalk.redBright`Unable to login due to an unknown error: The token was empty`
-    );
+    log.error(chalk.redBright`Unable to login due to an unknown error: The token was empty`);
   });
 
 program
   .name("bp_image_build")
-  .version("1.0.0")
+  .version("1.1.0")
   .description("Builds a docker image out of a botpress instance")
 
   .parse(process.argv);
