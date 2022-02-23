@@ -1,6 +1,6 @@
 import gunzip from "gunzip-maybe";
-import logger from "loglevel";
 import fs from "fs-extra";
+import path from "path";
 
 export interface ReadFSOpts {
   archivePath: string;
@@ -34,4 +34,24 @@ export async function readFile(path: string): Promise<Buffer> {
       resolve(Buffer.concat(buffers));
     });
   });
+}
+
+export async function readFileAsText(path: string): Promise<string> {
+  if (await fs.pathExists(path)) {
+    return fs.readFileSync(path, "utf8");
+  }
+  return null;
+}
+
+export async function getFolderBufferArray(folderPath: string) {
+  if (await fs.pathExists(folderPath)) {
+    const files = fs.readdirSync(folderPath);
+    return Promise.all(
+      files.map(async (value) => ({
+        headers: { name: path.join(folderPath, value) },
+        content: await readFile(path.join(folderPath, value)),
+      }))
+    );
+  }
+  return [];
 }

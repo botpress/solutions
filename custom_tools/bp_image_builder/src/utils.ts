@@ -27,20 +27,34 @@ export const defaultDockerOpts: DockerOptions = {
 export function makeDockerfile(
   image_tag: string,
   content: string = null,
-  info: { token: string; originHost: string }
+  info: { token: string; originHost: string; hasHooks: boolean; hasModules: boolean; hasExtraFiles: boolean }
 ): FileEntry {
   content =
-    content ||
+    (content &&
+      content
+        .replace("{{imageTag}}", image_tag)
+        .replace("{{BUILD_TOKEN}}", info.token)
+        .replace("{{BUILD_ORIGIN_HOST}}", info.originHost)) ||
     `
         FROM ${image_tag}
         COPY ./data /botpress/data
         ARG BUILD_TOKEN=${info.token}
         ARG BUILD_ORIGIN_HOST=${info.originHost}
         RUN mkdir /botpress/docker_hooks
+        RUN mkdir /botpress/extra_files
+        ${info.hasHooks ? "COPY ./docker_hooks/ /botpress/docker_hooks/" : ""}
+        ${info.hasModules ? "COPY ./custom_modules/ /botpress/modules/" : ""}
+        ${info.hasExtraFiles ? "COPY ./extra_files/ /botpress/extra_files/" : ""}
         RUN ls
-        COPY ./after_build.sh /botpress/docker_hooks/after_build.sh
-        RUN chmod -R 777 /botpress/docker_hooks/*
-        RUN /botpress/docker_hooks/after_build.sh
+        RUN ls docker_hooks
+        RUN ls modules
+        RUN ls extra_files
+        ${info.hasModules ? "RUN ./bp extract" : ""}
+        ${
+          info.hasHooks
+            ? "RUN chmod -R 777 /botpress/docker_hooks/* && /botpress/docker_hooks/after_build.sh;exit 0"
+            : ""
+        }
         WORKDIR /botpress
         CMD ./duckling & ./bp
     `;

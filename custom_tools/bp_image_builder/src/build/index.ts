@@ -16,7 +16,7 @@ import {
 } from "../utils";
 import chalk from "chalk";
 import { AbstractMultiStrategy } from "../multistrategy";
-import ReadFSStrategy, { ReadFSOpts, readFile } from "./fs";
+import ReadFSStrategy, { ReadFSOpts, getFolderBufferArray, readFileAsText } from "./fs";
 import BPPullStrategy, { BPPullOpts } from "./bppull";
 
 export type BPDataReadStrategy = (opts: ReadFSOpts | BPPullOpts) => Promise<NodeJS.ReadableStream>;
@@ -105,14 +105,22 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
 
     logger.getLogger("docker").info(`Creating docker image ${outputTag} based on ${baseImageTag}`);
 
-    const dockerfile = makeDockerfile(baseImageTag, null, info);
+    const dockerHooks = await getFolderBufferArray("./docker_hooks");
+    const botpressCustomModules = await getFolderBufferArray("./custom_modules");
+    const extraFiles = await getFolderBufferArray("./extra_files");
+
+    const dockerFileText = await readFileAsText("./Dockerfile");
+
+    const dockerfile = makeDockerfile(baseImageTag, dockerFileText, {
+      ...info,
+      hasHooks: dockerHooks.length > 0,
+      hasModules: botpressCustomModules.length > 0,
+      hasExtraFiles: extraFiles.length > 0,
+    });
 
     const tarStream = processTar(
       contextStream,
-      [
-        dockerfile,
-        { headers: { name: "after_build.sh" }, content: await readFile("./docker_hooks/after_build.sh") },
-      ],
+      [dockerfile, ...dockerHooks, ...botpressCustomModules, ...extraFiles],
       logger.getLogger("build")
     );
 
