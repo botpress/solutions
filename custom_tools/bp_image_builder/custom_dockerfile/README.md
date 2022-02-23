@@ -4,7 +4,7 @@ A custom Dockerfile allows you customize the build pipeline even more, to use it
 
 1 - Copy your Dockerfile to the same folder as the bp_image_builder binary
 
-![image](https://user-images.githubusercontent.com/13484138/155405333-813926b2-6be2-48b8-8ae6-611abd7c47fb.png)
+![image](https://user-images.githubusercontent.com/13484138/155421149-759ecf08-3b8f-4cc7-941c-ae085f42e9ef.png)
 
 However, using a custom dockerfile removes additional features such as docker_hooks, custom_modules and extra_files, however, its very simple to add that functionality again, check URL for an example.
 
