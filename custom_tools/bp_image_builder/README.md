@@ -105,6 +105,8 @@ Include extra files in the docker image, usefull to be used with [Docker Hooks](
 - ### Custom Dockerfile
 Its possible to use a custom Dockerfile to customize the pipeline even more, check [Custom Dockerfile Docs](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/custom_dockerfile) for documentation.
 
+OBS: Usually a docker hook is enough, so try to use this only on extreme cases.
+
 ## Development
 To start developing on this project:
 
