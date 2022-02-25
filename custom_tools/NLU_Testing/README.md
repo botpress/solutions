@@ -26,6 +26,9 @@
 
     **BOT_ID**
     : the ID of the bot which you will be testing
+    
+    **EXTRACT_ENTITIES**
+    : whether or not to save any extracted entities during testing. Should be either TRUE or FALSE
 
     **TEST_PATH**
     : the location of your file with test utterances. The file should be a .csv file with the first two columns labeled:
