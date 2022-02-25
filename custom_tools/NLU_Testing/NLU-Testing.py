@@ -6,7 +6,8 @@
 #   b. Set the answer to "Test Answer"
 # 3. Takes individual utterances from a test dataset and sends them via converse API to the bot and records the intent
 #   - If no intent is matched, it will record 'No Intent Matched'
-#   - After all testing is done it will save the test results
+#   - If any entities are extracted and EXTRACT_ENTITIES = TRUE in the .env file, it saves the extracted entity information
+#   - After all testing is done it will save the test results to a csv
 # 4. It uses the results to create a confusion matrix that's saved in the base folder
 # /////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,7 @@ load_dotenv(os.path.join(BASEDIR, '.env'))
 # Read an environment variables.
 
 endpoint = os.getenv("ENDPOINT")
+entities = os.getenv('EXTRACT_ENTITIES')
 user = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
 botId= os.getenv("BOT_ID")
@@ -50,7 +52,7 @@ def getToken(endpoint, email, password):
         print('Error retrieving auth token- check your credentials')
 
 # Uses the converse API to send an utterance to the bot and then records the top NLU suggestion
-def sendUtterance(utterance):
+def getActualAndEntities(utterance):
     user = uuid.uuid4()
     result_dict = {}
     payload= {
@@ -76,6 +78,29 @@ def sendUtterance(utterance):
         actual = actual[18:]
     
     result_dict[utterance] = ["No Intent Matched", ''] if actual == 'none' else [actual,str(slots)]
+   # print(f"Utterance: {utterance} \n Actual: {actual}")
+    return result_dict
+
+def getActual(utterance):
+    user = uuid.uuid4()
+    result_dict = {}
+    payload= {
+    "type":"text",
+    "text":utterance
+    }
+    auth= {"Authorization": "Bearer "+token}
+    url = f"{endpoint}/api/v1/bots/{botId}/converse/{user}/secured?include=decision,nlu"
+    response = requests.post(url, data=payload, headers=auth)
+    slots = ""
+    try:
+        actual = response.json()["nlu"]["intent"]["name"]
+    except:
+        actual = "ERROR"
+
+    if (re.match(r"__qna__",actual)):
+        actual = actual[18:]
+    
+    result_dict[utterance] = "No Intent Matched" if actual == 'none' else actual
    # print(f"Utterance: {utterance} \n Actual: {actual}")
     return result_dict
 
@@ -112,14 +137,24 @@ def runner():
     threads = []
     i = 0
     with ThreadPoolExecutor(max_workers=10) as executor:
-        for phrase in test_df.Utterance:
-            threads.append(executor.submit(sendUtterance, phrase))
-        
-        for task in as_completed(threads):
-            progress(i, test_df.Utterance.size, status="Testing")
-            results.append(task.result())
-            i+=1
+        if(entities == 'TRUE'):
+            for phrase in test_df.Utterance:
+                threads.append(executor.submit(getActualAndEntities, phrase))
+            
+            for task in as_completed(threads):
+                progress(i, test_df.Utterance.size, status="Testing")
+                results.append(task.result())
+                i+=1
+        else:
+            for phrase in test_df.Utterance:
+                threads.append(executor.submit(getActual, phrase))
+            
+            for task in as_completed(threads):
+                progress(i, test_df.Utterance.size, status="Testing")
+                results.append(task.result())
+                i+=1
 # ############ End Definitions #############
+
 # Processing time!
 # Step 1: Get the token
 token = getToken(endpoint, user, password)
@@ -135,18 +170,26 @@ test_df = pandas.read_csv(testPath)
 
 # Overwrite any previous data with the same labels
 if( col_name in test_df.columns):
-    test_df.drop([col_name,f"{col_name}_entities"], axis=1, inplace=True)
+    test_df.drop(col_name, axis=1, inplace=True)
+if( f"{col_name}_entities" in test_df.columns):
+    test_df.drop(f"{col_name}_entities", axis=1, inplace=True)
 results = []         
 print(f"Starting NLU test.... \n {test_df.Utterance.size} utterances detected")
 runner()
-results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_entities"]) for i in results)
+if(entities=='TRUE'):
+    results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_entities"]) for i in results)
+else:
+    results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name]) for i in results)
 test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_on='Utterance')
 
-# Repeat the test for any errors
+# Repeat the test for any errors, checking twice
 errors = test_df.loc[(test_df[col_name]==None)|(test_df[col_name]=='')]
 for error in errors.Utterance.index:
     test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
 
+errors = test_df.loc[(test_df[col_name]==None)|(test_df[col_name]=='')]
+for error in errors.Utterance.index:
+    test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
 # Remove any duplicate utterances
 test_df.drop_duplicates(subset='Utterance', keep='last', ignore_index=True, inplace=True)
 
