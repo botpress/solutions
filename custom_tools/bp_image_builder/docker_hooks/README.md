@@ -14,7 +14,7 @@ Check below the list of available hooks.
 
 |Hook name|Example|Description|
 |---|---|---|
-|after_build|Link|Runs after everything has been executed in the docker build pipeline|
+|after_build|[Download trained models](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/docker_hooks/examples/Download%20train%20data%20from%20origin)|Runs after everything has been executed in the docker build pipeline|
 
 ## Environment variables
 
