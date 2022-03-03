@@ -6,8 +6,7 @@
 #   b. Set the answer to "Test Answer"
 # 3. Takes individual utterances from a test dataset and sends them via converse API to the bot and records the intent
 #   - If no intent is matched, it will record 'No Intent Matched'
-#   - If any entities are extracted and EXTRACT_ENTITIES = TRUE in the .env file, it saves the extracted entity information
-#   - After all testing is done it will save the test results to a csv
+#   - After all testing is done it will save the test results
 # 4. It uses the results to create a confusion matrix that's saved in the base folder
 # /////////////////////////////////////////////////////////////////////
 
@@ -32,7 +31,8 @@ load_dotenv(os.path.join(BASEDIR, '.env'))
 # Read an environment variables.
 
 endpoint = os.getenv("ENDPOINT")
-entities = os.getenv('EXTRACT_ENTITIES')
+entities = True if os.getenv('EXTRACT_ENTITIES') == 'TRUE' else False
+conf = True if os.getenv('EXTRACT_CONFIDENCE') == 'TRUE' else False
 user = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
 botId= os.getenv("BOT_ID")
@@ -52,7 +52,8 @@ def getToken(endpoint, email, password):
         print('Error retrieving auth token- check your credentials')
 
 # Uses the converse API to send an utterance to the bot and then records the top NLU suggestion
-def getActualAndEntities(utterance):
+# optional parameters to record extracted slots and confidence
+def getActual(utterance, withEntities, withConfidence):
     user = uuid.uuid4()
     result_dict = {}
     payload= {
@@ -63,44 +64,30 @@ def getActualAndEntities(utterance):
     url = f"{endpoint}/api/v1/bots/{botId}/converse/{user}/secured?include=decision,nlu"
     response = requests.post(url, data=payload, headers=auth)
     slots = ""
+    #try finding confidence in intent.confidence
     try:
-        actual = response.json()["nlu"]["intent"]["name"]
+        actual = "No Intent Matched" if response.json()["nlu"]["intent"]["name"] == 'none' else response.json()["nlu"]["intent"]["name"]
         extracted = response.json()['nlu']['slots']
-        
-        if(len(extracted)>0):
+
+        #Add entities if desired
+        if((len(extracted)>0) & withEntities):
             slots = [f"{extracted[i]['name']} was extracted from \"{extracted[i]['source']}\" and normalized to {extracted[i]['value']}"
                     for i in extracted]
-        else:
-            None
-    except:
-        actual = "ERROR"
-    if (re.match(r"__qna__",actual)):
-        actual = actual[18:]
-    
-    result_dict[utterance] = ["No Intent Matched", ''] if actual == 'none' else [actual,str(slots)]
-   # print(f"Utterance: {utterance} \n Actual: {actual}")
-    return result_dict
-
-def getActual(utterance):
-    user = uuid.uuid4()
-    result_dict = {}
-    payload= {
-    "type":"text",
-    "text":utterance
-    }
-    auth= {"Authorization": "Bearer "+token}
-    url = f"{endpoint}/api/v1/bots/{botId}/converse/{user}/secured?include=decision,nlu"
-    response = requests.post(url, data=payload, headers=auth)
-    slots = ""
-    try:
-        actual = response.json()["nlu"]["intent"]["name"]
+        #Add confidence if desired
+        if(withConfidence):
+            conf = response.json()["nlu"]["intent"]["confidence"]
     except:
         actual = "ERROR"
 
     if (re.match(r"__qna__",actual)):
         actual = actual[18:]
     
-    result_dict[utterance] = "No Intent Matched" if actual == 'none' else actual
+    if(withEntities & withConfidence):
+        result_dict[utterance] = [actual, str(slots), np.round(conf*100, 2)]
+    elif(withEntities):
+        result_dict[utterance] = [actual,str(slots)]
+    elif(withConfidence):
+        result_dict[utterance] = [actual, np.round(conf*100, 2)]
    # print(f"Utterance: {utterance} \n Actual: {actual}")
     return result_dict
 
@@ -137,22 +124,14 @@ def runner():
     threads = []
     i = 0
     with ThreadPoolExecutor(max_workers=10) as executor:
-        if(entities == 'TRUE'):
-            for phrase in test_df.Utterance:
-                threads.append(executor.submit(getActualAndEntities, phrase))
-            
-            for task in as_completed(threads):
-                progress(i, test_df.Utterance.size, status="Testing")
-                results.append(task.result())
-                i+=1
-        else:
-            for phrase in test_df.Utterance:
-                threads.append(executor.submit(getActual, phrase))
-            
-            for task in as_completed(threads):
-                progress(i, test_df.Utterance.size, status="Testing")
-                results.append(task.result())
-                i+=1
+        for phrase in test_df.Utterance:
+            threads.append(executor.submit(getActual, phrase, entities, conf))
+        
+        for task in as_completed(threads):
+            progress(i, test_df.Utterance.size, status="Testing")
+            results.append(task.result())
+            i+=1
+       
 # ############ End Definitions #############
 
 # Processing time!
@@ -173,13 +152,20 @@ if( col_name in test_df.columns):
     test_df.drop(col_name, axis=1, inplace=True)
 if( f"{col_name}_entities" in test_df.columns):
     test_df.drop(f"{col_name}_entities", axis=1, inplace=True)
+if(f"{col_name}_confidence" in test_df.columns):
+    test_df.drop(f"{col_name}_confidence", axis=1, inplace=True)
 results = []         
 print(f"Starting NLU test.... \n {test_df.Utterance.size} utterances detected")
 runner()
-if(entities=='TRUE'):
+if(entities & conf):
+    results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_entities", f"{col_name}_confidence"]) for i in results)
+elif(entities):
     results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_entities"]) for i in results)
+elif(conf):
+    results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name, f"{col_name}_confidence"]) for i in results)
 else:
     results_df = pandas.concat(pandas.DataFrame.from_dict(i, orient='index', columns=[col_name]) for i in results)
+
 test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_on='Utterance')
 
 # Repeat the test for any errors, checking twice
