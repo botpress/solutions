@@ -73,11 +73,15 @@ def getActual(utterance, withEntities, withConfidence):
         if((len(extracted)>0) & withEntities):
             slots = [f"{extracted[i]['name']} was extracted from \"{extracted[i]['source']}\" and normalized to {extracted[i]['value']}"
                     for i in extracted]
+        else: entities = None
         #Add confidence if desired
         if(withConfidence):
             conf = response.json()["nlu"]["intent"]["confidence"]
+        else: conf = None
     except:
         actual = "ERROR"
+        slots=[]
+        conf=0
 
     if (re.match(r"__qna__",actual)):
         actual = actual[18:]
@@ -88,7 +92,6 @@ def getActual(utterance, withEntities, withConfidence):
         result_dict[utterance] = [actual,str(slots)]
     elif(withConfidence):
         result_dict[utterance] = [actual, np.round(conf*100, 2)]
-   # print(f"Utterance: {utterance} \n Actual: {actual}")
     return result_dict
 
 # Renders a progress bar in the terminal window
