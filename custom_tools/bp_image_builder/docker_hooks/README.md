@@ -14,7 +14,7 @@ Check below the list of available hooks.
 
 |Hook name|Example|Description|
 |---|---|---|
-|after_build|Link|Runs after everything has been executed in the docker build pipeline|
+|after_build|[Download trained models](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/docker_hooks/examples/Download%20train%20data%20from%20origin)|Runs after everything has been executed in the docker build pipeline|
 
 ## Environment variables
 
@@ -27,4 +27,4 @@ These hooks will have access to the following environment variables
 
 ## Tips
 
--  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make requests from your hooks
+-  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make HTTP requests using wget from your hooks

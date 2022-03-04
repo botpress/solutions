@@ -73,7 +73,7 @@ bp_image_builder build <path to archive.tgz> -it botpress/server:v12_23_0
 ## Awesome features
 
 - ### Docker Hooks
-Lets you execute code during the docker build pipeline, check LINK for documentation.
+Lets you execute code during the docker build pipeline, check [Docker Hooks Docs](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/docker_hooks) for documentation.
 
 - ### Custom modules
 Build your image with your custom modules included.
@@ -89,7 +89,7 @@ Build your image with your custom modules included.
   3 - Your module will be included in the "modules" folder from Botpress and extracted, it will be available when you instanciate your docker image.
 
 - ### Extra files
-Include extra files in the docker image, usefull to be used with Docker Hooks LINK
+Include extra files in the docker image, usefull to be used with [Docker Hooks](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/docker_hooks) 
 
 
   1 - Create a folder called extra_files in the same folder as the bp_image_builder binary
@@ -103,7 +103,9 @@ Include extra files in the docker image, usefull to be used with Docker Hooks LI
   3 - Your files will be available at /botpress/extra_files inside the container after you build it.
 
 - ### Custom Dockerfile
-Its possible to use a custom Dockerfile to customize the pipeline deeper, check LINK for documentation.
+Its possible to use a custom Dockerfile to customize the pipeline even more, check [Custom Dockerfile Docs](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/custom_dockerfile) for documentation.
+
+OBS: Usually a docker hook is enough, so try to use this only on extreme cases.
 
 ## Development
 To start developing on this project:
