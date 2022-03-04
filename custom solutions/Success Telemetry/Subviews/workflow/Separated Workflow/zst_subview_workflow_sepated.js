@@ -9,7 +9,7 @@ bp.experimental.successTelemetry.addNewSubview({
 
     for (const item of all) {
       try {
-        item.payload = JSON.parse(item.payload);
+        item.payload = typeof item.payload == "string" ? JSON.parse(item.payload) : item.payload;
       } catch (e) {
         continue;
       }
