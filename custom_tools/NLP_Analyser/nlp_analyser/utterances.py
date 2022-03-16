@@ -73,7 +73,7 @@ def possible_topics(datas: pd.DataFrame):
         min_topic_size=15,
     )
 
-    _, _ = topic_model.fit_transform(datas["lemmas"].tolist())
+    _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
 
     topics_fig: str = topic_model.visualize_topics().to_html(
         full_html=False, include_plotlyjs="cdn"
@@ -101,7 +101,7 @@ def possible_topics(datas: pd.DataFrame):
     topics_html += barchart_fig_html + "\n"
     topics_html += "<div>\n"
 
-    topics_exemples: Dict[int, List[str]] = topic_model.get_representative_docs()
+    topics_exemples: Dict[int, List[str]] = topic_model.get_representative_docs()  # type: ignore
     for topic_nb, exemples in topics_exemples.items():
         topics_html += f"<h4>Topic {topic_nb}</h4>\n"
         topics_html += "<ul>\n"
@@ -129,9 +129,13 @@ def analyse_datas(datas: List[str]) -> Tuple[str, str]:
         ]
     )
 
-    nlp = load_spacy_model("en", [])
+    nlp = load_spacy_model("en", ["tok2vec", "parser", "textcat"])
 
-    for line in track(datas):
+    for doc in track(
+        nlp.pipe(datas, n_process=8, batch_size=3000),
+        total=len(datas),
+        description="Processing...",
+    ):
         lemmas: List[str] = []
         pos: List[str] = []
         ner: List[str] = []
@@ -139,10 +143,10 @@ def analyse_datas(datas: List[str]) -> Tuple[str, str]:
 
         words_no_stop: List[str] = []
 
-        if lang_id_predict(line) != "en":
+        if lang_id_predict(doc.text) != "en":
             continue
 
-        for token in nlp(line):
+        for token in doc:
             if not token.is_alpha:
                 continue
 
@@ -162,7 +166,7 @@ def analyse_datas(datas: List[str]) -> Tuple[str, str]:
                 df,
                 pd.DataFrame.from_dict(
                     {
-                        "text": [line.strip().lower()],
+                        "text": [doc.text.strip().lower()],
                         "lemmas": [" ".join(lemmas).lower()],
                         "pos": [" ".join(pos).lower()],
                         "ner": [" ".join(ner).lower()],

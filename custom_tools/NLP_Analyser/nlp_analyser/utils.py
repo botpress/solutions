@@ -1,6 +1,7 @@
 from typing import Dict, List
 
 import spacy
+from thinc.util import prefer_gpu
 from spacy.cli.download import download
 from spacy.language import Language
 from typing_extensions import Literal
@@ -21,6 +22,7 @@ SPACY_COMPONENTS = Literal[
     "sentencizer",
     "tok2vec",
     "transformer",
+    "textcat",
 ]
 
 
@@ -28,6 +30,7 @@ def load_spacy_model(lang: str, exclude: List[SPACY_COMPONENTS]) -> Language:
 
     model = SPACY_LANG_TO_MODEL[lang]
 
+    prefer_gpu()
     try:
         nlp = spacy.load(model, exclude=exclude or [])
     except Exception:

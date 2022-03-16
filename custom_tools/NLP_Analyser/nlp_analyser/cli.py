@@ -5,6 +5,44 @@ import click
 
 from nlp_analyser.utterances import idea_split, analyse_datas
 
+from nlp_analyser.converter import convert_csv_to_txt_corpus
+
+
+@click.group()
+def converter():
+    pass
+
+
+@converter.command()
+@click.option(
+    "--file",
+    "-f",
+    type=click.Path(
+        exists=True, file_okay=True, readable=True, path_type=Path, dir_okay=False
+    ),
+    required=True,
+)
+@click.option(
+    "--delimiter",
+    "-d",
+    type=click.STRING,
+    required=True,
+)
+@click.option(
+    "--column-idx",
+    "-c",
+    type=click.INT,
+    required=True,
+)
+@click.option(
+    "--no-headers",
+    "-h",
+    is_flag=True,
+)
+def csv_to_text(file: Path, delimiter: str, column_idx: int, no_headers: bool):
+    print(file, delimiter, column_idx, no_headers)
+    convert_csv_to_txt_corpus(file, delimiter, column_idx, no_headers)
+
 
 @click.group()
 def analyse():
@@ -55,3 +93,16 @@ def utterances(file: Path, output: Optional[Path]):
 
         with open(output.joinpath(f"topics_{speech_act_label}.html"), "w") as res_file:
             res_file.write(topics_html)
+
+
+@click.group()
+def cli():
+    pass
+
+
+cli.add_command(analyse)
+cli.add_command(converter)
+
+
+if __name__ == "__main__":
+    cli()
