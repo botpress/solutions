@@ -1,3 +1,4 @@
 .venv/
 __pycache__
 nlp_analyser/weights
+results/

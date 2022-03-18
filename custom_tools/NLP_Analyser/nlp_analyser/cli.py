@@ -73,7 +73,7 @@ def utterances(file: Path, output: Optional[Path]):
         for line in data_file:
             datas.append(line)
 
-    report_html, topics_html = analyse_datas(datas)
+    report_html, topics_html = analyse_datas(datas, output)
 
     with open(output.joinpath("results.html"), "w") as res_file:
         res_file.write(report_html)
@@ -86,7 +86,9 @@ def utterances(file: Path, output: Optional[Path]):
         with open(output.joinpath(f"{speech_act_label}.txt"), "w") as res_file:
             res_file.write("\n".join(speechact_datas))
 
-        report_html, topics_html = analyse_datas(speechact_datas)
+        report_html, topics_html = analyse_datas(
+            speechact_datas, output.joinpath(speech_act_label)
+        )
 
         with open(output.joinpath(f"results_{speech_act_label}.html"), "w") as res_file:
             res_file.write(report_html)

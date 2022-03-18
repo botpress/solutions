@@ -1,4 +1,5 @@
 from pathlib import Path
+import pickle
 from typing import List, Tuple, Dict, Any
 
 import pandas as pd
@@ -11,6 +12,10 @@ from bertopic import BERTopic
 
 from nlp_analyser.idea import IdeaInference
 from LanguageIdentifier import predict as lang_id_predict
+from multiprocessing import cpu_count
+import os
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def idea_split(datas: List[str]) -> Dict[str, List[str]]:
@@ -37,10 +42,11 @@ def profiling_report(datas: pd.DataFrame) -> str:
         n_freq_table_max=25,
         explorative=True,
         dark_mode=True,
+        minimal=True,
         variables={
             "descriptions": {
                 "text": "The raw text",
-                "lemmas": "In vocabulary words, without stop words(the/a/...) and lemmatize",
+                "lemmas": "In vocabulary words, without stop words(the/a/...) and lemmatized",
                 "pos": "The part of speech tag (Noun, verb etc...)",
                 "ner": "Entities (Location, Person etc..)",
                 "in_voc_words": "Only in vocabulary words of the raw text",
@@ -62,18 +68,25 @@ def profiling_report(datas: pd.DataFrame) -> str:
     return report_html
 
 
-def possible_topics(datas: pd.DataFrame):
-    topic_model = BERTopic(
-        embedding_model="all-MiniLM-L6-v2",
-        top_n_words=10,
-        calculate_probabilities=True,
-        n_gram_range=(1, 2),
-        # nr_topics="auto",
-        nr_topics=15,
-        min_topic_size=15,
-    )
+def possible_topics(datas: pd.DataFrame, output: Path):
+    if not output.joinpath("BertTopic.pkl").exists():
+        topic_model = BERTopic(
+            embedding_model="all-MiniLM-L6-v2",
+            top_n_words=10,
+            calculate_probabilities=False,
+            n_gram_range=(1, 2),
+            nr_topics=20,
+            min_topic_size=15,
+            verbose=True,
+        )
 
-    _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
+        _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
+        with open(output.joinpath("BertTopic.pkl"), "wb") as f:
+            pickle.dump(topic_model, f)
+
+    else:
+        with open(output.joinpath("BertTopic.pkl"), "rb") as f:
+            topic_model = pickle.load(f)
 
     topics_fig: str = topic_model.visualize_topics().to_html(
         full_html=False, include_plotlyjs="cdn"
@@ -82,7 +95,7 @@ def possible_topics(datas: pd.DataFrame):
         full_html=False, include_plotlyjs="cdn"
     )
     barchart_fig: Any = topic_model.visualize_barchart(
-        top_n_topics=16, n_words=10, height=500
+        top_n_topics=50, n_words=10, height=500
     )
     barchart_fig.update_layout(margin=dict(l=400))
     barchart_fig_html: str = barchart_fig.to_html(
@@ -117,67 +130,105 @@ def possible_topics(datas: pd.DataFrame):
     return topics_html
 
 
-def analyse_datas(datas: List[str]) -> Tuple[str, str]:
-    df = pd.DataFrame(
-        columns=[
-            "text",
-            "lemmas",
-            "pos",
-            "ner",
-            "in_voc_words",
-            "words_no_stop",
-        ]
-    )
+def analyse_datas(datas: List[str], output: Path) -> Tuple[str, str]:
+    output.mkdir(parents=True, exist_ok=True)
 
-    nlp = load_spacy_model("en", ["tok2vec", "parser", "textcat"])
+    dataframe_path = output.joinpath(f"dataframe.pkl")
+    topics_path = output.joinpath(f"BertTopics.pkl")
+    report_path = output.joinpath(f"report.html")
 
-    for doc in track(
-        nlp.pipe(datas, n_process=8, batch_size=3000),
-        total=len(datas),
-        description="Processing...",
-    ):
-        lemmas: List[str] = []
-        pos: List[str] = []
-        ner: List[str] = []
-        in_voc_words: List[str] = []
-
-        words_no_stop: List[str] = []
-
-        if lang_id_predict(doc.text) != "en":
-            continue
-
-        for token in doc:
-            if not token.is_alpha:
-                continue
-
-            if not token.is_stop:
-                words_no_stop.append(token.text)
-
-                if not token.is_oov:
-                    lemmas.append(token.lemma_)
-                    pos.append(token.pos_)
-                    in_voc_words.append(token.text)
-
-            if token.ent_iob_ != "O":
-                ner.append(token.ent_type_)
-
-        df = pd.concat(
-            [
-                df,
-                pd.DataFrame.from_dict(
-                    {
-                        "text": [doc.text.strip().lower()],
-                        "lemmas": [" ".join(lemmas).lower()],
-                        "pos": [" ".join(pos).lower()],
-                        "ner": [" ".join(ner).lower()],
-                        "in_voc_words": [" ".join(in_voc_words).lower()],
-                        "words_no_stop": [" ".join(words_no_stop).lower()],
-                    }
-                ),
-            ],
-            ignore_index=True,
+    if dataframe_path.exists():
+        print(
+            (
+                "A dataframe already exists !\n"
+                "skipping dataframe creation and loading existing one"
+            )
+        )
+        df: pd.DataFrame = pd.read_pickle(dataframe_path)
+    else:
+        df = pd.DataFrame(
+            columns=[
+                "text",
+                "lemmas",
+                "pos",
+                "ner",
+                "in_voc_words",
+                "words_no_stop",
+            ]
         )
 
-    topics_html = possible_topics(df)
-    report_html = profiling_report(df)
+        nlp = load_spacy_model("en", ["tok2vec", "parser", "textcat"])
+
+        for doc in track(
+            nlp.pipe(datas, n_process=int(cpu_count() * 0.75), batch_size=3000),
+            total=len(datas),
+            description="Processing...",
+        ):
+            lemmas: List[str] = []
+            pos: List[str] = []
+            ner: List[str] = []
+            in_voc_words: List[str] = []
+
+            words_no_stop: List[str] = []
+
+            if lang_id_predict(doc.text) != "en":
+                continue
+
+            for token in doc:
+                if not token.is_alpha:
+                    continue
+
+                if not token.is_stop:
+                    words_no_stop.append(token.text)
+
+                    if not token.is_oov:
+                        lemmas.append(token.lemma_)
+                        pos.append(token.pos_)
+                        in_voc_words.append(token.text)
+
+                if token.ent_iob_ != "O":
+                    ner.append(token.ent_type_)
+
+            df = pd.concat(
+                [
+                    df,
+                    pd.DataFrame.from_dict(
+                        {
+                            "text": [doc.text.strip().lower()],
+                            "lemmas": [" ".join(lemmas).lower()],
+                            "pos": [" ".join(pos).lower()],
+                            "ner": [" ".join(ner).lower()],
+                            "in_voc_words": [" ".join(in_voc_words).lower()],
+                            "words_no_stop": [" ".join(words_no_stop).lower()],
+                        }
+                    ),
+                ],
+                ignore_index=True,
+            )
+        pd.to_pickle(df, dataframe_path)
+
+    if topics_path.exists():
+        print(
+            (
+                "A Topic file already exists !\n"
+                "skipping topic creation and loading existing one"
+            )
+        )
+        topics_html: str = topics_path.read_text()
+    else:
+        topics_html = possible_topics(df, output)
+        topics_path.write_text(topics_html)
+
+    if report_path.exists():
+        print(
+            (
+                "HTML repport already exists !\n"
+                "skipping html report creation and loading existing one"
+            )
+        )
+        report_html: str = report_path.read_text()
+    else:
+        report_html = profiling_report(df)
+        report_path.write_text(report_html)
+
     return report_html, topics_html
