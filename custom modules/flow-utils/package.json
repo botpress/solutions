@@ -1,0 +1,26 @@
+{
+  "name": "flow-utils",
+  "version": "1.0.0",
+  "description": "Flow Utils",
+  "private": true,
+  "main": "dist/backend/index.js",
+  "webpack": {
+    "externals": {
+      "reactstrap": "Reactstrap",
+      "botpress/tooltip": "BotpressTooltip"
+    }
+  },
+  "scripts": {
+    "build": "node ../../build/module-builder/bin/entry build",
+    "watch": "node ../../build/module-builder/bin/entry watch",
+    "package": "node ../../build/module-builder/bin/entry package"
+  },
+  "author": "Botpress, Inc.",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "he": "^1.2.0",
+    "nanoid": "^2.1.6",
+    "react-bootstrap": "^0.33.1",
+    "react-select": "^2.4.2"
+  }
+}

@@ -1,0 +1,33 @@
+.modalContent {
+  padding: 15px;
+}
+
+.warning {
+  color: red;
+}
+
+.note {
+  margin: 10px 0 10px 0;
+}
+
+.section {
+  margin-top: 10px;
+}
+
+.warning {
+  color: darkred;
+
+  i {
+    font-size: 16px;
+    vertical-align: baseline;
+  }
+}
+
+.padded {
+  padding: 10px;
+}
+
+.errorContainer {
+  height: 50px;
+  margin-top: 5px;
+}
