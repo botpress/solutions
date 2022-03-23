@@ -1,6 +1,6 @@
 ## Setup
 
-1. Add the module on the server
+1. Add the module on the server (flow-utils.tgz)
 2. Restart the server
 
 #### Demo bot (bot_demo.tgz) available in this repo folder
