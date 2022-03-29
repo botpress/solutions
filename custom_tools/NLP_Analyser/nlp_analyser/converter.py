@@ -2,14 +2,12 @@ from pathlib import Path
 from csv import reader
 
 
-def convert_csv_to_txt_corpus(
-    file_path: Path, delimiter: str, column_idx: int, no_headers: bool
+def convert_csv_to_txt_files(
+    csv_path: Path, txt_path: Path, delimiter: str, column_idx: int, no_headers: bool
 ) -> None:
     assert len(delimiter) == 1
 
-    text_file_path = str(file_path).replace(".csv", ".txt")
-
-    with open(file_path, "r") as csv_file, open(text_file_path, "w") as out_file:
+    with open(csv_path, "r") as csv_file, open(txt_path, "w") as out_file:
         csv_reader = reader(csv_file, delimiter=delimiter)
 
         if not no_headers:

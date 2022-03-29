@@ -3,9 +3,12 @@ from typing import Optional, List
 
 import click
 
-from nlp_analyser.utterances import idea_split, analyse_datas
+from nlp_analyser.analyser import analyse_datas
+from nlp_analyser.converter import convert_csv_to_txt_files
 
-from nlp_analyser.converter import convert_csv_to_txt_corpus
+import sys
+from streamlit import cli as stcli
+from pathlib import Path
 
 
 @click.group()
@@ -40,8 +43,8 @@ def converter():
     is_flag=True,
 )
 def csv_to_text(file: Path, delimiter: str, column_idx: int, no_headers: bool):
-    print(file, delimiter, column_idx, no_headers)
-    convert_csv_to_txt_corpus(file, delimiter, column_idx, no_headers)
+    csv_path = Path(str(Path(file)).replace(".txt", ".csv"))
+    convert_csv_to_txt_files(file, csv_path, delimiter, column_idx, no_headers)
 
 
 @click.group()
@@ -81,21 +84,6 @@ def utterances(file: Path, output: Optional[Path]):
     with open(output.joinpath("topics.html"), "w") as res_file:
         res_file.write(topics_html)
 
-    speechacts = idea_split(datas)
-    for speech_act_label, speechact_datas in speechacts.items():
-        with open(output.joinpath(f"{speech_act_label}.txt"), "w") as res_file:
-            res_file.write("\n".join(speechact_datas))
-
-        report_html, topics_html = analyse_datas(
-            speechact_datas, output.joinpath(speech_act_label)
-        )
-
-        with open(output.joinpath(f"results_{speech_act_label}.html"), "w") as res_file:
-            res_file.write(report_html)
-
-        with open(output.joinpath(f"topics_{speech_act_label}.html"), "w") as res_file:
-            res_file.write(topics_html)
-
 
 @click.group()
 def cli():
@@ -104,6 +92,25 @@ def cli():
 
 cli.add_command(analyse)
 cli.add_command(converter)
+
+
+@cli.command()
+def gui() -> None:
+    """
+    Launch the streamlit app from the command line.
+    """
+    sys.argv = [
+        "streamlit",
+        "run",
+        f"{Path(__file__).parent / 'gui.py'}",
+        "--server.port",
+        "8501",
+        "--theme.base",
+        "dark",
+        "--server.fileWatcherType",
+        "none",
+    ]
+    sys.exit(stcli.main())
 
 
 if __name__ == "__main__":

@@ -1,23 +1,23 @@
 [tool.poetry]
-name = "nlp_analyser"
+name = "botpress_analyser"
 version = "0.1.0"
-description = ""
+description = "A package to make clusters from a corpus"
 authors = ["Pierre Snell <pierre.snell@botpress.com>"]
 readme = "README.md"
 packages = [{include = "nlp_analyser"}]
 
 [tool.poetry.scripts]
-cli = "nlp_analyser.cli:cli"
+nlp_analyser = "nlp_analyser.cli:cli"
 
 [tool.poetry.dependencies]
-python = "^3.7.1"
+python = "^3.8"
 rich = "^11.1.0"
-click = "^8.0.3"
+click = "8.0.4"
 pandas-profiling = "^3.1.0"
-spacy = {version = "^3.2.1", extras = ["cuda113"]}
+spacy = {version = "^3.2.1"}
 bertopic = "^0.9.4"
 LanguageIdentifier = "^1.1.1"
-
+streamlit = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^4.0.1"

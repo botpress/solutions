@@ -1,6 +1,6 @@
 from pathlib import Path
 import pickle
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Generator
 
 import pandas as pd
 from pandas_profiling import ProfileReport
@@ -10,29 +10,12 @@ from rich.progress import track
 from nlp_analyser.utils import load_spacy_model
 from bertopic import BERTopic
 
-from nlp_analyser.idea import IdeaInference
 from LanguageIdentifier import predict as lang_id_predict
-from multiprocessing import cpu_count
+
+# from multiprocessing import cpu_count
 import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-def idea_split(datas: List[str]) -> Dict[str, List[str]]:
-    weight_path = Path(__file__).parent.joinpath("./weights")
-    if not weight_path.joinpath("config.json").exists():
-        raise FileNotFoundError("Please place idea model in ./weights folder from ")
-
-    idea_model = IdeaInference(weight_path)
-
-    speechacts: Dict[str, List[str]] = {}
-    for utt in track(datas, description="Running IDEA"):
-        for output in idea_model.tag(utt):
-            label_list: List[str] = speechacts.get(output["label"], [])
-            label_list.append(output["text"])
-            speechacts[output["label"]] = label_list
-
-    return speechacts
 
 
 def profiling_report(datas: pd.DataFrame) -> str:
@@ -68,25 +51,7 @@ def profiling_report(datas: pd.DataFrame) -> str:
     return report_html
 
 
-def possible_topics(datas: pd.DataFrame, output: Path):
-    if not output.joinpath("BertTopic.pkl").exists():
-        topic_model = BERTopic(
-            embedding_model="all-MiniLM-L6-v2",
-            top_n_words=10,
-            calculate_probabilities=False,
-            n_gram_range=(1, 2),
-            nr_topics=20,
-            min_topic_size=15,
-            verbose=True,
-        )
-
-        _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
-        with open(output.joinpath("BertTopic.pkl"), "wb") as f:
-            pickle.dump(topic_model, f)
-
-    else:
-        with open(output.joinpath("BertTopic.pkl"), "rb") as f:
-            topic_model = pickle.load(f)
+def get_figures(topic_model: BERTopic) -> Tuple[str, str, str, str, str, str]:
 
     topics_fig: str = topic_model.visualize_topics().to_html(
         full_html=False, include_plotlyjs="cdn"
@@ -101,26 +66,68 @@ def possible_topics(datas: pd.DataFrame, output: Path):
     barchart_fig_html: str = barchart_fig.to_html(
         full_html=False, include_plotlyjs="cdn"
     )
-    heatmap_fig: str = topic_model.visualize_heatmap(n_clusters=15).to_html(
+    heatmap_fig: str = topic_model.visualize_heatmap().to_html(
         full_html=False, include_plotlyjs="cdn"
     )
     term_rank_fig: str = topic_model.visualize_term_rank().to_html(
         full_html=False, include_plotlyjs="cdn"
     )
 
+    topics_exemples = ""
+    docs: Dict[int, List[str]] = topic_model.get_representative_docs()  # type: ignore
+
+    for topic_nb, exemples in docs.items():
+        topics_exemples += f"<h4>Topic {topic_nb}</h4>\n"
+        topics_exemples += "<ul>\n"
+        for ex in exemples[:10]:
+            topics_exemples += f"<li>{ex}</li>\n"
+        topics_exemples += "</ul>\n"
+
+    return (
+        topics_fig,
+        topics_hierarchy_fig,
+        barchart_fig_html,
+        heatmap_fig,
+        term_rank_fig,
+        topics_exemples,
+    )
+
+
+def possible_topics(datas: pd.DataFrame, output: Path):
+    if not output.joinpath("BertTopic.pkl").exists():
+        topic_model = BERTopic(
+            embedding_model="all-MiniLM-L6-v2",
+            top_n_words=10,
+            calculate_probabilities=False,
+            n_gram_range=(1, 3),
+            nr_topics=20,
+            min_topic_size=15,
+            verbose=True,
+        )
+
+        _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
+        with open(output.joinpath("BertTopic.pkl"), "wb") as f:
+            pickle.dump(topic_model, f)
+
+    else:
+        with open(output.joinpath("BertTopic.pkl"), "rb") as f:
+            topic_model = pickle.load(f)
+
+    (
+        topics_fig,
+        topics_hierarchy_fig,
+        barchart_fig_html,
+        heatmap_fig,
+        term_rank_fig,
+        topic_exemples,
+    ) = get_figures(topic_model)
+
     topics_html = "<html>\n"
     topics_html += topics_fig + "\n"
     topics_html += topics_hierarchy_fig + "\n"
     topics_html += barchart_fig_html + "\n"
+    topics_html += topic_exemples + "\n"
     topics_html += "<div>\n"
-
-    topics_exemples: Dict[int, List[str]] = topic_model.get_representative_docs()  # type: ignore
-    for topic_nb, exemples in topics_exemples.items():
-        topics_html += f"<h4>Topic {topic_nb}</h4>\n"
-        topics_html += "<ul>\n"
-        for ex in exemples[:10]:
-            topics_html += f"<li>{ex}</li>\n"
-        topics_html += "</ul>\n"
 
     topics_html += heatmap_fig + "\n"
     topics_html += "<div>Each topic is represented by a set of words. These words, however, do not all equally represent the topic. This visualization shows how many words are needed to represent a topic and at which point the beneficial effect of adding words starts to decline.</div>\n"
@@ -128,6 +135,71 @@ def possible_topics(datas: pd.DataFrame, output: Path):
     topics_html += "</html>\n"
 
     return topics_html
+
+
+def corpus_to_datas(corpus: List[str]) -> Generator[pd.DataFrame, None, None]:
+    df = pd.DataFrame(
+        columns=[
+            "text",
+            "lemmas",
+            "pos",
+            "ner",
+            "in_voc_words",
+            "words_no_stop",
+        ]
+    )
+
+    nlp = load_spacy_model("en", ["tok2vec", "parser", "textcat"])
+
+    for doc in track(
+        # nlp.pipe(corpus, n_process=int(cpu_count() * 0.75), batch_size=3000),
+        nlp.pipe(corpus, batch_size=3000),
+        total=len(corpus),
+        description="Processing corpus...",
+    ):
+        lemmas: List[str] = []
+        pos: List[str] = []
+        ner: List[str] = []
+        in_voc_words: List[str] = []
+
+        words_no_stop: List[str] = []
+
+        if lang_id_predict(doc.text) != "en":
+            continue
+
+        for token in doc:
+            if not token.is_alpha:
+                continue
+
+            if not token.is_stop:
+                words_no_stop.append(token.text)
+
+                if not token.is_oov:
+                    lemmas.append(token.lemma_)
+                    pos.append(token.pos_)
+                    in_voc_words.append(token.text)
+
+            if token.ent_iob_ != "O":
+                ner.append(token.ent_type_)
+
+        df = pd.concat(
+            [
+                df,
+                pd.DataFrame.from_dict(
+                    {
+                        "text": [doc.text.strip().lower()],
+                        "lemmas": [" ".join(lemmas).lower()],
+                        "pos": [" ".join(pos).lower()],
+                        "ner": [" ".join(ner).lower()],
+                        "in_voc_words": [" ".join(in_voc_words).lower()],
+                        "words_no_stop": [" ".join(words_no_stop).lower()],
+                    }
+                ),
+            ],
+            ignore_index=True,
+        )
+        yield df
+    del nlp
 
 
 def analyse_datas(datas: List[str], output: Path) -> Tuple[str, str]:
@@ -146,65 +218,7 @@ def analyse_datas(datas: List[str], output: Path) -> Tuple[str, str]:
         )
         df: pd.DataFrame = pd.read_pickle(dataframe_path)
     else:
-        df = pd.DataFrame(
-            columns=[
-                "text",
-                "lemmas",
-                "pos",
-                "ner",
-                "in_voc_words",
-                "words_no_stop",
-            ]
-        )
-
-        nlp = load_spacy_model("en", ["tok2vec", "parser", "textcat"])
-
-        for doc in track(
-            nlp.pipe(datas, n_process=int(cpu_count() * 0.75), batch_size=3000),
-            total=len(datas),
-            description="Processing...",
-        ):
-            lemmas: List[str] = []
-            pos: List[str] = []
-            ner: List[str] = []
-            in_voc_words: List[str] = []
-
-            words_no_stop: List[str] = []
-
-            if lang_id_predict(doc.text) != "en":
-                continue
-
-            for token in doc:
-                if not token.is_alpha:
-                    continue
-
-                if not token.is_stop:
-                    words_no_stop.append(token.text)
-
-                    if not token.is_oov:
-                        lemmas.append(token.lemma_)
-                        pos.append(token.pos_)
-                        in_voc_words.append(token.text)
-
-                if token.ent_iob_ != "O":
-                    ner.append(token.ent_type_)
-
-            df = pd.concat(
-                [
-                    df,
-                    pd.DataFrame.from_dict(
-                        {
-                            "text": [doc.text.strip().lower()],
-                            "lemmas": [" ".join(lemmas).lower()],
-                            "pos": [" ".join(pos).lower()],
-                            "ner": [" ".join(ner).lower()],
-                            "in_voc_words": [" ".join(in_voc_words).lower()],
-                            "words_no_stop": [" ".join(words_no_stop).lower()],
-                        }
-                    ),
-                ],
-                ignore_index=True,
-            )
+        *_, df = corpus_to_datas(datas)
         pd.to_pickle(df, dataframe_path)
 
     if topics_path.exists():
