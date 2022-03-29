@@ -7,7 +7,7 @@ body {
   background-color: darkgray !important;
 }
 :global(.DayPicker-Day--selected-range) {
-  background-color: lightgray;
+  background-color: lightgray !important;
 }
 
 .myDiv {

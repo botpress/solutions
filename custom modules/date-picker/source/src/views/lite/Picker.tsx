@@ -7,7 +7,6 @@ import en from '../../translations/en.json'
 import fr from '../../translations/fr.json'
 import 'moment/locale/fr'
 import '@blueprintjs/datetime/lib/css/blueprint-datetime.css'
-import Stylesheet from './Stylesheet'
 
 interface Props {
   locale?: string
@@ -53,7 +52,6 @@ const Picker: FC<Props> = ({ locale, isMinToday, isDateRange, configJson, onCanc
 
   return (
     <div>
-      {/* <Stylesheet href={`${window['BOT_API_PATH']}/mod/date-picker/custom.css`} /> */}
       {isDateRange ? (
         <DateRangePicker
           value={[startDate, endDate]}

@@ -36,25 +36,25 @@ export default async (bp: typeof sdk) => {
     })
   )
 
-  // router.get(
-  //   '/custom.css',
-  //   asyncMiddleware(async (req: BPRequest, res) => {
-  //     const { botId } = req.params
+  router.get(
+    '/custom.css',
+    asyncMiddleware(async (req: BPRequest, res) => {
+      const { botId } = req.params
 
-  //     res.setHeader('content-type', 'text/css')
+      res.setHeader('content-type', 'text/css')
 
-  //     if (botId === '___') {
-  //       return res.send('')
-  //     }
+      if (botId === '___') {
+        return res.send('')
+      }
 
-  //     const ghost = bp.ghost.forBot(botId)
+      const ghost = bp.ghost.forBot(botId)
 
-  //     if (await ghost.fileExists('./actions', 'custom.css')) {
-  //       const file = await bp.ghost.forBot(req.params.botId).readFileAsString('./actions', 'custom.css')
-  //       return res.send(file)
-  //     }
+      if (await ghost.fileExists('./actions', 'date-picker.css')) {
+        const file = await bp.ghost.forBot(req.params.botId).readFileAsString('./actions', 'date-picker.css')
+        return res.send(file)
+      }
 
-  //     res.send('')
-  //   })
-  // )
+      res.send('')
+    })
+  )
 }

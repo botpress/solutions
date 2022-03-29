@@ -5,12 +5,15 @@ import queryString from 'query-string'
 import React, { useEffect, useState } from 'react'
 import en from '../../translations/en.json'
 import fr from '../../translations/fr.json'
-
 import Picker from './Picker'
+import Stylesheet from './Stylesheet'
 import './style.scss'
 
 const MessengerPicker = () => {
   const [isCompleted, setCompleted] = useState(false)
+
+  const host = window.location.origin
+  const { botId, target, threadId } = queryString.parse(location.search)
 
   useEffect(() => {
     fixHead()
@@ -33,9 +36,6 @@ const MessengerPicker = () => {
   }
 
   const submitChoice = async (startDate: string, endDate?: string) => {
-    const host = window.location.origin
-    const { botId, target, threadId } = queryString.parse(location.search)
-
     const data = {
       userId: target,
       conversationId: threadId,
@@ -65,13 +65,16 @@ const MessengerPicker = () => {
   }
 
   return (
-    <Picker
-      isDateRange={isDateRange}
-      isMinToday={isMinToday}
-      locale={locale}
-      onSubmit={submitChoice}
-      onCancel={closeWindow}
-    />
+    <>
+      <Stylesheet href={`${host}/api/v1/bots/${botId}/mod/date-picker/custom.css`} />
+      <Picker
+        isDateRange={isDateRange}
+        isMinToday={isMinToday}
+        locale={locale}
+        onSubmit={submitChoice}
+        onCancel={closeWindow}
+      />
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-
 import Picker from './Picker'
+import Stylesheet from './Stylesheet'
 
 const WebPicker = props => {
   const [isHidden, setHidden] = useState(false)
@@ -32,14 +32,17 @@ const WebPicker = props => {
   }
 
   return (
-    <Picker
-      isMinToday={isMinToday}
-      isDateRange={isDateRange}
-      configJson={configJson}
-      locale={locale}
-      onSubmit={submit}
-      onCancel={cancel}
-    />
+    <>
+      <Stylesheet href={`${window['BOT_API_PATH']}/mod/date-picker/custom.css`} />
+      <Picker
+        isMinToday={isMinToday}
+        isDateRange={isDateRange}
+        configJson={configJson}
+        locale={locale}
+        onSubmit={submit}
+        onCancel={cancel}
+      />
+    </>
   )
 }
 
