@@ -16,20 +16,22 @@ packages = [{include = "nlp_analyser"}]
 nlp_analyser = "nlp_analyser.cli:cli"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-rich = "^11.1.0"
+python = ">=3.7, <3.10"
+numpy = "1.21.5"
+numba = "0.55.1"
+rich = "11.1.0"
 click = "8.0.4"
-pandas-profiling = "^3.1.0"
-spacy = {version = "^3.2.1"}
-bertopic = "^0.9.4"
-LanguageIdentifier = "^1.1.1"
-streamlit = "^1.8.0"
+pandas-profiling = "3.1.0"
+spacy = "3.2.1"
+bertopic = "0.9.4"
+LanguageIdentifier = "1.1.1"
+streamlit = "1.8.0"
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "^4.0.1"
-mypy = "^0.931"
-black = "^22.1.0"
-ipython = "^8.0.1"
+flake8 = "4.0.1"
+mypy = "0.931"
+black = "22.1.0"
+
 
 [build-system]
 requires = ["poetry-core"]
