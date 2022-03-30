@@ -8,6 +8,11 @@ bp.experimental.successTelemetry.addNewSubview({
     const workflows = {};
 
     for (const item of all) {
+      try {
+        item.payload = typeof item.payload == "string" ? JSON.parse(item.payload) : item.payload;
+      } catch (e) {
+        continue;
+      }
       const { workflowId, status } = item.payload;
       if (!workflows[workflowId]) {
         workflows[workflowId] = { count: 0, successCount: 0 };

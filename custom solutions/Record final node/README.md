@@ -11,6 +11,6 @@ Sample table with data
 ![image](https://user-images.githubusercontent.com/77560236/149194735-11b3305d-62bb-448f-b93a-5b91e6f94a73.png)
 
 **How to install**
-1. Copy/paste *record-final-node.js* as a `Before_Conversation_End` hook
-2. Copy/past *createDropoutTable.js* as an `After_Serrver_start` hook
+1. Copy/paste *record-final-node.js* as a `Before_Session_Timeout` hook
+2. Copy/past *createDropoutTable.js* as an `After_Server_start` hook
 3. Restart your Botpress server for changes to take effect

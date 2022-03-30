@@ -1,0 +1,41 @@
+.key input {
+  padding: 5px;
+  border: solid 1px #ddd;
+  height: 32px;
+}
+
+.invalid input {
+  border: 1px solid red;
+}
+
+.table {
+  td {
+    padding: 0;
+    position: relative;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  tbody {
+    overflow-y: overlay;
+  }
+
+  margin-bottom: 0;
+  table-layout: fixed;
+}
+
+.keyTip {
+  position: absolute;
+  right: 15px;
+  font-size: 20px;
+  top: 11px;
+  color: green;
+}
+
+.mandatory {
+  input {
+    font-weight: bold;
+  }
+}
