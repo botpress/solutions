@@ -85,8 +85,8 @@ try:
 except ValueError:
     st.error("The column index must be an integer.")
 
-csv_was_converted_successfully = False
-was_analysed = False
+st.session_state.csv_was_converted_successfully = False
+st.session_state.was_analysed = False
 
 if corpus_file and corpus_file.__dict__["type"] not in ["text/plain", "text/csv"]:
     st.error("The corpus file is not a txt or a csv file !")
@@ -136,7 +136,7 @@ if (
     text_temp_file.close()
 
 if (
-    csv_was_converted_successfully
+    st.session_state.csv_was_converted_successfully
     or (corpus_file and corpus_file.__dict__["type"] == "text/plain")
     and st.session_state.get("data") is None
 ):
@@ -163,6 +163,9 @@ if (
 # Main page elements #
 ######################
 st.title("Botpress Analysis")
+if not corpus_file:
+    st.write("Please upload a corpus file (csv or txt) from the side bar.")
+    st.write("Analysis will start as soon as you upload a file.")
 
 st.write("\n\n\n\n\n")
 # Tests running and results
@@ -204,14 +207,48 @@ if corpus_file:
         st.session_state.heatmap_fig = heatmap_fig
         st.session_state.term_rank_fig = term_rank_fig
         st.session_state.topic_exemples = topic_exemples
-        was_analysed = True
+        st.session_state.was_analysed = True
 
-if was_analysed:
+if st.session_state.was_analysed:
+
+    st.write("Note that the topics are generated automatically.")
+    st.write(
+        "The number of topics is found automatically that means that they might be too much or not enough topics."
+    )
+    st.write(
+        "That means that the first topics might contain the best knowledge and other topics might be less relevant containing only gibberish keywords like `hey/hello/hi/greetings`"
+    )
+    st.write("\n\n\n\n\n")
+
+    st.write("On the intertopics graph, circles correspond to the topics.")
+    st.write(
+        "Some might overlap but please remember that they're projected on a 2D space so close topics in 2D might not really be..."
+    )
+    st.write("Hover with the mouse to see topics words.")
     components.html(st.session_state.topics_fig, height=800)
+
+    st.write("On the hierarchical graph, you can see how topics might be regrouped.")
+    st.write(
+        "From left to right, follow the forks to see where topic join and how they can be grouped."
+    )
     components.html(st.session_state.topics_hierarchy_fig, height=800)
+
+    st.write("The following chart gives you the most relevant words for each topic.")
     components.html(st.session_state.barchart_fig_html, height=1200)
+
+    st.write(
+        "On this matrix, you can see how much a topic is close to the others. The higher the score the closer the topics."
+    )
     components.html(st.session_state.heatmap_fig, height=800)
+
+    st.write(
+        "This tell you how much word are needed for each topic. If you use too much words for a topic, then it will loose signification. Usually at more than 5 words, topic become too specific and will not be relevant."
+    )
     components.html(st.session_state.term_rank_fig, height=800)
+
+    st.write(
+        "This are just exemple sentences for each topics, it dupplicate the information of the topic word score."
+    )
     components.html(st.session_state.topic_exemples, height=800)
 
 
@@ -238,7 +275,7 @@ if st.session_state.get("topics", None) is not None:
         mime="text/csv",
     )
 
-if corpus_file and csv_was_converted_successfully:
+if corpus_file and st.session_state.csv_was_converted_successfully:
     st.sidebar.download_button(
         label="Export txt file",
         data=corpus_file.read(),

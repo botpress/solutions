@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "botpress_analyser"
-version = "0.1.0"
+version = "0.1.1"
 description = "A package to make clusters from a corpus"
 authors = ["Pierre Snell <pierre.snell@botpress.com>"]
 readme = "README.md"

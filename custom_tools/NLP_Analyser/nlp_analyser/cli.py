@@ -13,6 +13,9 @@ from pathlib import Path
 
 @click.group()
 def converter():
+    """
+    Group with some file converting commands. For more information about the commands, please refer to `nlp_analyser convert --help`
+    """
     pass
 
 
@@ -43,12 +46,19 @@ def converter():
     is_flag=True,
 )
 def csv_to_text(file: Path, delimiter: str, column_idx: int, no_headers: bool):
+    """
+    Convert a CSV file to a text file.
+    The output will be the same as the input, but with a .txt extension.
+    """
     csv_path = Path(str(Path(file)).replace(".txt", ".csv"))
     convert_csv_to_txt_files(file, csv_path, delimiter, column_idx, no_headers)
 
 
 @click.group()
 def analyse():
+    """
+    Group with some analysis commands. For more information about the commands, please refer to `nlp_analyser analyse --help`
+    """
     pass
 
 
@@ -64,17 +74,20 @@ def analyse():
     type=click.Path(file_okay=False, dir_okay=True, writable=True, path_type=Path),
     required=False,
 )
-def utterances(file: Path, output: Optional[Path]):
-    if output is None:
-        output = file.parent
-
+def corpus(file: Path, output: Optional[Path]):
+    """
+    Analyse the corpus contained in a text file.
+    It will cache some results in the output directory for faster recomputation.
+    """
     if file.suffix != ".txt":
         raise AssertionError("Please give a text file with one utterance per line.")
 
+    if output is None:
+        output = file.parent
+    output.mkdir(exist_ok=True, parents=True)
+
     with open(file, "r") as data_file:
-        datas: List[str] = []
-        for line in data_file:
-            datas.append(line)
+        datas: List[str] = data_file.readlines()
 
     report_html, topics_html = analyse_datas(datas, output)
 
@@ -87,6 +100,10 @@ def utterances(file: Path, output: Optional[Path]):
 
 @click.group()
 def cli():
+    """
+    The nlp_analyser CLI.
+    For more information about the commands, please refer to `nlp_analyser --help`
+    """
     pass
 
 
@@ -97,7 +114,7 @@ cli.add_command(converter)
 @cli.command()
 def gui() -> None:
     """
-    Launch the streamlit app from the command line.
+    Launch the GUI (streamlit app).
     """
     sys.argv = [
         "streamlit",
