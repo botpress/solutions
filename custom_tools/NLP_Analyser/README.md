@@ -20,6 +20,14 @@ nlp_analyser gui               # launch the tool
 deactivate                     # quit the venv
 ```
 
+Note : 
+On windows you need to have the microsoft build tools : https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16 (only the core one)
+On windows you need to run `.\.venv\Scripts\activate` instead of `source .venv/bin/activate`
+Also on windows, if you get any policy error : 
+- Open a powershell as administrator
+- Change the execution policy with `set-executionpolicy remotesigned` and input `A` when asked
+- Now you have rights to activate the venv
+
 ## With poetry 
 Install poetry from https://python-poetry.org/docs/#installation 
 

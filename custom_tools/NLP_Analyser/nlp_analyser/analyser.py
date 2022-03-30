@@ -100,8 +100,8 @@ def possible_topics(datas: pd.DataFrame, output: Path):
             top_n_words=10,
             calculate_probabilities=False,
             n_gram_range=(1, 3),
-            nr_topics=20,
-            min_topic_size=15,
+            nr_topics="auto",
+            min_topic_size=10,
             verbose=True,
         )
 

@@ -109,7 +109,7 @@ if (
                 no_headers,
             )
 
-            csv_was_converted_successfully = True
+            st.session_state.csv_was_converted_successfully = True
 
             corpus_file = UploadedFile(
                 UploadedFileRec(
@@ -123,14 +123,16 @@ if (
             st.success("Csv file was converted to a text one.")
             csv_temp_file.seek(0)
             header, line, *_ = csv_temp_file.read().decode("utf-8").split("\n")
-            st.info(f"Header : {header}\n First line : {line}")
+            st.info(f"Header : {header}")
+            st.info(f"First line : {line}")
 
         except IndexError:
             header, line, *_ = csv_temp_file.read().decode("utf-8").split("\n")
             st.error("The column index is not correct.")
             csv_temp_file.seek(0)
             header, line, *_ = csv_temp_file.read().decode("utf-8").split("\n")
-            st.error(f"Header : {header}\nFirst line : {line}")
+            st.error(f"Header : {header}")
+            st.error(f"First line : {line}")
 
     csv_temp_file.close()
     text_temp_file.close()
@@ -189,7 +191,7 @@ if corpus_file:
             min_topic_size=3,
             verbose=True,
         )
-        with st.spinner("Creating topics..."):
+        with st.spinner("Creating topics... Can be long, check terminal for updates"):
             _, _ = topic_model.fit_transform(st.session_state.data["lemmas"].tolist())  # type: ignore
 
         (
@@ -250,6 +252,25 @@ if st.session_state.was_analysed:
         "This are just exemple sentences for each topics, it dupplicate the information of the topic word score."
     )
     components.html(st.session_state.topic_exemples, height=800)
+
+    st.sidebar.download_button(
+        label="Export analysis as Html file",
+        data="\n".join(
+            [
+                f"<div>{fig}</div>"
+                for fig in [
+                    st.session_state.topics_fig,
+                    st.session_state.topics_hierarchy_fig,
+                    st.session_state.barchart_fig_html,
+                    st.session_state.heatmap_fig,
+                    st.session_state.term_rank_fig,
+                    st.session_state.topic_exemples,
+                ]
+            ]
+        ),
+        file_name=f"analysis.html",
+        mime="text/html",
+    )
 
 
 # Analysis
