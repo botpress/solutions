@@ -2,8 +2,14 @@
 name = "botpress_analyser"
 version = "0.1.1"
 description = "A package to make clusters from a corpus"
+maintainers = ["Pierre Snell <ierezell@gmail.com>"]
 authors = ["Pierre Snell <pierre.snell@botpress.com>"]
+homepage = "https://botpress.com/"
+repository = "https://github.com/botpress/solutions/tree/ps_revamp_nlu_testing/custom_tools/NLP_Analyser"
+documentation = "https://github.com/botpress/solutions/tree/ps_revamp_nlu_testing/custom_tools/NLP_Analyser"
 readme = "README.md"
+license = "AGPL-3.0-or-later"
+keywords = ['nlp', 'chatbot']
 packages = [{include = "nlp_analyser"}]
 
 [tool.poetry.scripts]

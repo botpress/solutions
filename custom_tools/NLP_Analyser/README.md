@@ -4,8 +4,34 @@ This tool provide a small GUI to cluster a corpus
 
 For now it support only csv files and txt files.
 
-# Using the GUI
+# Installation
+This tool requires that python is installed on your machine.
 
+## With a venv 
+This is an exemple setup. If you have yours just `pip install botpress_analyser`.
+
+```shell 
+mkdir test                     # create a new folder
+cd test                        # go to this folder
+python -m venv .venv           # create the venv (virtual environnement)
+source .venv/bin/activate      # activate the venv 
+pip install botpress_analyser  # install the tool 
+nlp_analyser gui               # launch the tool
+deactivate                     # quit the venv
+```
+
+## With poetry 
+Install poetry from https://python-poetry.org/docs/#installation 
+
+```shell
+mkdir test                    # create a new folder
+cd test                       # go to this folder
+poetry init                   # init poetry in the folder 
+poetry add botpress_analyser  # add the dependency
+poetry install                # double check that all is installed 
+poetry run nlp_analyser gui   # launch the tool in the poetry **env**
+```
+# Using the GUI
 We provide a small gui to help less technical users.
 ## Launching the gui
 Once installed, run `nlp_analyser gui` to launch the app. 
