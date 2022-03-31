@@ -1,0 +1,4 @@
+dist/
+assets/web/
+assets/config.schema.json
+node_modules/
