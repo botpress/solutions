@@ -14,8 +14,11 @@ from LanguageIdentifier import predict as lang_id_predict
 
 # from multiprocessing import cpu_count
 import os
+from logging import getLogger, INFO
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+logger = getLogger("Analyser")
+logger.setLevel(INFO)
 
 
 def profiling_report(datas: pd.DataFrame) -> str:
@@ -52,10 +55,14 @@ def profiling_report(datas: pd.DataFrame) -> str:
 
 
 def get_figures(topic_model: BERTopic) -> Tuple[str, str, str, str, str, str]:
+    try:
+        topics_fig: str = topic_model.visualize_topics().to_html(
+            full_html=False, include_plotlyjs="cdn"
+        )
+    except (TypeError, ValueError):
+        logger.error("Cannot reduce topics in 2D")
+        topics_fig = ""
 
-    topics_fig: str = topic_model.visualize_topics().to_html(
-        full_html=False, include_plotlyjs="cdn"
-    )
     topics_hierarchy_fig: str = topic_model.visualize_hierarchy(width=1200).to_html(
         full_html=False, include_plotlyjs="cdn"
     )
@@ -93,19 +100,53 @@ def get_figures(topic_model: BERTopic) -> Tuple[str, str, str, str, str, str]:
     )
 
 
+def train_bert_topic(datas: pd.DataFrame, nb_topics: int = -1) -> BERTopic:
+    tries = 0
+    MAX_TRIES = 5
+    while tries < MAX_TRIES:
+        try:
+            topic_model = BERTopic(
+                embedding_model="all-MiniLM-L6-v2",
+                top_n_words=10,
+                calculate_probabilities=False,
+                n_gram_range=(1, 3),
+                nr_topics="auto" if nb_topics < 2 else nb_topics,
+                min_topic_size=10,
+                verbose=True,
+            )
+
+            _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
+            return topic_model
+        except ValueError:
+            tries += 1
+            logger.error(f"Training topics failed : try {tries}/{MAX_TRIES}")
+    raise RuntimeError(f"Could not train topics after {MAX_TRIES} tries")
+
+
+def get_topics_analysis(
+    datas: pd.DataFrame, nb_topics: int = -1
+) -> Tuple[str, str, str, str, str, str]:
+    tries = 0
+    MAX_TRIES = 5
+    while tries < MAX_TRIES:
+        try:
+            topic_model = train_bert_topic(datas, nb_topics)
+            figures = get_figures(topic_model)
+            if figures[0]:
+                return figures
+            else:
+                raise ValueError("Cannot reduce topics in 2D")
+        except (TypeError, ValueError):
+            tries += 1
+            logger.error(f"Training topics failed : try {tries}/{MAX_TRIES}")
+    raise RuntimeError(
+        f"Training topics failed after {MAX_TRIES} tries. Try again, it will generate a new seed, or change the number of topics."
+    )
+
+
 def possible_topics(datas: pd.DataFrame, output: Path):
     if not output.joinpath("BertTopic.pkl").exists():
-        topic_model = BERTopic(
-            embedding_model="all-MiniLM-L6-v2",
-            top_n_words=10,
-            calculate_probabilities=False,
-            n_gram_range=(1, 3),
-            nr_topics="auto",
-            min_topic_size=10,
-            verbose=True,
-        )
-
-        _, _ = topic_model.fit_transform(datas["lemmas"].tolist())  # type: ignore
+        topic_model = train_bert_topic(datas)
         with open(output.joinpath("BertTopic.pkl"), "wb") as f:
             pickle.dump(topic_model, f)
 
@@ -121,6 +162,11 @@ def possible_topics(datas: pd.DataFrame, output: Path):
         term_rank_fig,
         topic_exemples,
     ) = get_figures(topic_model)
+
+    if not topics_fig:
+        logger.error(
+            "Cannot reduce topics in 2D, please try again (it will change the seed) or change the number of topics"
+        )
 
     topics_html = "<html>\n"
     topics_html += topics_fig + "\n"

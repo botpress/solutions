@@ -5,10 +5,8 @@ from streamlit.uploaded_file_manager import UploadedFile, UploadedFileRec
 from tempfile import NamedTemporaryFile
 from pathlib import Path
 from nlp_analyser.converter import convert_csv_to_txt_files
-from nlp_analyser.analyser import corpus_to_datas, get_figures
-from bertopic import BERTopic
+from nlp_analyser.analyser import corpus_to_datas, get_topics_analysis
 from streamlit.elements.progress import ProgressMixin
-from typing import List
 
 st.set_page_config(  # type: ignore[misc]
     page_title="Botpress Analysis",
@@ -21,13 +19,49 @@ st.set_page_config(  # type: ignore[misc]
 #####################
 # Side bar elements #
 #####################
+
+nb_topics: int = st.sidebar.slider(
+    label="Number of topics (1 for auto)",
+    min_value=1,
+    max_value=50,
+    value=1,
+    step=1,
+    key="nb_topics",
+    help="The number of topics. Use 1 to find them automatically. Specifying the number of topics will reduce the initial number of topics to the value specified.",
+    on_change=None,
+    args=None,
+    kwargs=None,
+    disabled=False,
+)
+
+# min_nb_words_topics: bool = st.sidebar.slider(
+#     label="Minimum number of word per topic",
+#     min_value=1,
+#     max_value=50,
+#     value=10,
+#     step=1,
+#     key="min_nb_words_topics",
+#     help="The minimum number of words per topic. Increasing this value will lead to a lower number of clusters/topics.",
+#     on_change=None,
+#     args=None,
+#     kwargs=None,
+#     disabled=False,
+# )
+
+
+def reset_files():
+    st.session_state.data = None
+    st.session_state.text_file = None
+    st.session_state.was_analysed = False
+
+
 corpus_file: Optional[UploadedFile] = st.sidebar.file_uploader(
     "Corpus path (csv,txt)",
     type=["txt", "csv"],
     accept_multiple_files=False,
     key="corpus_file",
     help="The path to your csv or txt file. ",
-    on_change=None,
+    on_change=lambda: reset_files(),
     args=None,
     kwargs=None,
     disabled=False,
@@ -85,16 +119,16 @@ try:
 except ValueError:
     st.error("The column index must be an integer.")
 
-st.session_state.csv_was_converted_successfully = False
-st.session_state.was_analysed = False
-
 if corpus_file and corpus_file.__dict__["type"] not in ["text/plain", "text/csv"]:
     st.error("The corpus file is not a txt or a csv file !")
+
+if corpus_file and corpus_file.__dict__["type"] == "text/plain":
+    st.session_state.text_file = corpus_file
 
 if (
     corpus_file
     and corpus_file.__dict__["type"] == "text/csv"
-    and st.session_state.get("data") is None
+    and st.session_state.get("text_file") is None
 ):
     csv_temp_file = NamedTemporaryFile()
     text_temp_file = NamedTemporaryFile()
@@ -110,8 +144,7 @@ if (
             )
 
             st.session_state.csv_was_converted_successfully = True
-
-            corpus_file = UploadedFile(
+            st.session_state.text_file = UploadedFile(
                 UploadedFileRec(
                     id=0,
                     name=corpus_file.name.replace(".csv", ".txt"),
@@ -120,10 +153,15 @@ if (
                 )
             )
 
-            st.success("Csv file was converted to a text one.")
+            st.success(
+                "Csv file was converted to a text one." + " Headers were removed"
+                if no_headers
+                else ""
+            )
             csv_temp_file.seek(0)
             header, line, *_ = csv_temp_file.read().decode("utf-8").split("\n")
-            st.info(f"Header : {header}")
+            if no_headers:
+                st.info(f"Header : {header}")
             st.info(f"First line : {line}")
 
         except IndexError:
@@ -137,14 +175,12 @@ if (
     csv_temp_file.close()
     text_temp_file.close()
 
+
 if (
-    st.session_state.csv_was_converted_successfully
-    or (corpus_file and corpus_file.__dict__["type"] == "text/plain")
+    st.session_state.get("text_file") is not None
     and st.session_state.get("data") is None
 ):
-    text_data: List[str] = []
-    if corpus_file and corpus_file.__dict__["type"] == "text/plain":
-        text_data = [l.decode("utf-8") for l in corpus_file.readlines()]
+    text_data = [l.decode("utf-8") for l in st.session_state.text_file.readlines()]
 
     progress_bar: ProgressMixin = st.progress(0)
     with st.spinner(
@@ -171,56 +207,57 @@ if not corpus_file:
 
 st.write("\n\n\n\n\n")
 # Tests running and results
+if st.session_state.get("data") is not None:
+    st.subheader(
+        "Datas were imported and pre-processed. You can now choose topic number and run topic analysis."
+    )
 
-
-if corpus_file:
-    analysis_clicked: bool = st.button(
+if st.session_state.get("text_file"):
+    if st.button(
         "Run Topic Analysis",
         key="test",
         help="Test the bot",
         kwargs=None,
         disabled=False,
-    )
-    if analysis_clicked:
-        topic_model = BERTopic(
-            embedding_model="all-MiniLM-L6-v2",
-            top_n_words=10,
-            calculate_probabilities=False,
-            n_gram_range=(1, 3),
-            nr_topics=5,
-            min_topic_size=3,
-            verbose=True,
-        )
+    ):
         with st.spinner("Creating topics... Can be long, check terminal for updates"):
-            _, _ = topic_model.fit_transform(st.session_state.data["lemmas"].tolist())  # type: ignore
+            try:
+                (
+                    topics_fig,
+                    topics_hierarchy_fig,
+                    barchart_fig_html,
+                    heatmap_fig,
+                    term_rank_fig,
+                    topic_exemples,
+                ) = get_topics_analysis(st.session_state.data, nb_topics)
 
-        (
-            topics_fig,
-            topics_hierarchy_fig,
-            barchart_fig_html,
-            heatmap_fig,
-            term_rank_fig,
-            topic_exemples,
-        ) = get_figures(topic_model)
+                st.session_state.topics_fig = topics_fig
+                st.session_state.topics_hierarchy_fig = topics_hierarchy_fig
+                st.session_state.barchart_fig_html = barchart_fig_html
+                st.session_state.heatmap_fig = heatmap_fig
+                st.session_state.term_rank_fig = term_rank_fig
+                st.session_state.topic_exemples = topic_exemples
+                st.session_state.was_analysed = True
+            except RuntimeError:
+                st.error("An error occurred during the analysis.")
 
-        st.session_state.topics_fig = topics_fig
-        st.session_state.topics_hierarchy_fig = topics_hierarchy_fig
-        st.session_state.barchart_fig_html = barchart_fig_html
-        st.session_state.heatmap_fig = heatmap_fig
-        st.session_state.term_rank_fig = term_rank_fig
-        st.session_state.topic_exemples = topic_exemples
-        st.session_state.was_analysed = True
 
-if st.session_state.was_analysed:
-
-    st.write("Note that the topics are generated automatically.")
+if st.session_state.get("was_analysed"):
     st.write(
-        "The number of topics is found automatically that means that they might be too much or not enough topics."
+        "Note that the topics are generated automatically and will change at every run !"
+    )
+    st.write(
+        "If the number of topics was found automatically (value of 1) that means that they might be too much or not enough topics."
     )
     st.write(
         "That means that the first topics might contain the best knowledge and other topics might be less relevant containing only gibberish keywords like `hey/hello/hi/greetings`"
     )
+    st.write(
+        "You can analyse the data and re-run the analysis with the number of topics you want."
+    )
     st.write("\n\n\n\n\n")
+    st.write("\n")
+    st.write("\n")
 
     st.write("On the intertopics graph, circles correspond to the topics.")
     st.write(
@@ -255,7 +292,8 @@ if st.session_state.was_analysed:
 
     st.sidebar.download_button(
         label="Export analysis as Html file",
-        data="\n".join(
+        data="<html>"
+        + "\n".join(
             [
                 f"<div>{fig}</div>"
                 for fig in [
@@ -267,7 +305,8 @@ if st.session_state.was_analysed:
                     st.session_state.topic_exemples,
                 ]
             ]
-        ),
+        )
+        + "</html>",
         file_name=f"analysis.html",
         mime="text/html",
     )
@@ -296,10 +335,13 @@ if st.session_state.get("topics", None) is not None:
         mime="text/csv",
     )
 
-if corpus_file and st.session_state.csv_was_converted_successfully:
+if (
+    st.session_state.get("text_file")
+    and st.session_state.csv_was_converted_successfully
+):
     st.sidebar.download_button(
         label="Export txt file",
-        data=corpus_file.read(),
+        data=st.session_state.text_file.read(),
         file_name=f"corpus.txt",
         mime="text/txt",
     )
