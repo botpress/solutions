@@ -32,7 +32,9 @@ load_dotenv(os.path.join(BASEDIR, '.env'))
 
 endpoint = os.getenv("ENDPOINT")
 entities = True if os.getenv('EXTRACT_ENTITIES') == 'TRUE' else False
-conf = True if os.getenv('EXTRACT_CONFIDENCE') == 'TRUE' else False
+conf = True #There's a bug in the code that makes it output nothing unless either entties or conf is true
+#This is a stopgap solution until I can fix that bug...
+#if os.getenv('EXTRACT_CONFIDENCE') == 'TRUE' else False
 user = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
 botId= os.getenv("BOT_ID")
