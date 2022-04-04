@@ -1,6 +1,6 @@
 # Timely Greetings
 
-Enables the bot to dynamically greet the user with "Good Morning/Afternoon/Evening" or any custom greeting based on their time of day. 
+Enables the bot to dynamically greet the user with "Good Morning/Afternoon/Evening" or any custom greeting based on the user's time of day. 
 
 **To use:**
 
