@@ -62,7 +62,7 @@
     else if (currentTime > schedule.morningEnd && currentTime <= schedule.afternoonEnd) {
       message = messages[1]
     }
-    if (currentTime > schedule.afternoonEnd || currentTime <= schedule.morningStart) {
+    else if (currentTime > schedule.afternoonEnd || currentTime <= schedule.morningStart) {
       message = messages[2]
     }
     // Create the text content element
