@@ -59,7 +59,7 @@
     if (currentTime >= schedule.morningStart && currentTime <= schedule.morningEnd) {
       message = messages[0]
     }
-    if (currentTime > schedule.morningEnd && currentTime <= schedule.afternoonEnd) {
+    else if (currentTime > schedule.morningEnd && currentTime <= schedule.afternoonEnd) {
       message = messages[1]
     }
     if (currentTime > schedule.afternoonEnd || currentTime <= schedule.morningStart) {
