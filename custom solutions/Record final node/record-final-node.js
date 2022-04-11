@@ -1,6 +1,7 @@
+async function record() {
   bp.logger.info('attempting data insert...')
   try {
-    bp.database.insertAndRetrieve('last_nodes', {
+    await bp.database.insertAndRetrieve('last_nodes', {
       session_id: event.threadId,
       last_flow: event.state.context.currentFlow,
       last_node: event.state.context.currentNode
@@ -9,3 +10,6 @@
   } catch (error) {
     bp.logger.info(error)
   }
+}
+
+return record()
