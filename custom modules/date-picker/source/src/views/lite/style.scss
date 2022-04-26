@@ -1,0 +1,19 @@
+body {
+  margin: 0 !important;
+  width: 250px !important;
+}
+
+:global(.DayPicker-Day--selected) {
+  background-color: darkgray !important;
+}
+:global(.DayPicker-Day--selected-range) {
+  background-color: lightgray !important;
+}
+
+.myDiv {
+  width: 300px;
+}
+
+.center {
+  text-align: center;
+}
