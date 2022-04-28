@@ -50,9 +50,8 @@
     //gets the user's hour as an int from 0 to 23
     const currentTime = parseInt(
       moment()
-        .zone(user.timezone.toString())
         .format('HH')
-    )
+    ) + parseInt(user.timezone)
     bp.logger.info(`current time is ${currentTime}`)
     bp.logger.info(`Morning ends at ${schedule.morningEnd} and afternoon ends at ${schedule.afternoonEnd}`)
 
