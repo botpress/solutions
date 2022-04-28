@@ -16,6 +16,7 @@ export const NumberPicker: FC<SkillProps<NumberPickerProps>> = ({ initialData, o
   const [onInvalidContentId, setOnInvalidContentId] = useState('')
   const [showExit, setShowExit] = useState(false)
   const [roundOutput, setRoundOutput] = useState(true)
+  const [sendPicker, setSendPicker] = useState(false)
   const [randomId, setRandomId] = useState(customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10)())
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export const NumberPicker: FC<SkillProps<NumberPickerProps>> = ({ initialData, o
     setShowExit(initialData.showExit)
     setRoundOutput(initialData.roundOutput)
     setRandomId(initialData.randomId)
+    setSendPicker(initialData.sendPicker)
   }, [])
 
   useEffect(() => {
@@ -44,12 +46,24 @@ export const NumberPicker: FC<SkillProps<NumberPickerProps>> = ({ initialData, o
       randomId,
       onInvalidContentId,
       showExit,
-      roundOutput
+      roundOutput,
+      sendPicker
     })
 
     const isValid = questionId !== undefined && varName !== undefined
     onValidChanged(isValid)
-  }, [minValue, maxValue, retries, questionId, varName, onInvalidContentId, showExit, roundOutput, randomId])
+  }, [
+    minValue,
+    maxValue,
+    retries,
+    questionId,
+    varName,
+    onInvalidContentId,
+    showExit,
+    roundOutput,
+    randomId,
+    sendPicker
+  ])
 
   return (
     <div>
@@ -89,6 +103,18 @@ export const NumberPicker: FC<SkillProps<NumberPickerProps>> = ({ initialData, o
               <FormGroup label="Maximum value" helperText="Can be empty, a number or a variable, ex: {{temp.maxValue}}">
                 <InputGroup onChange={e => setMaxValue(e.currentTarget.value)} value={maxValue} placeholder="100" />
               </FormGroup>
+
+              <Checkbox
+                checked={showExit}
+                onChange={el => setShowExit(el.currentTarget.checked)}
+                label="Suggest button to abort prompt"
+              />
+
+              <Checkbox
+                checked={sendPicker}
+                onChange={el => setSendPicker(el.currentTarget.checked)}
+                label="Send a number picker component"
+              />
             </div>
           }
         />

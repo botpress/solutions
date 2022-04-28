@@ -10,6 +10,7 @@ export interface NumberPickerProps {
   retries: number
   showExit?: boolean
   roundOutput?: boolean
+  sendPicker?: boolean
 }
 
 export const generateFlow = async (
@@ -42,6 +43,22 @@ export const generateFlow = async (
     })
   }
 
+  const entryOnEnter: any = [
+    {
+      type: sdk.NodeActionType.RenderElement,
+      name: `#!${data.questionId}`,
+      args: { skill: 'number-picker' }
+    }
+  ]
+
+  if (data.sendPicker) {
+    entryOnEnter.push({
+      type: sdk.NodeActionType.RunAction,
+      name: 'number-picker/send-number-picker',
+      args: data
+    })
+  }
+
   const keySuffix = data.randomId ? `-${data.randomId}` : ''
   const validKey = `skill-number-picker-valid${keySuffix}`
 
@@ -50,13 +67,7 @@ export const generateFlow = async (
       nodes: [
         {
           name: 'entry',
-          onEnter: [
-            {
-              type: sdk.NodeActionType.RenderElement,
-              name: `#!${data.questionId}`,
-              args: { skill: 'number-picker' }
-            }
-          ],
+          onEnter: entryOnEnter,
           next: [{ condition: 'true', node: 'parse' }]
         },
         {

@@ -1,7 +1,4 @@
-import React from 'react'
+import MessengerPicker from './MessengerPicker'
+import WebPicker from './WebPicker'
 
-export class LiteView extends React.Component {
-  render() {
-    return null
-  }
-}
+export { WebPicker, MessengerPicker }
