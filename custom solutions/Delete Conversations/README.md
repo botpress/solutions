@@ -1,6 +1,6 @@
 You can use the script below to delete conversation messages older than 7 days
 
-There are two different versions because of the [messaging split](https://github.com/botpress/messaging/blob/master/docs/database.md) that happened in 12.26 
+There are two different versions because of the [messaging split](https://github.com/botpress/messaging/blob/master/docs/messaging/database.md) that happened in 12.26 
 
 ## Before 12.26.0
 
