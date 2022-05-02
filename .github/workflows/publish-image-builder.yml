@@ -37,12 +37,6 @@ jobs:
             echo "Invalid Branch Name format, use image-builder-release/vXXX.XXX.XXX"
             exit 1
           fi
-      - name: DockerHub Authentication
-        uses: docker/login-action@v1
-        if: ${{ steps.prep.outputs.release }}
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
