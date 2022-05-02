@@ -1,15 +1,14 @@
-FROM node:14-alpine
+FROM node:14-alpine as builder
+RUN apk add --no-cache git
 
 WORKDIR /
 
-RUN ls --all
+RUN yarn --frozen-lockfile && yarn build
 
-ADD package.json yarn.lock ./
-RUN yarn install 
+FROM node:14-alpine 
 
-ADD tsconfig.json ./
-ADD src ./
+WORKDIR /
 
-RUN yarn build
+COPY --from=builder ./bin/bp_image_builder-linux ./bp_image_builder
 
-CMD [ "yarn", "start" ]
+CMD ./bp_image_builder

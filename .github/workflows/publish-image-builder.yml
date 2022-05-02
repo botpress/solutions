@@ -46,7 +46,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./
+          context: ./custom_tools/bp_image_builder
           file: custom_tools/bp_image_builder/Dockerfile
           push: true
           tags: ${{ steps.prep.outputs.tags }}
