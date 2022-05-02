@@ -2,6 +2,7 @@ FROM node:14-alpine as builder
 RUN apk add --no-cache git
 
 WORKDIR /
+COPY . .
 
 RUN yarn --frozen-lockfile && yarn build
 
