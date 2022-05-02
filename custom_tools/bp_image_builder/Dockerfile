@@ -1,6 +1,6 @@
 FROM node:14-alpine
 
-WORKDIR /custom_tools/bp_image_builder
+WORKDIR /
 
 RUN ls --all
 
