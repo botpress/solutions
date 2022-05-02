@@ -1,6 +1,8 @@
 FROM node:14-alpine
 
-WORKDIR /bp_image_builder
+WORKDIR /custom_tools/bp_image_builder
+
+RUN ls
 
 ADD package.json yarn.lock ./
 RUN yarn install 
