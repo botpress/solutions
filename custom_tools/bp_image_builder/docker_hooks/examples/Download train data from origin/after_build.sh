@@ -20,7 +20,7 @@ fi
 file_index="$root/origin_files.json"
 header="Authorization: Bearer $BUILD_TOKEN"
 echo "Downloading origin files index from host $BUILD_ORIGIN_HOST"
-success=$(wget --header="$header" -O $file_index $BUILD_ORIGIN_HOST/api/v1/bots/bot2/mod/code-editor/files?rawFiles=true 2>&1 | grep -c '200 OK')
+success=$(wget --header="$header" -O $file_index $BUILD_ORIGIN_HOST/api/v1/bots/___/mod/code-editor/files?rawFiles=true 2>&1 | grep -c '200 OK')
 chmod 775 $file_index
 
 if [ ! $success = 1 ]; then 
