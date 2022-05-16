@@ -94,6 +94,8 @@ def getActual(utterance, withEntities, withConfidence):
         result_dict[utterance] = [actual,str(slots)]
     elif(withConfidence):
         result_dict[utterance] = [actual, np.round(conf*100, 2)]
+    else:
+        result_dict[utterance] = actual
     return result_dict
 
 # Renders a progress bar in the terminal window
