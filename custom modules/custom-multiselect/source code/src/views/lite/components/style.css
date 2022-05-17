@@ -1,0 +1,27 @@
+ /* Container for whole component */
+.multiselect {
+    display: block;
+    position: relative;
+    padding-left: 5px;
+    margin-bottom: 12px;
+  }
+
+ /*Grid settings. Add more auto for more columns */ 
+.container{
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-gap: 5px;
+    padding: 5px;
+}
+
+/* Container for the different options */
+.menu-item{
+    font-size:18px;
+    display:flex;
+}
+
+/* Checkbox size */
+.menu-item input {
+    height:18px;
+    width:18px;
+}
