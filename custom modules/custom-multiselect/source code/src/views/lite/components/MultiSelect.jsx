@@ -47,6 +47,7 @@ const MultiSelectKeyboard = props => {
   const { options, onOptionsUpdated, canSubmit, onSubmit } = props
   return (
     <div className="multiselect">
+      <div className="container">
       {options.map((opt, idx) => (
         <Option
           key={opt.label}
@@ -59,6 +60,8 @@ const MultiSelectKeyboard = props => {
           }}
         />
       ))}
+      </div>
+      <br/>
       <button className="trigger" disabled={!canSubmit} onClick={e => onSubmit()}>
         Submit
       </button>
@@ -69,15 +72,18 @@ const MultiSelectKeyboard = props => {
 const Option = props => {
   const { label, checked, onChange } = props
   return (
+   
     <label className="menu-item">
-      {label}
       <span className="custom-checkbox">
         <input type="checkbox" checked={checked} onChange={e => onChange()}></input>
         <span className="checkbox">
           <span className="checkmark"></span>
         </span>
       </span>
+      {label}
+      <br/>
     </label>
+
   )
 }
 
