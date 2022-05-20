@@ -9,6 +9,8 @@ import chalk from "chalk";
 
 const FALLBACK_VERSION = "botpress/server:v12_22_2";
 
+export type Info = { token: string; origin: { host: string; ip?: string; port?: string }, hasHooks?: boolean; hasModules?: boolean; hasExtraFiles?: boolean}
+
 interface FileEntry {
   headers: Headers;
   content: string | Buffer;
@@ -27,19 +29,23 @@ export const defaultDockerOpts: DockerOptions = {
 export function makeDockerfile(
   image_tag: string,
   content: string = null,
-  info: { token: string; originHost: string; hasHooks: boolean; hasModules: boolean; hasExtraFiles: boolean }
+  info: Info
 ): FileEntry {
   content =
     (content &&
       content
         .replace("{{imageTag}}", image_tag)
         .replace("{{BUILD_TOKEN}}", info.token)
-        .replace("{{BUILD_ORIGIN_HOST}}", info.originHost)) ||
+        .replace("{{BUILD_ORIGIN_HOST}}", info.origin.host)
+        .replace("{{BUILD_ORIGIN_IP}}", info.origin.ip)
+        .replace("{{BUILD_ORIGIN_PORT}}", info.origin.port)) ||
     `
         FROM ${image_tag}
         COPY ./data /botpress/data
         ARG BUILD_TOKEN=${info.token}
-        ARG BUILD_ORIGIN_HOST=${info.originHost}
+        ARG BUILD_ORIGIN_HOST=${info.origin.host}
+        ARG BUILD_ORIGIN_IP=${info.origin.ip}
+        ARG BUILD_ORIGIN_PORT=${info.origin.port}
         RUN mkdir /botpress/docker_hooks
         RUN mkdir /botpress/extra_files
         ${info.hasHooks ? "COPY ./docker_hooks/ /botpress/docker_hooks/" : ""}

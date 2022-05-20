@@ -75,7 +75,7 @@ program
       try {
         const outputTag = await builder.build(bpData, options.imageTag, options.outputTag, {
           token,
-          originHost: url,
+          origin: { host: url },
         });
         log.info(chalk.greenBright`Image has been built with tag ${outputTag}`);
         log.info(`\nTo try it out run: docker run -it -p 3000:3000 ${outputTag}`);

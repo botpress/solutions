@@ -4,6 +4,8 @@ import randomWords from "random-words";
 import fs from "fs-extra";
 import logger from "loglevel";
 import path from "path";
+import dns from 'dns'
+import ip from 'ip'
 import JSONStream from "JSONStream";
 import {
   processTar,
@@ -13,6 +15,7 @@ import {
   parseDockerOptions,
   defaultDockerOpts,
   isURL,
+  Info
 } from "../utils";
 import chalk from "chalk";
 import { AbstractMultiStrategy } from "../multistrategy";
@@ -83,11 +86,42 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
     return await reader({ archivePath: urlOrPath });
   }
 
+  async getConfig(): Promise<object> {
+    const path = process.cwd() + '/buildImage.config.js'
+    try {
+      if(!(await fs.pathExists(path))) return {};
+      const script = require(path)
+      const config = typeof script == 'function' ? await script() : script
+      logger.getLogger('build').info('Using additional config from buildImage.config.js: ' + JSON.stringify(config, null, 1))
+      return config
+    } catch(e) {
+      logger.getLogger('build').error('Error executing buildImage.config.js: ' + e.message)
+      throw e
+    }
+  }
+
+  async populateHostFields(info: Info) {
+    try {
+      const url = new URL(info.origin.host)
+      const originIp = await (await dns.promises.lookup(url.hostname)).address
+      info.origin.port = url.port || '80'
+
+      if(originIp == '127.0.0.1' || originIp == '127.0.1.1' || originIp == ip.address()) {
+        logger.getLogger('build').warn('Using localhost')
+        info.origin.ip = ip.address()
+      } else {
+        info.origin.ip = originIp
+      }
+    } catch(e) {
+      logger.getLogger('build').error(`Error resolving origin host ${info.origin.host}: ${e.message}`)
+    }
+  }
+
   async build(
     contextStream: NodeJS.ReadableStream,
     baseImageTag: string = null,
     outputTag: string = null,
-    info: { token: string; originHost: string }
+    info: Info
   ): Promise<string> {
     try {
       await this.docker.ping();
@@ -111,6 +145,8 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
 
     const dockerFileText = await readFileAsText("./Dockerfile");
 
+    await this.populateHostFields(info)
+
     const dockerfile = makeDockerfile(baseImageTag, dockerFileText, {
       ...info,
       hasHooks: dockerHooks.length > 0,
@@ -128,6 +164,8 @@ class Build extends AbstractMultiStrategy<BPDataReadStrategy> {
 
     const buildStream = await this.docker.buildImage(tarStream, {
       t: outputTag,
+      ...(info.origin.ip &&  { extrahosts: `origin:${info.origin.ip}` }),
+      ...await this.getConfig()
     });
 
     buildStream.pipe(JSONStream.parse("stream")).on("data", (d: string) => {
