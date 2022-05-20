@@ -62,11 +62,20 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.1.tgz#a6ca6a9a0ff366af433f42f5f0e124794ff6b8f1"
   integrity sha512-FTgBI767POY/lKNDNbIzgAX6miIDBs6NTCbdlDb8TrWovHsSvaVIZDlTqym29C6UqhzwcJx4CYr+AlrMywA0cA==
 
-"@types/dockerode@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.2.3.tgz#ae363b5bfa9f2989dab07f6e7ae3791e6431d145"
-  integrity sha512-nZRhpSxm3PYianRBcRExcHxDvEzYHUPfGCnRL5Fe4/fSEZbtxrRNJ7okzCans3lXxj2t298EynFHGTnTC2f1Iw==
+"@types/docker-modem@*":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/docker-modem/-/docker-modem-3.0.2.tgz#c49c902e17364fc724e050db5c1d2b298c6379d4"
+  integrity sha512-qC7prjoEYR2QEe6SmCVfB1x3rfcQtUr1n4x89+3e0wSTMQ/KYCyf+/RAA9n2tllkkNc6//JMUZePdFRiGIWfaQ==
   dependencies:
+    "@types/node" "*"
+    "@types/ssh2" "*"
+
+"@types/dockerode@^3.3.9":
+  version "3.3.9"
+  resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.9.tgz#8c6e519fd4d0d86717b2c6a864904f4e6aa8af40"
+  integrity sha512-SYRN5FF/qmwpxUT6snJP5D8k0wgoUKOGVs625XvpRJOOUi6s//UYI4F0tbyE3OmzpI70Fo1+aqpzX27zCrInww==
+  dependencies:
+    "@types/docker-modem" "*"
     "@types/node" "*"
 
 "@types/fs-extra@^9.0.11":
@@ -100,6 +109,21 @@
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@types/random-words/-/random-words-1.1.2.tgz#4ffe4da4817b4629d8802c8ac16466783e745c6e"
   integrity sha512-gULpJ68bNovfBWPWNNhwJgd/GcKdfkPpXXQGgACQWffgy6LRiJB4+4s/IslhFJKQvb5wBlnlOwFJ6RawHU5z3A==
+
+"@types/ssh2-streams@*":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@types/ssh2-streams/-/ssh2-streams-0.1.9.tgz#8ca51b26f08750a780f82ee75ff18d7160c07a87"
+  integrity sha512-I2J9jKqfmvXLR5GomDiCoHrEJ58hAOmFrekfFqmCFd+A6gaEStvWnPykoWUwld1PNg4G5ag1LwdA+Lz1doRJqg==
+  dependencies:
+    "@types/node" "*"
+
+"@types/ssh2@*":
+  version "0.5.52"
+  resolved "https://registry.yarnpkg.com/@types/ssh2/-/ssh2-0.5.52.tgz#9dbd8084e2a976e551d5e5e70b978ed8b5965741"
+  integrity sha512-lbLLlXxdCZOSJMCInKH2+9V/77ET2J6NPQHpFI0kda61Dd1KglJs+fPQBchizmzYSOJBgdTajhPqBO1xxLywvg==
+  dependencies:
+    "@types/node" "*"
+    "@types/ssh2-streams" "*"
 
 "@types/tar-stream@^2.2.0":
   version "2.2.0"
@@ -502,10 +526,10 @@ docker-modem@^3.0.0:
     split-ca "^1.0.1"
     ssh2 "^0.8.7"
 
-dockerode@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-3.3.0.tgz#bedaf48ef9fa9124275a54a9881a92374c51008e"
-  integrity sha512-St08lfOjpYCOXEM8XA0VLu3B3hRjtddODphNW5GFoA0AS3JHgoPQKOz0Qmdzg3P+hUPxhb02g1o1Cu1G+U3lRg==
+dockerode@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-3.3.1.tgz#74f66e239e092e7910e2beae6322d35c44b08cdc"
+  integrity sha512-AS2mr8Lp122aa5n6d99HkuTNdRV1wkkhHwBdcnY6V0+28D3DSYwhxAk85/mM9XwD3RMliTxyr63iuvn5ZblFYQ==
   dependencies:
     docker-modem "^3.0.0"
     tar-fs "~2.0.1"
@@ -609,6 +633,13 @@ expand-template@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/expand-template/-/expand-template-2.0.3.tgz#6e14b3fcee0f3a6340ecb57d2e8918692052a47c"
   integrity sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==
+
+extract-domain@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/extract-domain/-/extract-domain-2.4.1.tgz#f0520fdeebd7f12b145205b7dc6eb0b174a8e473"
+  integrity sha512-dX+kCRLakP2r5DrcVzC14rlRHgFfg4TzYreoe6ht5SirCiYVKNjOyZUSKrLa9If4XULWZ/5dChOyzKs5QwLbzA==
+  optionalDependencies:
+    psl "^1.8.0"
 
 fast-glob@^3.1.1:
   version "3.2.5"
@@ -877,6 +908,11 @@ into-stream@^6.0.0:
   dependencies:
     from2 "^2.3.0"
     p-is-promise "^3.0.0"
+
+ip@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.8.tgz#ae05948f6b075435ed3307acce04629da8cdbf48"
+  integrity sha512-PuExPYUiu6qMBQb4l06ecm6T6ujzhmh+MeJcW9wa89PoAz5pvd4zPgN5WJV104mb6S2T1AwNIAaB70JNrLQWhg==
 
 is-bigint@^1.0.1:
   version "1.0.2"
@@ -1446,6 +1482,11 @@ promptly@^3.2.0:
   integrity sha512-WnR9obtgW+rG4oUV3hSnNGl1pHm3V1H/qD9iJBumGSmVsSC5HpZOLuu8qdMb6yCItGfT7dcRszejr/5P3i9Pug==
   dependencies:
     read "^1.0.4"
+
+psl@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/psl/-/psl-1.8.0.tgz#9326f8bcfb013adcc005fdff056acce020e51c24"
+  integrity sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==
 
 pump@^2.0.0:
   version "2.0.1"
