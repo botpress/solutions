@@ -107,6 +107,9 @@ Its possible to use a custom Dockerfile to customize the pipeline even more, che
 
 OBS: Usually a docker hook is enough, so try to use this only on extreme cases.
 
+- ### Custom buildImage Config
+  Customize arguments used to build the docker image, check [Custom buildImage Config](https://github.com/botpress/solutions/tree/master/custom_tools/bp_image_builder/custom_buildImage_config) for documentation.
+
 ## Development
 To start developing on this project:
 
