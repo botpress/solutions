@@ -1,7 +1,6 @@
 name: Publish and release image builder
-
 on:
-  pull_request:
+  push:
     branches:
       - "image-builder-release/v*" # Push events to branch image-builder-release/v*
 permissions:
