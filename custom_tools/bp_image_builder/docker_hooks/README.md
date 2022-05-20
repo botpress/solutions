@@ -23,8 +23,10 @@ These hooks will have access to the following environment variables
 |Name|Description|Example|
 |---|---|---|
 |BUILD_TOKEN|Baerer token used to authenticate in the origin server|eyJhbGciOiJIUzI1N...|
-|BUILD_ORIGIN_HOST|URL for the origin server specified as argument at the login and build command |http://192.168.150.128:3000|
+|BUILD_ORIGIN_HOST|URL for the origin server specified as argument at the login and build command |http://localhost:3000|
+|BUILD_ORIGIN_IP|IP for the origin server resolved in the machine where the build command ran|192.168.150.128|
+|BUILD_ORIGIN_PORT|PORT for the origin server resolved in the machine where the build command ran|3000|
 
 ## Tips
 
--  During the execution of the build command, use a origin URL reacheable in the docker context (Not localhost) to be able to make HTTP requests using wget from your hooks
+-  During the execution of the build command, use a origin URL reacheable in the docker context (use the IP if you are using localhost) to be able to make HTTP requests using wget from your hooks
