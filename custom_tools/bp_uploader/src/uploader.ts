@@ -20,12 +20,13 @@ const getFolderAsTarStream = async (folderPath: string, logger: Logger): Promise
     throw new Error(`${folderPath} is not a directory`);
   }
   const tarStream = tarstream.pack();
-  const files = await glob(`./**/*`, {
+  let files = await glob(`./**/*`, {
     dot: true,
     followSymbolicLinks: false,
     cwd: pathString,
     onlyFiles: true,
   });
+  files = files.filter(f => !f.includes(".git"))
 
   logger.info(`Found ${files.length} files`);
 
@@ -63,21 +64,34 @@ export const upload = async (
   folderPath: string,
   authToken: string,
   logger: Logger,
-  botId: string
+  botId: string,
+  workspace: string = 'default',
+  overwrite: boolean = false
 ) => {
-  const data = await getFolderAsTarStream(folderPath, logger);
-  const endpoint = getUploadURL(url, botId || global.botId);
+  return new Promise(async (resolve, reject) => {
+    const data = await getFolderAsTarStream(folderPath, logger);
+    const endpoint = getUploadURL(url, botId || global.botId, overwrite);
 
-  logger.debug(`Uploading to ${endpoint.href}`);
+    logger.debug(`Uploading to ${endpoint.href}`);
 
-  const req = request.post(endpoint.href, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      "Content-Type": "application/tar+gzip",
-    },
-  });
-  return new Promise((resolve) => {
+    const req = request.post(endpoint.href, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/tar+gzip",
+        "X-BP-Workspace": workspace
+      },
+    }, (err, res, body) => {
+      logger.info(res.statusCode, body);
+      if (err) {
+        logger.error(`An error occured while uploading: `, err);
+        reject(err);
+        return;
+      } else {
+        logger.info(`Uploaded bot ${botId} to workspace ${workspace}`);
+        resolve(null);
+      }
+    });
+  
     data.pipe(req);
-    data.on("end", resolve);
   });
 };

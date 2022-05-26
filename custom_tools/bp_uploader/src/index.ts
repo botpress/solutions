@@ -35,7 +35,14 @@ program
       "Get from bot.config.json file"
     )
   )
-  .option("-i, --ignore", "Ignore file list to read", false)
+  .addOption(
+    new Option("-w, --workspace [workspace_id]", "Workspace to upload the bot to").default(
+      "default"
+    )
+  )
+  .addOption(
+    new Option("-o, --overwrite", "Overwrite the bot if it exists").default(false)
+  )
   .action(async (url, botFolderPath, options) => {
     const { jwt } = auth.getToken(url);
     if (!jwt) {
@@ -44,7 +51,7 @@ program
     }
     log.info(`Uploading ${botFolderPath} to ${url}`);
     try {
-      await upload(url, botFolderPath, jwt, log, options.botId);
+      await upload(url, botFolderPath, jwt, log, options.botId, options.workspace, options.overwrite);
     } catch (err) {
       log.error(`An error occured during bot upload: `, err);
       return;
