@@ -15,6 +15,7 @@ Allows checkboxes to be displayed in a node in the webchat channel so that users
 8. Tweak the question
 9. Tweak the options
 10. Then go to the node where you want the multi-select checkboxes to appear and add action 
+11. Values of what was selected are stored as a comma seperated string in event.payload.text
 
 ## Tip 
 If you want multiple unique multi-selects in your chatbot, duplicate the first action and rename and edit the duplicate for each unique multi-select. 
