@@ -1,3 +1,6 @@
+## About
+Creates a skill that displays as a calendar that users can select a single date or date range from, depending on the skill settings.  
+
 ## How to use
 
 Out of the box, it works for the webchat without additional configuration, but an extra step is needed to make it work on Messenger, included below.
