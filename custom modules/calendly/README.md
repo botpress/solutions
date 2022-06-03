@@ -1,10 +1,16 @@
 # Calendly Module
 
-## About
+Original author: @sadda11asm
 
-This custom module allows Botpress to integrate with Calendly to embed a Calendly widget into the bot message via custom content type.
+Last updated by @sadda11asm on 17 August 2021
+
+## Overview
+This custom module creates a new skill to integrate Botpress with [calendly](https://calendly.com/). The new skill lets users select a date on a calendar UI, then a time, and then pass those values to calendly to make an appointment.
+
+## Use cases:
+1. Empower end users to schedule meetings using your existing calendly solution.
+
 ## How to use
-
 ### 1 - Import the  "calendly.tgz" module in the admin panel
 
 ![image](https://user-images.githubusercontent.com/13484138/120817221-e9b0b300-c527-11eb-8b85-bd57c7258342.png)
@@ -40,4 +46,4 @@ This custom module allows Botpress to integrate with Calendly to embed a Calendl
 ### 9 - Test your Card in action!
 
 ![image](https://user-images.githubusercontent.com/28860442/128021897-70bb0ac7-9444-4f20-993f-72473029bb5a.png)
-
+a
