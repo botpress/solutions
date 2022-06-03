@@ -1,4 +1,4 @@
-# Module / Tool / Solution Title
+# BotKit Migration Tool
 
 Original author: @bassamtantawi-botpress
 
