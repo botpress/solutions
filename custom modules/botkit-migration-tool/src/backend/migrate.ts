@@ -24,9 +24,8 @@ class BotKitTool {
 
   async migrateFlow(flow: string, lang: string) {
     const otherLang = this.availableLangs.filter(e => e !== lang)[0]
-    console.log('other lang', otherLang)
 
-    const variables = []
+    let variables = []
     const contentTxtElements: any = await this.ghostService
       .readFileAsObject('/content-elements', 'builtin_text.json')
       .catch(e => console.log('no builtin_text found'))
@@ -38,24 +37,38 @@ class BotKitTool {
       .catch(e => console.log('no builtin_image found'))
     const filename = flow.replace('.flow.json', '').toLowerCase()
 
-    const flowTemplate = botkitMainFlow.prepareMainFlow
+    const flowTemplate = {
+      id: '6203f536b1489ecf0869dc32',
+      command: '6203f536b1489ecf0869dc32',
+      name: 'se_soigner_quand_on_a_un_rhume_v2',
+      description: 'Se soigner quand on a un rhume -V2',
+      modified: '',
+      'converter-format': '1.0',
+      source: 'Botpress',
+      source_id: '6203f536b1489ecf0869dc32',
+      triggers: [
+        {
+          type: 'string',
+          pattern: '6203f536b1489ecf0869dc32'
+        }
+      ],
+      script: [],
+      variables: []
+    }
     flowTemplate.modified = new Date().toISOString()
     flowTemplate.id = flowTemplate.command = flowTemplate.source_id = flowTemplate.triggers[0].pattern = filename
     flowTemplate.name = filename
     flowTemplate.description = filename
 
-    const botpressFlowFile = await this.ghostService.readFileAsObject('/flows', flow).catch(e => [])
+    const botpressFlowFile: any = await this.ghostService.readFileAsObject('/flows', flow).catch(e => [])
 
-    const globalContainer = helpers.globalContainer
-    globalContainer.fullJSON = botpressFlowFile
-
-    var botNodes = globalContainer.fullJSON.nodes
+    var botNodes = botpressFlowFile.nodes || []
     var newScript = true
     var scriptTemplate
     botNodes.forEach((node, i) => {
       //e438569e096
 
-      console.log(i)
+      //console.log(i, node)
       var id = node.id.substr(node.id.length - 11)
       if (id == 'e438569e096') console.log(i)
 
@@ -93,8 +106,20 @@ class BotKitTool {
           return element.id == 'extended-choice-' + node.id
         })[0]
         var choiceScriptTemplate = JSON.parse(JSON.stringify(botkitMainFlow.prepareSubChoicScript))
-
-        choiceScriptTemplate.text = choice.formData[`text$${lang}`] || choice.formData[`text$${otherLang}`]
+        const choiceTxt = choice.formData[`text$${lang}`] || choice.formData[`text$${otherLang}`]
+        if (choiceTxt) {
+          choiceScriptTemplate.text = [choiceTxt]
+        }
+        const choiceImg = choice.formData[`image$${lang}`] || choice.formData[`image$${otherLang}`]
+        if (choiceImg) {
+          var imageScriptTemplate = JSON.parse(JSON.stringify(botkitMainFlow.prepareSubImageScripts))
+          imageScriptTemplate.attachment.payload.url = choiceImg
+          choiceScriptTemplate = {
+            ...imageScriptTemplate,
+            ...choiceScriptTemplate,
+            text: undefined
+          }
+        }
         var choices = choice.formData[`choices$${lang}`] || choice.formData[`choices$${otherLang}`]
         choiceScriptTemplate.quick_replies = choices.map(choice => {
           return { title: choice.title, payload: choice.title, content_type: 'text' }
@@ -125,7 +150,7 @@ class BotKitTool {
         //add new choices
         scriptTemplate.script.push(choiceScriptTemplate)
         let action = choiceScriptTemplate.collect.options[choiceScriptTemplate.quick_replies.length - 1].action
-        scriptTemplate.script.push({ action })
+        //scriptTemplate.script.push({ action })
         newScript = true
       } else {
         node.onEnter.forEach(txtcontent => {
@@ -152,7 +177,18 @@ class BotKitTool {
             var subScriptTemplate = JSON.parse(JSON.stringify(botkitMainFlow.prepareSubTxtScript))
             var text = content.formData[`text$${lang}`] || content.formData[`text$${otherLang}`]
             subScriptTemplate.text = [text]
-
+            if (node.onReceive) {
+              subScriptTemplate.collect = {
+                key: `response_${content.id}`,
+                options: [
+                  {
+                    default: true,
+                    pattern: 'default',
+                    action: 'next'
+                  }
+                ]
+              }
+            }
             scriptTemplate.script.push(subScriptTemplate)
             if (node.next[0].node == 'END') {
               scriptTemplate.script.push({ action: 'complete' })
@@ -170,10 +206,11 @@ class BotKitTool {
         newScript = true
       }
     })
+
     flowTemplate.script.push(scriptTemplate)
     flowTemplate.variables = variables
 
-    flowTemplate.script.map(el => {
+    /*flowTemplate.script.map(el => {
       //merge choice element with previous element to remove "Choisir..." text element from choices
       const mergedList = el.script.reduce((acc, current) => {
         if (current.quick_replies) {
@@ -188,7 +225,7 @@ class BotKitTool {
 
       el.script = mergedList
       return el
-    })
+    })*/
     return flowTemplate
   }
 }
