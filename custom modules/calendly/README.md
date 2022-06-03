@@ -46,4 +46,4 @@ This custom module creates a new skill to integrate Botpress with [calendly](htt
 ### 9 - Test your Card in action!
 
 ![image](https://user-images.githubusercontent.com/28860442/128021897-70bb0ac7-9444-4f20-993f-72473029bb5a.png)
-a
+
