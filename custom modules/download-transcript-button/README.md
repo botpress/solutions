@@ -1,10 +1,17 @@
-### What it does
+# download-transcript-button
 
-Creates an action that sends a button to the user which downloads the conversation transcript
+Original author: @davidvitora
 
-### How to use
+Last updated by @davidvitora 4 June 2021
 
-1 - Import the module "download-transcript-button.tgz" at the admin panel
+## Overview
+Creates an action that sends a button to the user, which downloads the conversation transcript.
+
+## Use cases:
+Helpful for cases where the chat user would like to refer back to the conversation later, especially if there is a bot to agent handoff. 
+
+## How to use
+1 - Import, the module "download-transcript-button.tgz" at the admin panel
 
 ![image](https://user-images.githubusercontent.com/13484138/120817221-e9b0b300-c527-11eb-8b85-bd57c7258342.png)
 
@@ -32,6 +39,6 @@ Creates an action that sends a button to the user which downloads the conversati
 
 ![image](https://user-images.githubusercontent.com/13484138/120818341-e8cc5100-c528-11eb-91ce-a3d36f906072.png)
 
-In case you want to customize the button appearance, you can you use a custom CSS style to modify the class "CustomDownloadTranscriptButton"
+If you want to customize the button appearance, you can use a custom CSS style to modify the class "CustomDownloadTranscriptButton."
 
 https://botpress.com/docs/channels/web#customizing-web-chat-style
