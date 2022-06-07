@@ -1,8 +1,15 @@
-## About
-Creates a skill that displays as a calendar that users can select a single date or date range from, depending on the skill settings.  
+# Date Picker
+
+Original author: @allardy
+Last updated by @allardy 29 March 2022
+
+## Overview
+Creates a skill that displays as calendar users can select a single date or date range depending on the skill settings.
+
+## Use cases:
+Chat users are scheduling appointments via the bot.
 
 ## How to use
-
 Out of the box, it works for the webchat without additional configuration, but an extra step is needed to make it work on Messenger, included below.
 
 1. Add the module to the server
