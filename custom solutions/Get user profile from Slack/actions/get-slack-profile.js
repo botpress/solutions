@@ -6,6 +6,8 @@ const axios = require('axios')
  * @category Slack
  */
 const extractInfo = async () => {
+  const config = await bp.bots.getBotById(event.botId)
+  const channels = config.messaging.channels
 
   if (event.channel !== 'slack' || !channels || !channels.teams) {
     return
