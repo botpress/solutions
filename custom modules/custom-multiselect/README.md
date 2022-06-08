@@ -2,7 +2,7 @@
 
 Original author: @davidvitora
 
-Last updated by @davidvitora on 15 May 2022
+Last updated by @Gordon-BP on 22 May 2022
 
 ## Overview
 Allows checkboxes to be displayed in a node in the webchat channel so that users can select multiple options. The selections are converted into a text string and are easily accessible via the payload. 
@@ -32,7 +32,7 @@ Allows checkboxes to be displayed in a node in the webchat channel so that users
 ![Uploading Screen Shot 2022-06-03 at 4.18.04 PM.png…]()
 
 8. Tweak the question
-9. Tweak the options
+9. Modify the look & feel of the checkboxes in src/views/lite/components/style.css
 10. Then go to the node where you want the multi-select checkboxes to appear and add action 
 <img width="1204" alt="Screen Shot 2022-06-03 at 4 18 36 PM" src="https://user-images.githubusercontent.com/87815239/171951705-b9a42a7c-2d7b-44d6-a9f7-5b5026a4d346.png">
 <img width="1205" alt="Screen Shot 2022-06-03 at 4 18 50 PM" src="https://user-images.githubusercontent.com/87815239/171951721-4164f125-d163-4029-8dc9-623e071a6dc9.png">
