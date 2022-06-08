@@ -1,85 +1,46 @@
 # Create Dynamic Choices (Basic)
 
-## How-to
+Original author: @laurentlp
 
-### Create an Action
+Last updated by @Gordon-BP on 8 June 2022
 
-The easiest way to create a dynamic single-choice is to use a custom action.
+## Overview
+The easiest way to create a dynamic single-choice is to use a custom action that fetches the data, processes it, and renders the single choice element.
 
-![Image1](Images/image1.png)
+## Use cases:
+This action is great for providing simple, dynamic choices to the user, especially in cases like:
+* Choosing available dates
+* Selecting group within an organization
+* Indicating a preferred contact method from the user's account
 
-First, we need to render a built-in single-choice using `bp.cms.renderElement`. Then we need to reply to the chat event using that rendered payload.
+## How to use
+1. Copy the file `basic-dynamic-choice.js` to your bot.
+2.  Create a new node and add the action to it. In the `quantity` parameter, specify how many choices you want (maximum of 10)
 
-Modify the code below to generate the desired single-choice:
+<img width="904" alt="image" src="https://user-images.githubusercontent.com/77560236/172681269-b1aa4ff5-3774-42c1-833d-bbb600f68634.png">
 
-```javascript
-/**
- * Create and send a dynamic single-choice
- * @title Dynamic Single-Choice
- * @category Custom
- * @author Botpress
- */
-const dynamicSingleChoice = async () => {
-  const payloads = await bp.cms.renderElement(
-    "builtin_single-choice",
-    {
-      text: "Answer This",
-      typing: true,
-      choices: [
-        { title: "Test1", value: "Value1" },
-        { title: "Test2", value: "Value2" },
-        { title: "Test3", value: "Value3" },
-        { title: "Test4", value: "Value4" },
-      ],
-    },
-    event
-  );
+3. Make sure you tell the bot to wait for a user response after sending the skill!
 
-  bp.events.replyToEvent(
-    {
-      botId: event.botId,
-      channel: event.channel,
-      target: event.target,
-      threadId: event.threadId,
-    },
-    payloads,
-    event.id
-  );
-};
 
-return dynamicSingleChoice();
-```
+### Configurations to change:
 
-### Call the Action
+By default, the action gets random numbers from random.org. You should replace this with your desired method of fetching data.
 
-To use the action, we need to call it inside a standard node. The **selected value**, can be accessed with `event.payload.payload` and the **selected text** is available with `event.payload.text`, if needed.
+<img width="812" alt="image" src="https://user-images.githubusercontent.com/77560236/172681550-5789b58e-577f-4178-ba77-ccddfc263e31.png">
 
-![Image2](Images/image2.png)
 
-For this to work, we also need to wait for the user input before transitioning to the next node:
+To change the message shown before the buttons, modify what's in the `text` field on line 25. **Note:** this field cannot be blank.
 
-![Image3](Images/image3.png)
+<img width="285" alt="image" src="https://user-images.githubusercontent.com/77560236/172681666-7073e626-a43f-4b9a-9e47-fce4512cd4d8.png">
 
-We can also store the chosen value in a variable before evaluating it:
 
-![Image4](Images/image4.png)
+To modify the button labels, change the `title` parameter on line 19 to a different string.
 
-Below, we are storing it as a session variable to access it later:
+<img width="405" alt="image" src="https://user-images.githubusercontent.com/77560236/172681781-3f8c635e-9117-47e3-9271-3b492afc38c1.png">
 
-![Image5](Images/image5.png)
-
-![Image6](Images/image6.png)
-
-## Example Bot
-
-[Example Bot](Bot/bot_dynamic-choice-skill-example_1620996642495.tgz)
-
-## Caveats:
-
-If the user types a text instead of selecting a value, we won't be able to match it with a choice. To prevent errors, you can try to access it only if `event.payload` is valid, like below:
-
-![Image7](Images/image7.png)
-
-Another alternative is to disable the text input when options are displayed using the `disableFreeText` option inside the action.
-
-![Image8](Images/image8.png)
+## Basic or Advanced?
+Use the advanced example if you need the choice skill to...
+* Accept input from both buttons or free text
+* Validate user free text input with the available choices
+* Fuzzy match user input with a known list of synonyms
+* Store the user's choice in flow memory
