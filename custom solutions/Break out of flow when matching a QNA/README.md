@@ -8,21 +8,15 @@ Last updated by @allardy on 28 March 2022
 By default, QnAs are only answered when the user is outside of a flow in Botpress. This hook changes that behavior to make a bot answer a QnA no matter where the user is. The hook also adds options to exempt or restrict this behavior to certain flow or certain skills.
 
 ## Use cases:
-Use this hook when you want your bot to always answer every QnA during the conversation. This can be especially useful for voice bots or bots that ask the user to do a complex task, for example:
+Use this hook when you want your bot to always answer every QnA during the conversation. This can be especially useful for voice bots or bots that ask the user to do a complex task, for example, if a bot has a QnA about Quebec's holidays and a flow that looks like this, user interaction might look like:
 
-👨: "How do I restart my modem?" // This triggers an intent
+<img width="1235" alt="image" src="https://user-images.githubusercontent.com/77560236/172644624-b7cb65ab-915a-4704-8214-7f43dbdb1cde.png">
 
-🤖: "What is your modem's 8-digit product number?"
+But with this hook, the interaction will look like:
 
-👨: "Where do I find the product number?" //This triggers a QnA
+<img width="1233" alt="image" src="https://user-images.githubusercontent.com/77560236/172644751-1e20fdb2-b92f-4eba-8628-5f7392ef0eb2.png">
 
-🤖: "The product number is usually on a square sticker on the bottom of the modem." // QnA answer pt 1
-
-🤖: "It is 8 digits long and typically starts with the letter M" // QnA answer pt 2
-
-🤖: "What is your modem's 8-digit product number?" // Executes the flow's node again
-
-👨: "M1234567"
+Before using this hook, make sure that you're using best practices in regards to balancing intents, flows, and QnAs within a bot. Most of the time a developer should end a flow after a prompt instead of enabling this hook- see [this post for more informaiton](https://github.com/botpress/botpress/discussions/11816#discussioncomment-2783867) about how to balance intents and QnAs whithin a bot.
 
 ## How to use
 1. Create a new `before_suggestions_election` hook.
