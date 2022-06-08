@@ -1,30 +1,48 @@
 # Set Nested Value
 
-This action will allow you to change or set the value of a nested field. For example, if you have:
+Original author: @ptrckbp
+
+Last updated by @ptrckbp on 4 June 2022
+
+## Overview
+This custom action extends the builtin `set-variable` action to enable developers to add and modify nth-level fields within an object.
+
+## Use cases:
+Imagine you have an object like:
 ```
 temp:{
   data:{
-    response:{
-      field1: "foo"
-      }
-   }
+    resources:{
+      field1: "Foo"
+    }
+  }
 }
 ```
-and you want to change the value of `field1` to "bar", you cannot use the builtin `Set Value` function. Instead, you'll need to call this custom action with the following parameters:
 
-Scope: temp
-
-Key: data.response.field1
-
-Value: bar
-
-Then the object will look like:
+and you want to change it to:
 ```
 temp:{
   data:{
-    response:{
-      field1: "bar"
-      }
-   }
+    resources:{
+      field1: "Bar"
+    }
+  }
 }
 ```
+
+Just run this action with the following parameters:
+
+<img width="671" alt="image" src="https://user-images.githubusercontent.com/77560236/172642372-723a9d46-609a-4e59-8aad-50f8412e7b7b.png">
+
+## How to use
+1. Create a node and add this action to it.
+2. Fill out parameters as desired:
+
+    **Scope:** Either `user`, `session`, or `temp`
+
+    **Key:** The path to the field, separated by periods (".")
+
+    **Value:** The end value to set the field to
+
+### Note:
+This action will create any fields or object levels that don't exist. If no value is specified, the field will be undefined.
