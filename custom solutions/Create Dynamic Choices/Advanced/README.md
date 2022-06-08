@@ -52,12 +52,19 @@ This advanced example will help if the choice skill needs to do more complex act
 ### Extra Configurations:
 
   **Disable Free Text**:
-    Change line 49 to `True`
+    Change line 49 to `True`.
     
   <img width="267" alt="image" src="https://user-images.githubusercontent.com/77560236/172709431-16582c33-e9ce-40bf-b651-6bdfcea84eb3.png">
 
   **Change the prompt**:
-    Change line 46 to your desired prompt
+    Change line 46 to your desired prompt.
     
   <img width="268" alt="image" src="https://user-images.githubusercontent.com/77560236/172709587-2a5f599d-4e26-4a53-a717-e6ab2c579201.png">
+  
+  
+  **Change btton labels**:
+   Modify the value in the `title` field on line 38.
+  
+  <img width="723" alt="image" src="https://user-images.githubusercontent.com/77560236/172710862-38fd1532-adce-4163-930f-d313049d12a2.png">
+
 
