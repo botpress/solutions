@@ -1,4 +1,4 @@
-# Create Dynamic Carousel
+# Dynamically Generate Carousel
 
 Original author: @yallard
 
@@ -14,8 +14,9 @@ Displaying data arrays as carousels is a useful tool that can be used for things
 * Display different products that a user has access to
 
 ## How to use
-1. Create a new node and add this action to it.
-2. For quantity, enter the number of cards you would like the carousel to render.
+1. Copy the code from `send-carousel.js` into a new action on your bot.
+2. Create a new node and add this action to it.
+3. For quantity, enter the number of cards you would like the carousel to render.
 
 <img width="686" alt="image" src="https://user-images.githubusercontent.com/77560236/172664640-d5cd6153-d157-4fb4-98c5-3212c494f48f.png">
 
