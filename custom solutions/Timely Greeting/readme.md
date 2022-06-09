@@ -16,8 +16,8 @@ A bot that can say "Good morning" in the morning and "Good evening" at night is 
 
 <img width="654" alt="image" src="https://user-images.githubusercontent.com/77560236/161613469-eff17516-518f-40f2-9daa-6f5d1c9fe161.png">
 
-- **Free text** like "good morning" will be passed directly to the user as written. Markdown and variables will **not** be rendered.
-- **Content element IDs** like `builtin_text-wofnSd` will have the bot render the specified content element, be it text, image, card, etc. Markdown and variables **will be rendered** if they are in the content element.
+- **Free text** like "Good morning {{user.name}}" will be rendered and passed to the user. Markdown and variables can be rendered.
+- **Content element IDs** like `builtin_text-wofnSd` will have the bot render the specified content element, be it text, image, card, etc. Markdown and variables can be rendered.
 - **Blank parameters** will have the default values "Good morning," "Good afternoon," and "Good evening."
 
 ### Extra configurations
