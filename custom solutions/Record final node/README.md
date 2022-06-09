@@ -29,5 +29,5 @@ Because a new table is added, additional considerations will be needed when migr
 
 ## How to use
 1. Copy/paste `record-final-node.js` as a `Before_Session_Timeout` hook
-2. Copy/past `createDropoutTable.js` as an `After_Server_start` hook
+2. Copy/paste `createDropoutTable.js` as an `After_Server_start` hook
 3. Restart your Botpress server for changes to take effect
