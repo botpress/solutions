@@ -29,6 +29,11 @@ This advanced example will help if the choice skill needs to do more complex act
   **variableName**:
     What to name the field in flow memory that contains the value of the user-selected choice
 
+### Important notes:
+* This action **must** be the last thing in the `onEnter` tab. If any other elements or actions come after it, the choices will not render.
+* It's critically important to **wait for user input** after sending this action. If the `process dynamic option` action is in the `onReceive` tab, the node will wait for user input; otherwise you **must check the box to wait for user input**!
+
+
  3. In the OnReceive tab, add the `process dynamic option` action. For the `variableName` parameter, make sure it is the same as the one entered in the previous action.
 
 <img width="670" alt="image" src="https://user-images.githubusercontent.com/77560236/172689933-fa691507-0dab-4e97-8ce0-19a4aff3a65c.png">
@@ -37,6 +42,7 @@ This advanced example will help if the choice skill needs to do more complex act
 
 <img width="469" alt="image" src="https://user-images.githubusercontent.com/77560236/172690023-063111e4-9ff7-4351-b1b3-17dae069d1ea.png">
 
+### Transition examples:
   **event.nlu.intent.name**:
     If you want this dynamic menu to evalutate free text input for intents, listen for your intents first in the transtition pipeine.
     
