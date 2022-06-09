@@ -19,7 +19,10 @@ This action is great for providing simple, dynamic choices to the user, especial
 
 <img width="904" alt="image" src="https://user-images.githubusercontent.com/77560236/172681269-b1aa4ff5-3774-42c1-833d-bbb600f68634.png">
 
-3. Make sure you tell the bot to wait for a user response after sending the skill!
+### Important Notes:
+
+* This action needs to be the last thing in the `onEnter` tab. If you put anything after it, the choices will not render.
+* The checkbox to "Wait for user input" **must be checked**, otherwise the choices won't be rendered.
 
 
 ### Configurations to change:
