@@ -30,6 +30,6 @@ Use this action to help add variety to your bot by adding features like:
 
 ### Extra configurations
 
-If the variable doesn't exist, it will be created with a value of zero. You can change this default value by modifying `DEFAULT_VALUE` on line 14
+If the variable doesn't exist, it will be created with a value of zero. You can change this default value by modifying `DEFAULT_VALUE` on line 10.
 
 <img width="272" alt="image" src="https://user-images.githubusercontent.com/77560236/173085509-daf3fbbf-85e1-4456-9a60-9de449ffcf2b.png">
