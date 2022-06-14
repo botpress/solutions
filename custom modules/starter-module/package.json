@@ -1,0 +1,16 @@
+{
+  "name": "starter-module",
+  "version": "1.0.0",
+  "description": "Some description on what this module is about",
+  "private": true,
+  "main": "dist/backend/index.js",
+  "author": "Botpress, Inc.",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "dockerBuild": "sudo docker run -v \"$PWD:/botpress/modules/custom_module\" --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'",
+    "build": "node ../../build/module-builder/bin/entry build",
+    "watch": "node ../../build/module-builder/bin/entry watch",
+    "package": "node ../../build/module-builder/bin/entry package"
+  },
+  "dependencies": {}
+}
