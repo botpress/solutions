@@ -1,32 +1,34 @@
+# Starter Module
+
+Last updated by @ptrckbp on June 15th 2022
+
+## Use cases:
+1. You want to add hooks to your bots
+2. You want to add reusible code to your bot editor
+3. You want to update the Botpress bot building experience.
+
 ## Overview
 
 This example includes a lot of "boilerplate" to create a module with almost all features you can implement from the documentation
-Please check the [official documentation](https://botpress.com/docs/developers/create-module/) for more information
+Please check the [official documentation](https://botpress.com/docs/building-chatbots/developers/custom-modules) for more information
 
-## Quick Start
+## How to use
 
-1. Copy this folder to a dev folder.
+1. Clone this repo, the copy this folder to a dev folder.
 2. Make your changes in the code.
-3. Build using npm docker build. The build will be name "YOUR_PACKAGE_NAME.tgz" and be located in the root folder.
-4. Open Botpress.
-5. Go to the modules page.
-6. Click Upload Modules. Select and submit the tgz file.
-7. Click "Restart Server Now"
-8. In the modules page, click unpack now next to your module's name.
+3. To rename the package, change the folder name, the name field in [src/backend/index.ts](src/backend/index.ts) and the name field in [src/backend/index.ts](src/backend/index.ts)
+4. Build using the following command. The build will be named "YOUR_PACKAGE_NAME.tgz" where YOUR_PACKAGE_NAME is the name you chose in the previous step and be located in the root folder.
+```
+sudo docker run -v PATH_TO_CURRENT_DIR:/botpress/modules/custom_module --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
+```
+5. Open Botpress.
+6. Go to the modules page.
+7. Click Upload Modules. Select and submit the tgz file.
+8. Click "Restart Server Now"
+9. In the modules page, click unpack now next to your module's name.
 9. Go back up to the list of Stable modules, and activate it by clicking the toggle next to the module's name.
 10. Start editing a chatbot. notice the flag icon for the custom module.
 
 
-## Docs and references 
 
-Tips : 
-If you can, make your changes in a Botpress Bot, then migrate them to the correct files in this starter-module, and build once. 
-
-If you are looking for making a lot of changes and checking them often, we recommend you clone botpress/botpress, and use the commands in the documentations below to start a watcher. You will still need to restart the botpress server on every change. 
-
-[Documentation](https://botpress.com/docs/building-chatbots/developers/custom-modules)
-
-[Video series](https://botpress.com/docs/building-chatbots/developers/custom-modules)
-
-## Including it with your Deployment. 
 
