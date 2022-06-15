@@ -27,7 +27,7 @@ const botTemplates: sdk.BotTemplate[] = [{ id: 'my_bot_demo', name: 'Bot Demo', 
 
 /**
  * Skills allows you to create custom logic and use them easily on the flow editor
- * Check this link for more information: https://botpress.com/docs/developers/create-module/#skill-creation
+ * Check this link for more information: https://botpress.com/docs/building-chatbots/developers/custom-modules#skills
  */
 const skills: sdk.Skill[] = []
 
