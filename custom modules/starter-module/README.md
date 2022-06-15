@@ -30,5 +30,12 @@ sudo docker run -v PATH_TO_CURRENT_DIR:/botpress/modules/custom_module --rm ghcr
 10. Start editing a chatbot. notice the flag icon for the custom module.
 
 
-
+### Unofficial Video Series
+1) [Module Structure](https://share.descript.com/view/F7HWNQVbpEX)
+2) [Creating a new module](https://share.descript.com/view/t5iYzfqHrJu)
+3) [Backend, API and database](https://share.descript.com/view/C6uaCVLx5wI)
+4) [Module Views](https://share.descript.com/view/5FdZBxlzrEe)
+5) [Custom Content Types](https://share.descript.com/view/Bz382dj6EFG)
+6) [Custom Skills](https://share.descript.com/view/dDOkVlvTaoT)
+7) [Bot Templates](https://share.descript.com/view/b6OAuV8C86E)
 
