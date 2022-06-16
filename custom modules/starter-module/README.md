@@ -14,13 +14,19 @@ Please check the [official documentation](https://botpress.com/docs/building-cha
 
 ## How to use
 
-1. Clone this repo, the copy this folder to a dev folder.
+1. Clone this repo, then copy this folder to a dev folder.
 2. Make your changes in the code.
 3. To rename the package, change the folder name, the name field in [src/backend/index.ts](src/backend/index.ts) and the name field in [src/backend/index.ts](src/backend/index.ts)
 4. Build using the following command. The build will be named "YOUR_PACKAGE_NAME.tgz" where YOUR_PACKAGE_NAME is the name you chose in the previous step and be located in the root folder.
 ```
-sudo docker run -v PATH_TO_CURRENT_DIR:/botpress/modules/custom_module --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
+sudo docker run -v 'PATH_TO_CURRENT_DIR:/botpress/modules/custom_module' --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
 ```
+![image](https://user-images.githubusercontent.com/13484138/174085596-2b0b1c74-8f91-4bb9-999a-2380107bac90.png)
+
+4.1. After executing the command, the packaged module (in this case starter-module.tgz) will appear in the folder from the module
+![image](https://user-images.githubusercontent.com/13484138/174085152-4672e159-2b82-419a-b33f-ad72f7a7cf7a.png)
+
+
 5. Open Botpress.
 6. Go to the modules page.
 7. Click Upload Modules. Select and submit the tgz file.![](1.png)
