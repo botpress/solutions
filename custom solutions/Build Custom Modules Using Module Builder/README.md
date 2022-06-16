@@ -16,8 +16,13 @@ If you have a relatively straightforward change you would like to make, and you 
 3. Make changes to the code you are seeking. See the [documentation](https://botpress.com/docs/building-chatbots/developers/custom-modules) for more details.  
 4. run the following command 
 ```
-sudo docker run -v PATH_TO_CURRENT_DIR:/botpress/modules/custom_module --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
+sudo docker run -v 'PATH_TO_CURRENT_DIR:/botpress/modules/custom_module' --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
 ```
+![image](https://user-images.githubusercontent.com/13484138/174085596-2b0b1c74-8f91-4bb9-999a-2380107bac90.png)
+
+4.1. After executing the command, the packaged module (in this case starter-module.tgz) will appear in the folder from the module
+![image](https://user-images.githubusercontent.com/13484138/174085152-4672e159-2b82-419a-b33f-ad72f7a7cf7a.png)
+
 5. The build will be named "YOUR_PACKAGE_NAME.tgz" where YOUR_PACKAGE_NAME is the name of your package (found in package.json and src/backend/index.ts) and be located in the root folder. 
 6. Open Botpress and go to the Modules page
 7. Click Upload Modules. Select and submit the tgz file.![](1.png)
