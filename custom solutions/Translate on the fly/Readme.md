@@ -113,7 +113,7 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 2. Add the file `translate-user-messages.js` as a `before_incoming_middleware` hook
 3. Add the file `translate-bot-messages.js` as a `before_outgoing_middleware` hook
 4. Register with your preferred machine translation service:
-5. Add your translation service endpoint and API token to your bot's `bot.config.json` file. Follow the instructions for your preferred translation API above.
+5. Add your translation service endpoint and API token to your bot's `bot.config.json` file. Follow the instructions for your preferred translation API above and use the provided `bot.config.json` as an example.
 6. Change the code to call your preferred translation service:
 * In `translate-user-messages.js`, change lines 121 and 132
 
