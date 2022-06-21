@@ -144,9 +144,9 @@
      * Google Translate-
      *  await translateGoogle(userText, config.endpoint, config.token, lang)
      */
-    await translateGoogle(sourceArr.join('+?'), config.endpoint, config.token, lang).then(translatedText => {
+    await translateGoogle(sourceArr.join('+'), config.endpoint, config.token, lang).then(translatedText => {
       bp.logger.info(translatedText)
-      let translatedArr = decodeURIComponent(translatedText).split('+?') ? translatedText.split('+?') : [translatedText]
+      let translatedArr = decodeURIComponent(translatedText).split('+') ? translatedText.split('+') : [translatedText]
       if (event.payload.text && translatedArr.length > 0) {
         event.payload.text = translatedArr.shift()
       }
