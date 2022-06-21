@@ -5,7 +5,7 @@ Original author: @Gordon-BP
 Last updated by @Gordon-BP on 21 June 2022
 
 ## Overview
-These two hooks enable a bot to become multilingual by translating user and bot messages on the fly using a translation SaaS like DeepL or a huggingface translation model. The on the fly translation empowers developers to build a bot in a single language (like English) but enables the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
+These two hooks enable a multilingual bot by translating user and bot messages on the fly using a translation SaaS  or a huggingface translation model. The on the fly translation empowers developers to build a bot in a single language but enables the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
 
 For a bot trained in English:
 1. User says to bot "Bonjour, comment allez-vous?"
@@ -63,11 +63,11 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 
 <img width="722" alt="image" src="https://user-images.githubusercontent.com/77560236/174851790-a56a9826-d5b7-4531-b488-b233cedf32d5.png">
 
-### DeepL
+### DeepL API
 **Website:** https://www.deepl.com/translator
 
 **Pros:**
-- Free tier allows up to 500,000 chars/month
+- Free tier allows up to 500,000 chars per month
 - Translations are fast and accurate
 - Auto language detection
 
@@ -77,7 +77,7 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 - DeepL only supports about 30 languages 
 
 **How to get your API key**
-1. If you do not already have an account, [create a DeepL account here]((https://www.deepl.com/pro-checkout/account)
+1. If you do not already have an account, [create a DeepL account here](https://www.deepl.com/pro-checkout/account)
 2. Enter valid credit card details
 3. Once you have your account, go to [your account summary](https://www.deepl.com/account/summary) and scroll down to find your API key.
 4. Copy this API key as the value for `token` in your bot's `bot.config.json` file. The endpoint for DeepL free API will **always be** `https://api-free.deepl.com/v2/translate`
