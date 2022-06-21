@@ -15,6 +15,15 @@ For a bot trained in English:
 5. The "translate-bot-message.js" hook changes the response to "Je vais bien, merci."
 6. Bot says to user "Je vais bien, merci."
 
+### These conversations are all with the same bot!
+
+<img width="281" alt="image" src="https://user-images.githubusercontent.com/77560236/174856896-c8b1d6a5-195a-4d7e-b96c-a5b8554f0dc4.png"> <img width="283" alt="image" src="https://user-images.githubusercontent.com/77560236/174856663-7e27bd25-218c-44a9-89f8-4ef35f38826b.png"> <img width="279" alt="image" src="https://user-images.githubusercontent.com/77560236/174856728-17873695-c958-421d-a52f-bacc377a5c78.png">
+
+**Bot flow:**
+
+<img width="785" alt="image" src="https://user-images.githubusercontent.com/77560236/174856234-1d96b2b9-7c29-433b-82e3-09b3c2edb8b9.png">
+
+
 ## Use cases:
 There are many advantages to using these hooks over developing a multilingual bot the traditional way:
 * Bot content is easier to manage in one language
