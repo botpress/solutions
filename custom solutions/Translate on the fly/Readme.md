@@ -75,7 +75,29 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 
 <img width="442" alt="image" src="https://user-images.githubusercontent.com/77560236/174853147-4a2dcf32-f518-400b-93bc-94d3fbb2aea6.png">
 
+### Google Cloud Translate API
+**Website:** https://cloud.google.com/translate
 
+**Pros:**
+- $300 credit when you register a new account
+- Auto-detects languages
+- Largest language availability
+
+**Cons:**
+- Credit card required
+- No free tier
+
+**How to get your API key**
+1. If you have not already created a Google cloud account, create one and [go to your console](https://console.cloud.google.com/translation/dashboard)
+2. Under APIs and services, find Cloud Translation API [or click here](https://console.cloud.google.com/apis/api/translate.googleapis.com/overview), and enable the API.
+3. On the credentials tab, click "Create Credentials" and select "API Key"
+
+<img width="1415" alt="image" src="https://user-images.githubusercontent.com/77560236/174854252-ad9b068a-ff6d-42a9-b792-ddb35ccb61ff.png">
+
+
+4. Copy this API key as the value for `token` in your bot's `bot.config.json` file. The endpoint for Cloud Translation API will **always be** `https://translation.googleapis.com/language/translate/v2`
+
+<img width="584" alt="image" src="https://user-images.githubusercontent.com/77560236/174854562-9e1aab0c-f04a-413d-ac15-27fae8ce7379.png">
 
 ## How to use
 1. Create your bot in a single language
@@ -83,10 +105,21 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 3. Add the file `translate-bot-messages.js` as a `before_outgoing_middleware` hook
 4. Register with your preferred machine translation service:
 5. Add your translation service endpoint and API token to your bot's `bot.config.json` file. Follow the instructions for your preferred translation API above.
+6. Change the code to call your preferred translation service:
+* In `translate-user-messages.js`, change lines 121 and 132
+
+<img width="738" alt="image" src="https://user-images.githubusercontent.com/77560236/174854935-20413498-44cd-456e-bd1e-3ea8f9c0674a.png">
 
 
-## Guidelines (Remove before posting)
-1. Ensure a non-technical reader can get a basic understanding of the tool / module / solution from reading this file
-2. Installation instructions should be easy to follow
-3. Please add as many screenshots as posssible! 1 picture == 1000 words
-4. Run **all** writeups through [grammarly](https://demo.grammarly.com/)
+<img width="727" alt="image" src="https://user-images.githubusercontent.com/77560236/174854969-4007cfe3-475e-411a-86c8-d59ac4487dd9.png">
+
+* In `translate-bot-messages.js` change lines 116 and 150
+
+<img width="724" alt="image" src="https://user-images.githubusercontent.com/77560236/174855134-87cf093a-ee89-422f-a5f4-05c730bb6964.png">
+
+
+<img width="670" alt="image" src="https://user-images.githubusercontent.com/77560236/174855174-ee063cee-f2b9-4da5-a962-ea5ca461f98f.png">
+
+For example, if you want to use huggingface instead of google, change `getConfig('google')` to `getConfig('huggingface_fr_en')` and `await translateGoogle(...)` to `await translateHuggingface(...)`
+
+7. Test your bot by sending it messages in different languages! DeepL and Google translate will auto-detect the language and respond in the same language as the user's message; Huggingface models vary by model.
