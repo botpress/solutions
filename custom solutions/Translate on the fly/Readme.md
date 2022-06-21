@@ -1,4 +1,4 @@
-# Real-time 3rd-party translations
+# Third-party translations
 
 Original author: @Gordon-BP
 
