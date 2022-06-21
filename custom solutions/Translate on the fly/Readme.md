@@ -5,7 +5,7 @@ Original author: @Gordon-BP
 Last updated by @Gordon-BP on 21 June 2022
 
 ## Overview
-These two hooks enable a bot to become multilingual by translating user and bot messages on the fly using a translation SaaS like DeepL or a huggingface translation model. The on the fly translation empowers developers to build a bot in a single language (like English) but enable the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
+These two hooks enable a bot to become multilingual by translating user and bot messages on the fly using a translation SaaS like DeepL or a huggingface translation model. The on the fly translation empowers developers to build a bot in a single language (like English) but enables the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
 
 For a bot trained in English:
 1. User says to bot "Bonjour, comment allez-vous?"
@@ -35,7 +35,7 @@ However, it's important to consider the drawbacks:
 * Additional API calls can slow down your bot's reply times
 
 ## Translation Services
-These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggingface model for translation services. You can use one or a combination of these services, as they each have their own pros and cons:
+These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggingface model for translation services. You can use one or a combination of these services, as they each have their pros and cons:
 
 ### Huggingface
 **Website:** https://huggingface.co/
@@ -47,7 +47,7 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 
 **Cons:**
 - Free tier is limited to 30,000 chars per month
-- Language availbility varies by model
+- Language availability varies by model
 - Additional model needed for language detection
 
 **How to get your API key**
@@ -57,7 +57,7 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 
 <img width="578" alt="image" src="https://user-images.githubusercontent.com/77560236/174850894-36ef20c7-3ce2-45b6-8aff-8655f75f154c.png">
 
-4. Copy the endpoint and credentials to your `bot.config.json` file. The API_URL should be put under `endpoint`. Check the box to show the API key anc copy this to `token`.
+4. Copy the endpoint and credentials to your `bot.config.json` file. The API_URL should be put under `endpoint`. Check the box to show the API key and copy this to `token`.
 
 <img width="877" alt="image" src="https://user-images.githubusercontent.com/77560236/174851199-2bc47540-b3db-413e-b93a-a932c54e4f08.png">
 
@@ -98,7 +98,7 @@ These hooks are configured to use DeepL, Google Cloud Translate API, or a Huggin
 
 **How to get your API key**
 1. If you have not already created a Google cloud account, create one and [go to your console](https://console.cloud.google.com/translation/dashboard)
-2. Under APIs and services, find Cloud Translation API [or click here](https://console.cloud.google.com/apis/api/translate.googleapis.com/overview), and enable the API.
+2. Under APIs and services, find Cloud Translation API [or click here](https://console.cloud.google.com/apis/api/translate.googleapis.com/overview) and enable the API.
 3. On the credentials tab, click "Create Credentials" and select "API Key"
 
 <img width="1415" alt="image" src="https://user-images.githubusercontent.com/77560236/174854252-ad9b068a-ff6d-42a9-b792-ddb35ccb61ff.png">
