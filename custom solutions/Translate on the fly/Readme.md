@@ -1,11 +1,11 @@
-# Translate on the fly
+# Real-time 3rd-party translations
 
 Original author: @Gordon-BP
 
 Last updated by @Gordon-BP on 21 June 2022
 
 ## Overview
-These two hooks enable a multilingual bot by translating user and bot messages on the fly using a translation SaaS  or a huggingface translation model. The on the fly translation empowers developers to build a bot in a single language but enables the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
+These two hooks enable a multilingual bot by translating user and bot messages with a translation SaaS or huggingface translation model. The on-the-fly translation empowers developers to build a bot in a single language while enabling the bot to speak other languages without providing translations or training another NLU model. A bot with these hooks will work as follows:
 
 For a bot trained in English:
 1. User says to bot "Bonjour, comment allez-vous?"
