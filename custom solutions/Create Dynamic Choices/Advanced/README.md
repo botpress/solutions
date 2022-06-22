@@ -1,151 +1,76 @@
-# Create Dynamic Choices (Advanced)
+# Advanced Dynamic Choice
 
-## What it does
+Original author: @laurentlp
 
-This document is a continuation of [Create Dynamic Choices (Basic)](../Basic/README.md). The intent is to add a little bit more functionality to the Choice Flow.
+Last updated by @Gordon-BP on 8 June 2022
 
-**We are going to add four functionalities:**
+## Overview
+This example shows how to create and render a dynamic choice skill and outlines additional configurable options.
 
-1. Text Input Detection
-2. Synonyms
-3. Automatic Variable Storing
-4. Invalidity indicator variable
+<img width="689" alt="image" src="https://user-images.githubusercontent.com/77560236/172688485-8cc6fb2c-a423-4030-88db-09278a518d10.png">
 
-**To archive this, we need to:**
+## Use cases:
+This advanced example will help if the choice skill needs to do more complex actions like:
+* Accept input from both buttons or free text
+* Validate user free text input with the available choices
+* Fuzzy match user input with a known list of synonyms
+* Store the user's choice in flow memory
 
-1. Pass a variable name as an argument to our previous action.
-2. Store the available choices and synonyms as a temporary variable.
-3. Post-process the choice in a new action using the stored choices and user input.
+## How to use
+1. Add both `advanced-dynamic-choice.js` and `process-dynamic-option.js` as actions in your bot.
+2. Create a new node and add the `advanced dynamic choice` action in the OnEnter tab, and set the parameters as desired:
 
-## How-to
+<img width="670" alt="image" src="https://user-images.githubusercontent.com/77560236/172689677-33714484-29c3-4096-a928-95d0b1a26805.png">
 
-**To do so, we need to:**
 
-1. Change the content of the `showDynamicChoice` action from this:
+  **quantity**:
+    How many buttons you want to show
 
-![Image1](Images/image1.png)
+  **variableName**:
+    What to name the field in flow memory that contains the value of the user-selected choice
 
-to this:
+### Important notes:
+* This action **must** be the last thing in the `onEnter` tab. If any other elements or actions come after it, the choices will not render.
+* It's critically important to **wait for user input** after sending this action. If the `process dynamic option` action is in the `onReceive` tab, the node will wait for user input; otherwise you **must check the box to wait for user input**!
 
-```javascript
-/**
- * Show dynamic options created
- * @title Show dynamic options
- * @category Custom
- * @author Botpress
- * @param {string} variableName - Name of the variable to store choice information
- */
-const myAction = async variableName => {
-  // Create a choice array with the title, value and synonyms array
-  const choices = [
-    { title: 'Test1', value: 'Value1', synonyms: ['Value1.1', 'Value1.2', 'Value1.3'] },
-    { title: 'Test2', value: 'Value2', synonyms: ['Value2.1', 'Value2.2', 'Value2.3'] },
-    { title: 'Test3', value: 'Value3' },
-    { title: 'Test4', value: 'Value4' }
-  ]
 
-  //These options will appear to the user
-  const payloads = await bp.cms.renderElement(
-    'builtin_single-choice',
-    {
-      text: 'Answer This',
-      typing: true,
-      payload:
-    },
-    event
-  )
+ 3. In the OnReceive tab, add the `process dynamic option` action. For the `variableName` parameter, make sure it is the same as the one entered in the previous action.
 
-  // Create temporary variables for the choices(all)
-  if (!temp.choice) {
-    temp.choice = {}
-  }
-  // Create temporary variables for our choice
-  if (!temp.choice[variableName]) {
-    temp.choice[variableName] = {}
-  }
+<img width="670" alt="image" src="https://user-images.githubusercontent.com/77560236/172689933-fa691507-0dab-4e97-8ce0-19a4aff3a65c.png">
 
-  // Save choices to process it in the future
-  temp.choice[variableName].choices = choices
+4. Add your transitions:
 
-  bp.events.replyToEvent(
-    {
-      botId: event.botId,
-      channel: event.channel,
-      target: event.target,
-      threadId: event.threadId
-    },
-    payloads,
-    event.id
-  )
-}
+<img width="469" alt="image" src="https://user-images.githubusercontent.com/77560236/172690023-063111e4-9ff7-4351-b1b3-17dae069d1ea.png">
 
-return myAction(args.variableName)
-```
+### Transition examples:
+  **event.nlu.intent.name**:
+    If you want this dynamic menu to evalutate free text input for intents, listen for your intents first in the transtition pipeine.
+    
+  **temp.choice.variableName.value**:
+    Replace `variableName` with the name used in the previous steps. If value is set, that means that the user selected a valid choice by either clicking the button or typing in the value or synonym. To transition based on the specific value chosen, change the expression to be `temp.choice.variableName.value === yourValue`
+    
+  **temp.choice.invalid**:
+    This will be `True` if the user's free text input doesn't match up with any of the choices or synonyms.
+  
+  **otherwise**:
+    If there's an error in either of the two previous actions, this transition will be triggered.
 
-2. Create a new `processDynamicChoice` action with the following code:
+### Extra Configurations:
 
-![Image2](Images/image2.png)
+  **Disable Free Text**:
+    Change line 49 to `True`.
+    
+  <img width="267" alt="image" src="https://user-images.githubusercontent.com/77560236/172709431-16582c33-e9ce-40bf-b651-6bdfcea84eb3.png">
 
-```javascript
-/**
- * Process the dynamic choice option chosen by the user
- * @title Process dynamic option
- * @category Custom
- * @author Botpress
- * @param {string} variableName - Name of the variable to store choice information
- */
-const myAction = async (variableName) => {
-  // Check if the user was presented to the dynamic choice selection
-  if (!temp.choice || !temp.choice[variableName]) {
-    bp.logger.error("No dynamic option with the variable name " + variableName + " was chosen");
-  } else {
-    // If we have a payload (User clicked in a button) we just set the value to our variable
-    if (event.payload && event.payload.payload) {
-      temp.choice[variableName].value = event.payload.payload;
-    } else {
-      // Stores what the user typed
-      const input = event.payload.text;
-      // For each choice, check the value and synonyms
-      for (const choice of temp.choice[variableName].choices) {
-        if (choice.value.toUpperCase() == input.toUpperCase() || choice.title == input) {
-          temp.choice[variableName].value = choice.value.toUpperCase();
-        } else {
-          if (choice.synonyms) {
-            for (const synonyms of choice.synonyms) {
-              if (synonyms == input) {
-                temp.choice[variableName].value = choice.value.toUpperCase();
-              }
-            }
-          }
-        }
-      }
-    }
-    // If no value was found for the input, we just return it as invalid
-    if (!temp.choice[variableName].value) {
-      temp.choice[variableName].invalid = true;
-    }
-  }
-};
+  **Change the prompt**:
+    Change line 46 to your desired prompt.
+    
+  <img width="268" alt="image" src="https://user-images.githubusercontent.com/77560236/172709587-2a5f599d-4e26-4a53-a717-e6ab2c579201.png">
+  
+  
+  **Change btton labels**:
+   Modify the value in the `title` field on line 38.
+  
+  <img width="723" alt="image" src="https://user-images.githubusercontent.com/77560236/172710862-38fd1532-adce-4163-930f-d313049d12a2.png">
 
-return myAction(args.variableName);
-```
 
-3. In the flow, after receiving the user input, we will need to call the new action (`processDynamicChoice`).
-
-![Image3](Images/image3.png)
-
-4. We now need to pass `variableName` as an argument to the `showDynamicChoice` action as well (same name).
-
-![Image4](Images/image4.png)
-
-![Image5](Images/image5.png)
-
-5. We can now change our current flow to use the now populated choice variable to make decisions.
-
-![Image6](Images/image6.png)
-
-## Final Result:
-
-[Video](<Video/Dynamic Choices Result (Advanced).mp4>)
-
-[Example Bot](Bot/bot_bot_dynamic-choice-skill-example-advanced_1620999077507.tgz)
