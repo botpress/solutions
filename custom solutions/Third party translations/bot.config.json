@@ -1,0 +1,21 @@
+{
+  "translation": {
+    "google": {
+      "endpoint": "https://translation.googleapis.com/language/translate/v2",
+      "token": "YOUR_API_TOKEN"
+    },
+    "deepl": {
+      "endpoint": "https://api-free.deepl.com/v2/translate",
+      "token": "YOUR_API_TOKEN"
+    },
+    "huggingface_fr_en": {
+          "endpoint": "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-fr-en",
+          "token": "YOUR_API_TOKEN"
+        },
+    "huggingface_en_fr":
+      {
+          "endpoint": "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-fr",
+          "token": "YOUR_API_TOKEN"
+        }
+  }, 
+}
