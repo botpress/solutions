@@ -1,0 +1,23 @@
+{
+  "dashboard": "Dashboard",
+  "export": "Export",
+  "exportCsv": "Export as CSV",
+  "exportJson": "Export as JSON",
+  "filterChannels": "Filter channels",
+  "fullName": "Validate email",
+  "title": "Validate email",
+  "placeholderText": "Dropdown placeholder text",
+  "typingIndicator": "Show typing indicators",
+  "useMarkdown": "Use markdown",
+  "markdownHelp": "Refer to this documentation for markdown syntax: ",
+  "disableFreeText": "Disable free text",
+  "description":"A message showing some file with an optional title",
+  "changeText":"Change the text",
+  "pickContent":"Pick content",
+  "reference":"Reference variable in the temp memory where the result will be stored",
+  "referenceTitle":"Reference",
+  "multipleTitle":"Multiple",
+  "train":"Note: The Bot must be trained for this skill to work properly.",
+  "contentTitle":"Select the content element to be used to request the user's e-mail address",
+  "multiple":"Multiple emails, if set to true, an array of all detected emails will be assigned to the reference variable instead of a text string"
+}

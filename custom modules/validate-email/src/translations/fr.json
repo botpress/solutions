@@ -1,0 +1,23 @@
+{
+  "title": "Email validé",
+  "dashboard": "Planche",
+  "export": " Exporter",
+  "exportCsv": "Exporter en CSV",
+  "exportJson": "Exporter en JSON",
+  "filterChannels": "Filtrer les canaux",
+  "fullName": "Email validé",
+  "placeholderText": "Texte d'espace réservé déroulant",
+  "typingIndicator": "Afficher les indicateurs de frappe",
+  "useMarkdown": "utiliser la démarque",
+  "markdownHelp": "Consultez cette documentation pour la syntaxe Markdown :",
+  "disableFreeText": "Désactiver le texte libre",
+  "description":"Un message montrant un fichier avec un titre optionnel",
+  "changeText":"Modifier le texte",
+  "pickContent":"Choisir le contenu",
+  "reference":"Variable de référence dans la mémoire temporaire où le résultat sera stocké",
+  "referenceTitle":"Référence",
+  "multipleTitle":"Multiple",
+  "train":"Note : Le Bot doit être formé pour que cette compétence fonctionne correctement.",
+  "contentTitle":"Sélectionnez l'élément de contenu à utiliser pour demander l'adresse e-mail de l'utilisateur",
+  "multiple":"Emails multiples, si cette option est activée, un tableau de tous les emails détectés sera attribué à la variable de référence au lieu d'une chaîne de texte."
+}
