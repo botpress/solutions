@@ -1,0 +1,23 @@
+{
+  "title": "Validar el correo electrónico",
+  "dashboard": "Tablero",
+  "export": "Exportar",
+  "exportCsv": "Exportar en CSV",
+  "exportJson": "Exportar en JSON",
+  "filterChannels": "Filtrar Canales",
+  "fullName": "Validar Email",
+  "placeholderText": "Texto del marcador de posición desplegable",
+  "typingIndicator": "Mostrar indicadores de escritura",
+  "useMarkdown": "Usar markdown",
+  "markdownHelp": "Consulte esta documentación para conocer la sintaxis de markdown:",
+  "disableFreeText": "Desactivar el texto libre",
+  "description":"Un mensaje que muestra algún archivo con un título opcional",
+  "changeText":"Cambiar el texto",
+  "pickContent":"Elige el contenido",
+  "reference":"Variable de referencia en la memoria temporal donde se almacenará el resultado",
+  "referenceTitle":"Referencia",
+  "multipleTitle":"Múltiples",
+  "train":"Nota: El Bot debe estar entrenado para que esta habilidad funcione correctamente.",
+  "contentTitle":"Seleccione el elemento de contenido que se utilizará para solicitar la dirección de correo electrónico del usuario",
+  "multiple":"Múltiples correos electrónicos, si se establece como verdadero, se asignará una matriz de todos los correos electrónicos detectados a la variable de referencia en lugar de una cadena de texto"
+}

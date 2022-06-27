@@ -1,0 +1,22 @@
+{
+  "name": "validate-email",
+  "version": "1.0.0",
+  "description": "Validate e-mails entered",
+  "private": true,
+  "main": "dist/backend/index.js",
+  "author": "Botpress, Inc.",
+  "license": "AGPL-3.0-only",
+  "webpack": {
+    "externals": {
+      "reactstrap": "Reactstrap",
+      "botpress/tooltip": "BotpressTooltip"
+    }
+  },
+  "scripts": {
+    "build": "node ../../build/module-builder/bin/entry build",
+    "watch": "node ../../build/module-builder/bin/entry watch",
+    "package": "node ../../build/module-builder/bin/entry package"
+  },
+  "dependencies": {
+  }
+}
