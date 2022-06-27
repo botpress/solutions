@@ -1,0 +1,50 @@
+.bpw-recorder-container {
+  position: absolute;
+  bottom: 47px;
+  right: 60px;
+}
+
+#recorder {
+  box-shadow: none;
+  background-color: transparent;
+  background-image: none;
+}
+
+.bpw-recorder-button-cancel {
+  display: none;
+}
+
+.bpw-composer-textarea {
+  background: #f0f0f0cc;
+  border-radius: 33px;
+  display: flex;
+  align-items: center;
+}
+
+.bpw-send-button {
+  color: black;
+}
+
+.bpw-send-button:hover,
+.bpw-send-button:focus {
+  background: none !important;
+  color: gray;
+}
+
+.bpw-composer textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.bpw-composer textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-right: 82px;
+}
+
+#botpress-tooltip-1 {
+  display: none;
+}
+
+#botpress-tooltip-37 {
+  display: none;
+}
