@@ -58,6 +58,8 @@ export function makeDockerfile(
             : ""
         }
         WORKDIR /botpress
+        ENV BPFS=disk \
+            CORE_DISABLE_FILE_LISTENERS=true
         CMD ./duckling & ./bp
     `;
   return {
