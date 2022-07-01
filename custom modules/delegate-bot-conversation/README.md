@@ -1,6 +1,13 @@
+#Delegate-Bot-conversation
+Original author:
+Last Uupdated by on
+
 ## Overview
 
 This module includes the `Start Delegation` and `End Delegation` skills which can be used to delegate conversations from one Bot to another.
+
+## Use cases:
+Allows bots to delegate to each other
 
 ## Quick Start
 
