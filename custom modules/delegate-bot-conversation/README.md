@@ -1,6 +1,7 @@
 # Delegate-Bot-conversation
-Original author:
-Last Uupdated by on
+Original author: @bassamtantawi-botpress 
+
+Last updated by @bassamtantawi-botpress on June 27 2022
 
 ## Overview
 
