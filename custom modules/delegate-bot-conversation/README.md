@@ -10,8 +10,9 @@ This module includes the `Start Delegation` and `End Delegation` skills which ca
 ## Use cases:
 Allows bots to delegate to each other
 
-## Quick Start
+## How use
 
+### Quick start
 1. Copy the folder `delegate-bot-conversation` to `modules/`
 2. Open a terminal in the folder `modules/delegate-bot-conversation` and type `yarn && yarn build`
 3. Edit your `botpress.config.json` and add the module definition so it will be loaded:
@@ -31,7 +32,7 @@ Allows bots to delegate to each other
 4. Start Botpress: `yarn start`
 5. Choose any bots in your workspace, then you should see the module in the sidebar !
 
-## How it works
+### Using after quickstart completed
 
 1. `Start Delegation`: Place the skill on any of the delegator bot's flows, where you want to start a delegation
 
