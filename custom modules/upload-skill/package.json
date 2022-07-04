@@ -1,0 +1,25 @@
+{
+  "name": "upload-skill",
+  "version": "1.0.0",
+  "description": "Uploads files from end users",
+  "private": true,
+  "main": "dist/backend/index.js",
+  "author": "Botpress, Inc.",
+  "license": "AGPL-3.0-only",
+  "webpack": {
+    "externals": {
+      "reactstrap": "Reactstrap",
+      "botpress/tooltip": "BotpressTooltip"
+    }
+  },
+  "scripts": {
+    "build": "node ../../build/module-builder/bin/entry build",
+    "watch": "node ../../build/module-builder/bin/entry watch",
+    "package": "node ../../build/module-builder/bin/entry package"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1122.0",
+    "express-fileupload": "^1.4.0",
+    "uuid": "^8.3.2"
+  }
+}
