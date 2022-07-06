@@ -1,7 +1,7 @@
 {
   "name": "delegate-bot-conversation",
   "version": "1.0.0",
-  "description": "Some description on what this module is about",
+  "description": "Transfer a conversation from one bot to another and back again",
   "private": true,
   "main": "dist/backend/index.js",
   "author": "Botpress, Inc.",
