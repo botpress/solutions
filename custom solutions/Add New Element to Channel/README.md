@@ -5,7 +5,19 @@ Original author: @ptrckbp
 Last updated by @ptrckbp on Jul 6 2022
 
 ## Overview
-By default Botpress channel integrations come with multiple element types like images, text, carousel and cards for you basic needs. If you want to add more element types, you'll have to bypass a few things. This is an example of how to do that on Slack.  
+By default Botpress channel integrations come with multiple element types like images, text, carousel and cards for you basic needs. If you want to add more element types, you'll have to bypass a few things. This is an example of how to do that on Slack. 
+
+You should get this as a result : 
+
+#### Before inputing text:
+
+![](./before.png)
+
+#### After inputing text:
+
+![](./flow.png)
+
+
 
 ## Use cases:
 If you want to add a form or some other content type, you can do so with the following code. The code is for a form on slack, but you should be able to adjust it by changing the payload sent to slack, and the channel. 
@@ -38,14 +50,3 @@ If you want to update the content sent to slack, please consider using [Slack's 
 - [on-unmount.js](on-unmount.js) This helps with making changes. You can copy this to after-unmount hook.
 4. In the flow editor, open a node, and add this action, filling in the four inputs for labels and choices.
 5. You will be able to access the value in temp.formValues. 
-
-The result should look somewhat like this : 
-
-(before inputing text)
-
-![](./before.png)
-
-(after inputing text)
-![](./flow.png)
-
-
