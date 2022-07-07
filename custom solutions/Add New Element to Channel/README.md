@@ -1,4 +1,4 @@
-# Add new element to Channel
+# Add New Element to Channel
 
 Original author: @ptrckbp
 
@@ -9,6 +9,9 @@ By default Botpress channel integrations come with multiple element types like i
 
 ## Use cases:
 If you want to add a form or some other content type, you can do so with the following code. The code is for a form on slack, but you should be able to adjust it by changing the payload sent to slack, and the channel. 
+If you want to update the content sent to slack, please consider using [Slack's Block Kit Builder](https://app.slack.com/block-kit-builder), and pasting the payload in sendform.js.
+
+![](./block-kit-builder.png)
 
 ## How to use
 
@@ -35,4 +38,14 @@ If you want to add a form or some other content type, you can do so with the fol
 - [on-unmount.js](on-unmount.js) This helps with making changes. You can copy this to after-unmount hook.
 4. In the flow editor, open a node, and add this action, filling in the four inputs for labels and choices.
 5. You will be able to access the value in temp.formValues. 
+
+The result should look somewhat like this : 
+
+(before inputing text)
+
+![](./before.png)
+
+(after inputing text)
+![](./flow.png)
+
 
