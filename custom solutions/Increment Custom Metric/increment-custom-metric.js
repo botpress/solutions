@@ -45,7 +45,7 @@
         botId: event.botId,
         date: date,
         channel: event.channel,
-        metric: 'new_leads',
+        metric: metric,
         subMetric: 'n/a',
         value: 1
       })
