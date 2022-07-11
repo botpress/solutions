@@ -6,7 +6,7 @@
     const [cmdName, flowName, nodeName] = args
 
     if (cmdName == 'sendTo') {
-      if (flowName && nodeName) {
+      if (flowName) {
         const { messageId, botId, channel, target, threadId } = event
         const internalEvent = bp.IO.Event({
           messageId,
