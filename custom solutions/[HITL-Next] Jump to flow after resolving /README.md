@@ -1,4 +1,4 @@
-# Add New Element to Channel
+# [HITL-Next] Jump to flow after resolving
 
 Original author: @davidvitora
 
