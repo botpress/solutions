@@ -17,7 +17,7 @@
   // Internal event to register the sendTo action
   else if (event.type == 'sendTo') {
     const { flowName, nodeName } = event.payload
-    if (flowName && nodeName) {
+    if (flowName) {
       event.state.session.sendTo = { flowName, nodeName }
     }
     event.setFlag(bp.IO.WellKnownFlags.FORCE_PERSIST_STATE, true)
