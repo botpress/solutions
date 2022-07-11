@@ -1,4 +1,4 @@
-  const text = event.payload.text
+  const text = event.payload && event.payload.text
   const cmd = text && text.startsWith('[cmd]') && text.substring(5)
 
   if (cmd) {
