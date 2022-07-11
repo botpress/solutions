@@ -14,6 +14,10 @@ To specify the flow, during a conversation the agent must type the following com
 
 example: [cmd]sendTo:flow2:entry
 
+If you want to jump to the start node, you can simply use [cmd]sendTo:FLOW_NAME
+
+example: [cmd]sendTo:flow2
+
 ## How to make it work
 
 Simply add the two hooks available in this folder
