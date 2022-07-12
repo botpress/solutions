@@ -178,11 +178,11 @@ test_df = test_df.merge(right= results_df, how='inner', right_index=True, left_o
 # Repeat the test for any errors, checking twice
 errors = test_df.loc[(test_df[col_name]==None)|(test_df[col_name]=='')]
 for error in errors.Utterance.index:
-    test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
+    test_df.at[error, col_name] = list(getActual(test_df.Utterance.iloc[error]).values())[0]
 
 errors = test_df.loc[(test_df[col_name]==None)|(test_df[col_name]=='')]
 for error in errors.Utterance.index:
-    test_df.at[error, col_name] = list(sendUtterance(test_df.Utterance.iloc[error]).values())[0]
+    test_df.at[error, col_name] = list(getActual(test_df.Utterance.iloc[error]).values())[0]
 # Remove any duplicate utterances
 test_df.drop_duplicates(subset='Utterance', keep='last', ignore_index=True, inplace=True)
 
