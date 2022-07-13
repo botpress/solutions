@@ -53,7 +53,7 @@
      payloads = await bp.cms.renderElement(
        'builtin_text',
        {
-         text: `<a href="${baseURL}/mod/conv/?data=${encoded}">Download Conversation Transcript</a>`,
+         text: `<a href="${baseURL}/mod/conv/?data=${encoded}" target="_blank">Download Conversation Transcript</a>`,
          typing: true,
          markdown: true
        },
