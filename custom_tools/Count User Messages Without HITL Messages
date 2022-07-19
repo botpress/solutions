@@ -1,1 +1,37 @@
+DROP TABLE IF EXISTS temp_hitlStart;
 
+-------------------------Get when the conversation was handed over to the agent-------------------------
+SELECT "conversationId", "sentOn" 
+INTO temp_hitlStart 
+FROM public.msg_messages 
+WHERE "payload" -> 'module' @> '"hitlnext"';
+
+CREATE OR REPLACE FUNCTION getUserMessages ()
+RETURNS INT 
+LANGUAGE plpgsql
+AS
+$$
+-------------------------Get the number of messages sent by the user to the agent-------------------------
+
+DECLARE count_usrHitlMsgs INT := (SELECT COUNT("payload")
+FROM public.msg_messages AS hitlMsgs
+INNER JOIN temp_hitlStart 
+ON temp_hitlStart."conversationId" = hitlMsgs."conversationId"  
+AND hitlMsgs."sentOn" >= temp_hitlStart."sentOn"
+AND hitlMsgs."authorId" IS NULL) ;
+
+-------------------------Get the number of messages sent by the user to the agent-------------------------
+DECLARE count_allUsrMsgs INT := (SELECT COUNT(MSGs.*) FROM public.msg_messages AS MSGs
+LEFT JOIN public.handoffs AS hndOff ON MSGs."conversationId"::text = hndOff."agentThreadId"::text
+WHERE MSGs."authorId" IS NOT NULL 
+AND hndOff."id" IS NULL
+AND NOT (payload -> 'type' @> '"visit"')
+AND NOT (payload -> 'type' @> '"session_reset"'));
+
+BEGIN
+
+RETURN (count_allUsrMsgs-count_usrHitlMsgs);
+
+END $$;
+
+SELECT getUserMessages();
