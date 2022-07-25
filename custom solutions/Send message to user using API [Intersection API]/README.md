@@ -21,7 +21,7 @@ Example:
 ````javascript
 
     var axios = require('axios');
-    var botpressServerHost = 'http://localhost:3000' // Your Botpress server name
+    var botpressServerHost = 'http://localhost:3000' // Your Botpress server host
     var authorizationToken = 'My login token' // Since this is an Authenticated route, you will first need to call the Botpress login route and get a token
     var data = JSON.stringify({
         "type": "text",
