@@ -6,7 +6,7 @@ Last updated by @davidvitora on Jul 25 2022
 
 ## Overview
 
-Use this solution to send a message to the user using backend APIs
+Use this solution to send a message to the user using backend API calls
 
 ## How to Install
 
@@ -16,7 +16,15 @@ Simply create a after_server_start hook with the code included in this solution 
 
 Make a POST API call to the route provided by the hook
 
-Example: 
+You will need:
+
+- user id
+- conversation id
+- authorization token
+- Botpress server address
+
+
+Example using [axios](https://www.npmjs.com/package/axios) : 
 
 ````javascript
 
