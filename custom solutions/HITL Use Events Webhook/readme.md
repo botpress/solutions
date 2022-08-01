@@ -1,4 +1,4 @@
-# HITL Use Events Webhook (In Progress)
+# HITL Use Events Webhook
 
 This solution shows how you can use the HITL Next new events webhook.
 
