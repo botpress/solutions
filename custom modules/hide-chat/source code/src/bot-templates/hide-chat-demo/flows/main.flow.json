@@ -61,10 +61,7 @@
           "node": "choice-14b859"
         }
       ],
-      "onEnter": [
-        "say #!custom_hide-chat-0faErK",
-        "say #!builtin_text-f1mSLd"
-      ],
+      "onEnter": ["say #!builtin_text-f1mSLd", "hide-chat/hide_chat {\"hide\":\"true\"}"],
       "onReceive": null,
       "type": "standard"
     },
@@ -77,10 +74,7 @@
           "node": "choice-14b859"
         }
       ],
-      "onEnter": [
-        "say #!custom_hide-chat-3pNcRH",
-        "say #!builtin_text-oM6HN5"
-      ],
+      "onEnter": ["say #!builtin_text-oM6HN5", "hide-chat/hide_chat {\"hide\":\"false\"}"],
       "onReceive": null,
       "type": "standard"
     },
@@ -119,9 +113,7 @@
           "node": "choice-a14123"
         }
       ],
-      "onEnter": [
-        "say #!builtin_text-paJd0t"
-      ],
+      "onEnter": ["say #!builtin_text-paJd0t"],
       "onReceive": null,
       "type": "standard"
     }

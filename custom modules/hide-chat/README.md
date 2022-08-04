@@ -1,6 +1,6 @@
 ### What it does
 
-Makes available a new type of content-element that can hide/show the channel-web chat composer
+Makes available a action that can hide/show the channel-web chat composer
 
 ### How to use
 
