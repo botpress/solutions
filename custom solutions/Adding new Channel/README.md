@@ -17,7 +17,7 @@ You need to add two listeners. One that forwards information from your channel t
 
 ## Details
 
-- If you want to build a custom module instead of just adding Global Hooks for re-usability, you can start [here](`https://github.com/botpress/solutions/tree/master/custom%20solutions/Build%20Custom%20Modules%20Using%20Module%20Builder`)
+- If you want to build a custom module instead of just adding Global Hooks for re-usability, you can start [here](../Build%20Custom%20Modules%20Using%20Module%20Builder/README.md)
 - In your botpress instance, or in your custom module. Write hooks that :
     - register a botpress middleware for before-outgoing that catches outgoing events. These are for handling messages that botpress will send to your channel. [See example](https://github.com/metsrl/channel-rocketchat/blob/d4344d13311d41dcb13c19ce9b7551d832215631/src/backend/client.ts#L239-L262)
     - register a listener for your platform. You can use your platform's sdk, or simply create a router to catch events and then register it on your platform. These are for handling messages that your channel will send to Botpress. [See example](https://github.com/metsrl/channel-rocketchat/blob/d4344d13311d41dcb13c19ce9b7551d832215631/src/backend/client.ts#L127)
