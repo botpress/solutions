@@ -4,6 +4,8 @@ Original author: @ptrckbp
 
 Last updated by @ptrckbp on August 12th 2022
 
+![](./new-channel.svg)
+
 ## Overview
 Adding a new channel in Botpress is straightforward as you can create remote & local listeners to external events (your channel) and internal events (your bot).  The complexity will depend on the complexity of the type of messages that you want, and will also depend on your channel's SDK / api ease of use. Channels can be directly added via Botpress Hooks, or added to a custom module to be shared.
 
