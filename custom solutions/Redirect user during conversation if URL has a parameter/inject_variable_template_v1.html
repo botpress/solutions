@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <div>There should be a black button on the right bottom corner</div>
+    <script src="http://localhost:3000/assets/modules/channel-web/object_assign.js"></script>
+    <script src="http://localhost:3000/assets/modules/channel-web/inject.js"></script>
+  </head>
+  <body>
+    <script>
+      let config = {
+        host: "http://localhost:3000",
+        botId: "test",
+        lazySocket: false,
+        showUserAvatar: true,
+      };
+
+      window.addEventListener("message", function (event) {
+        if (event.data.name === "webchatReady") {
+          console.log('Web chat ready was triggered')
+        }
+      });
+
+      window.botpressWebChat.init(config);
+    </script>
+  </body>
+</html>
