@@ -1,32 +1,40 @@
 # Conversation Events Webhook
 
-This solution shows how you can create an conversationevents webhook, to send events from Botpress to an external handler using HTTP.
+This solution shows how you can create a conversation events webhook, to send events from Botpress to an external handler using HTTP Post Requests.
 
-A new request will be sent to your server each time that an conversation event occurs
+A new request will be sent to your server each time that a conversation event occurs
 
-Example: 
+## before_incoming_middleware -> send user messages to your handler
 
-![image](https://user-images.githubusercontent.com/13484138/182182115-ac16feb8-e7ab-493f-9d36-d97cb1ade2f0.png)
+Example of incoming events in the webhook
 
+![image](https://user-images.githubusercontent.com/13484138/185236822-85973382-a515-4a49-bbb9-3b0ea3f5614d.png)
+
+## before_outgoing_middleware -> send bot messages to your handler
+
+Example of outgoing events in the webhook
+
+![image](https://user-images.githubusercontent.com/13484138/185236561-ddf8981e-47a2-4d4c-994f-d90e9b18b78d.png)
 
 # How to install
 
-You will need to create an before_incoming_middleware hook or before_outgoing_middleware hook using the script available in this folder (conversation_events_webhook.js)
-
-before_incoming_middleware -> send user messages to your handler
-before_outgoing_middleware -> send bot messages to your handler
+You will need to create an before_incoming_middleware hook or before_outgoing_middleware hook using the script available in this folder (conversation_events_webhook.js), decide which you want to create (or both) based on your own use case.
 
 # How to use it
 
-1 - In the code editor, create an before_incoming_middleware hook or before_outgoing_middleware
+1 - In the code editor, create an before_incoming_middleware hook or before_outgoing_middleware hook using the script available in this folder (conversation_events_webhook.js):
 
-![image](https://user-images.githubusercontent.com/13484138/182180204-8992933b-ba6d-403c-aecd-14635269c4ba.png)
+![image](https://user-images.githubusercontent.com/13484138/185235821-0c08f73b-283a-4c0b-81c1-cc43b636947f.png)
 
 2 - Modify the "config" object and specify the URL for the webhook endpoint of your system.
 
-![image](https://user-images.githubusercontent.com/13484138/182180474-3a22a97e-ce6c-4f6d-9c92-4aa90df2734b.png)
+![image](https://user-images.githubusercontent.com/13484138/185235005-39f06c2c-339d-4cac-a206-eb71f60cceaf.png)
 
-OBS: If you need that that any headers to be sent along side with the request, specify those in the 'headers' sub property.
+OBS: If you need any headers to be sent along side with the request, specify those in the 'headers' sub property.
 
-![image](https://user-images.githubusercontent.com/13484138/182180734-e91974e4-cff0-42c7-be33-4d7a0345e256.png)
+OBS2: Decide if you want the Dialog engine to wait or continue the conversation before your server gets the response.
+
+![image](https://user-images.githubusercontent.com/13484138/185235192-11d7fa7c-b5ad-4d81-9ea5-f8f31c4bf32f.png)
+
+After saving the changes in the hook, Botpress should start sending those events to your server right away
 
