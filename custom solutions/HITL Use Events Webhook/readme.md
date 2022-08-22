@@ -140,7 +140,9 @@ Post request from webhook
     ....
  }
 ````
+As you can see, it will show you lots of data, including data from the user conversation with the bot, which included userId (userId) and userThreadId (conversationId).
 
+HITL: When a user stops talking with the bot and starts talking in the HITL next module, what happens in the background is Botpress creates a new conversation and starts forwarding messages (user/agent) between those conversations,
 
 After the handoff is assigned to an Agent (Agent on HITL Next), what you are going to receive in your webhook is:
 
@@ -271,7 +273,7 @@ Post request from webhook
   ​...
  }
 ````
-
+Now you can also see the "agentThreadId" (conversationId) and "agentId" (userId from the agent); those are related to that second conversation that is open, which was mentioned previously.
 
 # How to install
 
