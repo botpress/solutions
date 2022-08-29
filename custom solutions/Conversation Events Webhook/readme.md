@@ -31,10 +31,3 @@ You will need to create an before_incoming_middleware hook or before_outgoing_mi
 ![image](https://user-images.githubusercontent.com/13484138/185235005-39f06c2c-339d-4cac-a206-eb71f60cceaf.png)
 
 OBS: If you need any headers to be sent along side with the request, specify those in the 'headers' sub property.
-
-OBS2: Decide if you want the Dialog engine to wait or continue the conversation before your server gets the response.
-
-![image](https://user-images.githubusercontent.com/13484138/185235192-11d7fa7c-b5ad-4d81-9ea5-f8f31c4bf32f.png)
-
-After saving the changes in the hook, Botpress should start sending those events to your server right away
-

@@ -40,7 +40,4 @@ async function send(data) {
   }
 }
 
-// Comment the line below if you don't want the dialog engine to wait your server to receive the event first
-return send(event)
-// Uncomment the line below if you don't want the dialog engine to wait your server to receive the event first
-// send(event)
+send(event)
