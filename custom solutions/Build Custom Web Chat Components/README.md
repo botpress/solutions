@@ -26,8 +26,7 @@ sudo docker run -v 'PATH_TO_FOLDER:/botpress/modules/custom_module' --rm ghcr.io
 7. Click Upload Modules. Select and submit the tgz file.![](1.png)
 8. Click "Restart Server Now"![](2.png)
 9. In the modules page, click unpack now next to your module's name.![](3.png)
-9. Go back up to the list of Stable modules, and activate it by clicking the toggle next to the module's name.![](4.png)
-10. Start editing a chatbot. Changes made in your custom module will be injected automatically in the Botpress Studio. 
+10. Go back up to the list of Stable modules, and activate it by clicking the toggle next to the module's name.![](4.png)
 
 ## How to use The component
 
