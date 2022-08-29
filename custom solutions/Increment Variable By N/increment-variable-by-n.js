@@ -19,7 +19,11 @@
       }
       bp.logger.info(await bp.kvs.forBot(event.botId).get('global'))
     } else if (scope != undefined && scope != '') {
-      event.state[scope][name] = event.state[scope][name] ? parseInt(event.state[scope][name]) + n : DEFAULT_VALUE
+      event.state[scope][name] =
+        typeof event.state[scope][name] != 'undefined'
+          ? parseInt(JSON.stringify(event.state[scope][name])) + n
+          : DEFAULT_VALUE
+      bp.logger.info(`${scope}, ${name}, ${n}, ${JSON.stringify(Boolean(event.state[scope][name]))} `)
     } else bp.logger.forBot(event.botId).warn(`Please specify a variable scope`)
   }
   return myAction(args.scope, args.name, parseInt(args.n))
