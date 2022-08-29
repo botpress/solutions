@@ -10,6 +10,16 @@ Any custom behavior to add to your web chat can be coded using components (Widge
 https://botpress.com/docs/messaging-channels/botpress-webchat/website-embedding#creating-a-custom-component
 https://botpress.com/docs/messaging-channels/botpress-webchat/website-embedding#injecting-your-components
 
+## Demo
+
+The component from this example will clean messages after 3 seconds
+
+
+
+https://user-images.githubusercontent.com/13484138/187286085-3f5008f4-92e8-4395-9f8b-cdb48f78e769.mp4
+
+
+
 ## How to build the component
 1. Download the compacted folder 'custom-web-component-module.zip' and extract it
 2. run the following command to compile the module (change PATH_TO_FOLDER)
@@ -46,5 +56,13 @@ overrides: {
 ````
 
 Example:
+![image](https://user-images.githubusercontent.com/13484138/187283967-5a93dec0-9330-4514-8728-c24071c3f0ea.png)
 
+## How to change the component
 
+1. In the folder, go to the folder src/views/lite and edit the file before_container.jsx
+2. You can see that the current implementation of the component will just clean the messages after 3 seconds, change the bahavior as you wish.
+
+![image](https://user-images.githubusercontent.com/13484138/187284396-15308b39-1e33-4e38-92fe-4e171ade2f64.png)
+
+3. After doing your changes, you will need to compile and upload your module again.
