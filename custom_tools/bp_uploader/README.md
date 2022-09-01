@@ -66,6 +66,8 @@ bp_uploader upload-bot http://localhost:3000 ./bot_example
 | Flag                          | Shorthand | Default                 | Description                             |
 | ----------------------------- | --------- | ----------------------- | --------------------------------------- |
 | &#x2011;&#x2011;bot&#x2011;id | -id       | Id from bot.config.json | An Id for the bot that will be uploaded |
+| --overwrite                   | -o        | false                   | Overwrite the bot if it exists          |
+| --workspace [workspace_id]    | -w        | default                 | Workspace to upload the bot to          |
 
 ## Development
 
