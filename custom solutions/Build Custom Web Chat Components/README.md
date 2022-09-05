@@ -29,7 +29,7 @@ sudo docker run -v 'PATH_TO_FOLDER:/botpress/modules/custom_module' --rm ghcr.io
 OBS: For windows, put your whole path as 'PATH_TO_FOLDER', example: 
 
 ```
-sudo docker run -v 'C:\Users\MyUser\Downloads\Folder:/botpress/modules/custom_module' ........
+docker run -v 'C:\Users\MyUser\Downloads\Folder:/botpress/modules/custom_module' ........
 ```
 
 ![image](https://user-images.githubusercontent.com/13484138/174085596-2b0b1c74-8f91-4bb9-999a-2380107bac90.png)
