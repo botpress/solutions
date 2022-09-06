@@ -5,8 +5,12 @@ This solution will create a url that can be used to expose files from a public f
 # How to install
 
 1. Create the after_server_start hook available in this folder (create_files_router.js) as a global hook in your server, and restart your server
-2. Create a folder called 'myFiles' in the root using the advanced editor (only)
+
+2. Create a folder called 'myfiles' in the root using the advanced editor (only)
     1. In the code editor, click on 'Advanced Editor'
+    
+    ![image](https://user-images.githubusercontent.com/13484138/188656031-7833563f-96db-4563-b104-094a9b40ac3c.png)
+    
     2. Click on the '+' to create a new file
     
     ![image](https://user-images.githubusercontent.com/13484138/188652875-0180c52b-a7f8-4566-b334-ea35b29a2e4b.png)
