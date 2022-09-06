@@ -26,6 +26,12 @@ https://user-images.githubusercontent.com/13484138/187286085-3f5008f4-92e8-4395-
 ```
 sudo docker run -v 'PATH_TO_FOLDER:/botpress/modules/custom_module' --rm ghcr.io/botpress/botpress/module-builder:0.0.3 sh -c 'cd /botpress/modules/custom_module && yarn && yarn build && yarn package'
 ```
+OBS: For windows, put your whole path as 'PATH_TO_FOLDER', example: 
+
+```
+docker run -v 'C:\Users\MyUser\Downloads\Folder:/botpress/modules/custom_module' ........
+```
+
 ![image](https://user-images.githubusercontent.com/13484138/174085596-2b0b1c74-8f91-4bb9-999a-2380107bac90.png)
 
 4.1. After executing the command, the packaged module (in this case custom-web-component-module.tgz) will appear in the folder from the module
