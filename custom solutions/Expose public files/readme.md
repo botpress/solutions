@@ -1,4 +1,4 @@
-# Create logout link
+# Expose public files
 
 This solution will create a url that can be used to expose files from a public folder
 
