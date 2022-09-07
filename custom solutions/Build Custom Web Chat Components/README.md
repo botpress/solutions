@@ -67,8 +67,8 @@ Example:
 ## How to change the component
 
 1. In the folder, go to the folder src/views/lite and edit the file before_container.jsx
-2. You can see that the current implementation of the component will just clean the messages after 3 seconds, change the bahavior as you wish.
+2. You can see that the current implementation of the component will just clean the messages after the conversation loads, change the bahavior as you wish.
 
-![image](https://user-images.githubusercontent.com/13484138/187284396-15308b39-1e33-4e38-92fe-4e171ade2f64.png)
+![image](https://user-images.githubusercontent.com/13484138/188959015-1bdff2bc-7537-49cc-a86a-a22a4d3a3eb1.png)
 
 3. After doing your changes, you will need to compile and upload your module again.
