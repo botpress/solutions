@@ -72,3 +72,7 @@ Example:
 ![image](https://user-images.githubusercontent.com/13484138/188959015-1bdff2bc-7537-49cc-a86a-a22a4d3a3eb1.png)
 
 3. After doing your changes, you will need to compile and upload your module again.
+
+## TIPS
+
+- In a local instance, if you are using BPFS=disk (default configuration), you can easily update the previously uploaded module by changing the .tgz file at /data/modules
