@@ -16,7 +16,11 @@ The component from this example will clean messages when the webchat loads
 
 
 
-https://user-images.githubusercontent.com/13484138/187286085-3f5008f4-92e8-4395-9f8b-cdb48f78e769.mp4
+
+https://user-images.githubusercontent.com/13484138/188961186-8c71ad63-84cb-4b55-a18a-dacd449ff17e.mp4
+
+
+
 
 
 
