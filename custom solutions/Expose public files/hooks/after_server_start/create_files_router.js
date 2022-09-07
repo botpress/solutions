@@ -3,13 +3,13 @@
 
   router.get('/:file', async (req, res) => {
     try {
-      if (!(await bp.ghost.forRoot().fileExists('/myfiles', req.params.file))) {
+      if (!(await bp.ghost.forGlobal().fileExists('/myfiles', req.params.file))) {
         res.status('404')
         res.send('File not found')
         return
       }
 
-      const file = await bp.ghost.forRoot().readFileAsBuffer('/myfiles', req.params.file)
+      const file = await bp.ghost.forGlobal().readFileAsBuffer('/myfiles', req.params.file)
       if (req.query.download == 'true') {
         res.setHeader('Content-Disposition', 'attachment; filename=' + req.params.file)
       }
