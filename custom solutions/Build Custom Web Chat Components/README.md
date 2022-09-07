@@ -12,7 +12,7 @@ https://botpress.com/docs/messaging-channels/botpress-webchat/website-embedding#
 
 ## Demo
 
-The component from this example will clean messages after 3 seconds
+The component from this example will clean messages when the webchat loads
 
 
 
