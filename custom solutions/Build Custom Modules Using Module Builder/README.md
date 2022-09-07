@@ -36,3 +36,7 @@ docker run -v 'C:\Users\MyUser\Downloads\Folder:/botpress/modules/custom_module'
 9. Go back up to the list of Stable modules, and activate it by clicking the toggle next to the module's name.![](4.png)
 10. Start editing a chatbot. Changes made in your custom module will be injected automatically in the Botpress Studio. 
 
+## TIPS
+
+- In a local instance, if you are using BPFS=disk (default configuration), you can easily update the previously uploaded module by changing the .tgz file at /data/modules
+
