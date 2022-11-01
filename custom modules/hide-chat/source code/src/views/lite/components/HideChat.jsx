@@ -4,10 +4,10 @@ export class HideChat extends React.Component {
       store: { composer },
       hidden,
       isBotMessage,
-      isLastOfGroup
+      isLastGroup
     } = this.props
 
-    if (isBotMessage && isLastOfGroup) {
+    if (isBotMessage && isLastGroup) {
       composer.setHidden(hidden)
     }
   }

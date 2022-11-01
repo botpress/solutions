@@ -17,7 +17,7 @@ const hideChat = async hide => {
       noBubble: true
     }
   ]
-  bp.events.replyToEvent(
+  await bp.events.replyToEvent(
     {
       botId: event.botId,
       channel: event.channel,
