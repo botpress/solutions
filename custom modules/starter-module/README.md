@@ -45,3 +45,5 @@ sudo docker run -v 'PATH_TO_CURRENT_DIR:/botpress/modules/custom_module' --rm gh
 6) [Custom Skills](https://share.descript.com/view/dDOkVlvTaoT)
 7) [Bot Templates](https://share.descript.com/view/b6OAuV8C86E)
 
+Videos also available at: https://drive.google.com/drive/folders/1UiXTHTBL5LBib8ogxAZO5Z5gEoshy5kb?usp=sharing
+
