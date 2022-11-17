@@ -12,10 +12,20 @@
 const myAction = async (contentElement, reference) => {
   const config = await bp.config.getModuleConfigForBot('upload-skill', event.botId)
   const allowedMimeTypes = config.allowedMimeTypes.join(',')
-
+  if (event.channel === 'messenger') {
+    const message = {
+      type: 'text',
+      text: `veuillez utiliser la fonction de téléchargement de Facebook pour télécharger une image ou un fichier vidéo décrivant votre problème.`,
+      // Markdown enables rich content, for example links or bold text. Otherwise, content will be displayed as-is
+      markdown: true
+    }
+    event.state.temp.uploadKey = reference
+    // Send the message to the user (note the array, since you can send multiple payloads in the same reply)
+    return bp.events.replyToEvent(event, [message])
+  }
   const upel = await bp.cms.renderElement(
     `#!${contentElement}`,
-    { reference, botId: event.botId, threadId: event.threadId, allowedMimeTypes },
+    { reference, botId: event.botId, threadId: event.threadId, target: event.target, allowedMimeTypes },
     event
   )
   bp.events.replyToEvent(event, upel, event.id)

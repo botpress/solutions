@@ -31,6 +31,7 @@ export class UploadFile extends Component<any> {
       formData.append('file', file)
       formData.append('botId', this.props.botId)
       formData.append('threadId', this.props.threadId)
+      formData.append('target', this.props.target)
 
       const { data } = await axios.post('/mod/upload-skill/upload', formData)
       if (!data.url) {
