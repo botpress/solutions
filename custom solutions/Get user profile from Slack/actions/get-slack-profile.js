@@ -20,7 +20,7 @@ const extractInfo = async () => {
     }
 
     const userId = await getName(
-      `SELECT name FROM msg_senders s, msg_usermap m WHERE s.id = m.senderId AND m.userId = '${event.target}'`
+      `SELECT name FROM msg_senders s, msg_usermap m WHERE s.id = m."senderId" AND m."userId" = '${event.target}'`
     )
 
     //Uncomment if you use it (conversation Id)
