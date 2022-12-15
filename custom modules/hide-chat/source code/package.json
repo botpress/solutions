@@ -1,7 +1,7 @@
 {
   "name": "hide-chat",
-  "version": "1.0.0",
-  "description": "Hide Chat",
+  "version": "3.0.3",
+  "description": "Hide Chat v3.0.3",
   "private": true,
   "main": "dist/backend/index.js",
   "scripts": {

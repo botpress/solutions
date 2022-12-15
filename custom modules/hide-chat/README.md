@@ -30,3 +30,7 @@ You want remove ability of chat users to type in answers and only select from bu
 
 Changes: use isLastGroup instead of isLastOfGroup to decide if component should hide or show composer, removing a race condition
 
+## 3.0.3
+
+Changes: use both isLastOfGroup and isLastGroup to prevent edge cases
+
