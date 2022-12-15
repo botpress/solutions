@@ -36,6 +36,7 @@
       const event = bp.IO.Event({
         direction: 'outgoing',
         channel: channel,
+        threadId: threadId,
         botId,
         target,
         type,
