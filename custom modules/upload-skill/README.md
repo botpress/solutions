@@ -1,6 +1,8 @@
+# Upload Skill
+
 ## Overview
 
-Botpress skill to upload media files to database or AWS S3. Supported platforms are webchat and messenger.
+This is aBotpress skill to upload media files to a database or AWS S3. Supported platforms are webchat and messenger.
 
 ### How to use
 
