@@ -1,13 +1,16 @@
+# Riva Module
+Original author: @allardy
+
+## Overview
 The Riva Skills module provides an interface so you can talk to your bot using your voice, and get an answer as voice
 
-## How to use this module
-
+## How to use
 1. Upload the module on your server
 2. On the code editor, edit the `riva.json` module config file
 3. Set the property `serverAddress` to your own server, ex: `127.0.0.1:55011`
 4. Open the page `http://localhost:3000/assets/modules/riva/webchat.html?botId=smalltalk` (replace the botId and the url with your own)
 
-## Setting up the Riva Server
+### Setting up the Riva Server
 
 1. Create a new EC2 instance
 
@@ -37,7 +40,7 @@ The Riva Skills module provides an interface so you can talk to your bot using y
 
 8. Configure your external ip with that port on thew riva module
 
-## How it works
+### How it works
 
 1. The wav is recorded on the webchat
 2. The content is sent to a special endpoint on the riva module
@@ -45,7 +48,7 @@ The Riva Skills module provides an interface so you can talk to your bot using y
 4. The dialog engine then sends the responses on the same channel
 5. The module handles the outgoing middleware; sending a special payload to the webchat
 
-## Update protos
+### Update protos
 
 When protocols are updated, we must regenerate the javascript implementation and the typescript definition.
 
