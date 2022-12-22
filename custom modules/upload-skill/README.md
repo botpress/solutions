@@ -4,7 +4,7 @@
 
 This is aBotpress skill to upload media files to a database or AWS S3. Supported platforms are webchat and messenger.
 
-### How to use
+## How to use
 
 1. Copy the folder `upload-skill` to `modules/upload-skill`
 2. Open a terminal in the folder `modules/upload-skill` and type `yarn && yarn build`
