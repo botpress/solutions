@@ -1,6 +1,6 @@
 ## Purpose
 This folder contains custom modules built in the past that our users have found helpful. **Please note we are not maintaining these modules, which means they may not work with the latest version of Botpress.**
-You are welcome to use these modules directly or pattern your modules off of their architecture.  
+You are welcome to use these modules directly or use them as a pattern. 
 
 ## Uploading Modules
 You generally have two options for uploading modules. 
