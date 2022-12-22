@@ -14,7 +14,7 @@ Allows access to a new skill to prompt for, receive and validate email address(e
 ![image](https://user-images.githubusercontent.com/104075132/209175500-25c11650-b479-449e-8dc8-a2bac3366e09.png)
 5. Set transitions for success (valid email entered) and failure (invalid email entered)
 
-### Quick start upload instructioins
+### Quick start options
 1. Copy the folder `validate-email` to `modules/validate-email`
 2. Open a terminal in the folder `modules/validate-email` and type `yarn && yarn build`
 3. Edit your `botpress.config.json` and add the module location, like below:
@@ -29,4 +29,4 @@ Allows access to a new skill to prompt for, receive and validate email address(e
 ]
 ```
 4. Start Botpress: `yarn start`
-5. Choose any bots in your workspace, then you should see the module in the sidebar !
+5. Choose any bots in your workspace, then you should see the module in the sidebar 
