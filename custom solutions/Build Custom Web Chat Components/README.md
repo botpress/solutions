@@ -7,8 +7,8 @@ This will help you to create a before_container webchat component and compile us
 Any custom behavior to add to your web chat can be coded using components (Widget or Messsages)
 
 
-https://botpress.com/docs/messaging-channels/botpress-webchat/website-embedding#creating-a-custom-component
-https://botpress.com/docs/messaging-channels/botpress-webchat/website-embedding#injecting-your-components
+https://v12.botpress.com/messaging-channels/botpress-webchat/website-embedding/#creating-a-custom-component
+https://v12.botpress.com/messaging-channels/botpress-webchat/website-embedding/#injecting-your-components
 
 ## Demo
 
