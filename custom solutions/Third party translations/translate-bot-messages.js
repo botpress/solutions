@@ -113,8 +113,8 @@
     let config = await getConfig('google') //Change this when changing translation service!
     let lang = ''
     let sourceArr = []
-    if (event.payload.text) {
-      sourceArr.push(event.payload.text)
+    if (event.preview) {
+      sourceArr.push(event.preview)
     }
     if (event.payload.title) {
       sourceArr.push(event.payload.title)
@@ -147,8 +147,8 @@
     await translateGoogle(sourceArr.join('+'), config.endpoint, config.token, lang).then(translatedText => {
       bp.logger.info(translatedText)
       let translatedArr = decodeURIComponent(translatedText).split('+') ? translatedText.split('+') : [translatedText]
-      if (event.payload.text && translatedArr.length > 0) {
-        event.payload.text = translatedArr.shift()
+      if (event.preview && translatedArr.length > 0) {
+        event.preview = translatedArr.shift()
       }
       if (event.payload.title && translatedArr.length > 0) {
         event.payload.title = translatedArr.shift()
