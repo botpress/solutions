@@ -130,7 +130,7 @@
         event.payload.text = translatedText ? decodeURIComponent(translatedText) : event.payload.text
       })
 
-      // event.payload.text = translatedText !== undefined ? translatedText : event.payload.text
+      // event.preview = translatedText !== undefined ? translatedText : event.preview
     }
   }
   return translateUserText()
