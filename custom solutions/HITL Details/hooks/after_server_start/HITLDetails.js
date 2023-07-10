@@ -53,6 +53,7 @@ const moment = require('moment')
   router.get('/conversation', async (req, res) => {
     try {
       const { conversationId, userId, botId, listMessages } = req.query
+      let limit = req.query.limit? req.query.limit : 20
 
       const response = {
         conversations: [],
@@ -63,7 +64,7 @@ const moment = require('moment')
       const messaging = bp.messaging.forBot(botId)
 
       const convIds = userId
-        ? (await messaging.listConversations(userId)).map(conversation => conversation.id)
+        ? (await messaging.listConversations(userId, limit)).map(conversation => conversation.id)
         : [conversationId]
 
       for (const id of convIds) {
