@@ -53,7 +53,7 @@ const moment = require('moment')
   router.get('/conversation', async (req, res) => {
     try {
       const { conversationId, userId, botId, listMessages } = req.query
-      let limit = req.query.limit? req.query.limit : 20
+      let limit = req.query.limit? parseInt(req.query.limit) : 20
 
       const response = {
         conversations: [],
