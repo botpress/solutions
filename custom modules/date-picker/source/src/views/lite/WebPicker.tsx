@@ -27,7 +27,7 @@ const WebPicker = props => {
     props.store.composer.setLocked(false)
   }
 
-  if (!locale || isHidden || !(isLastGroup && isLastOfGroup)) {
+  if (isHidden || !(isLastGroup && isLastOfGroup)) {
     return null
   }
 

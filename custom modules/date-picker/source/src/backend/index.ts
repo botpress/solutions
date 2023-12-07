@@ -26,7 +26,7 @@ const setWhitelist = async (whitelist: string[], accessToken: string) => {
 const onBotMount = async (bp: typeof sdk, botId: string) => {
   const modConfig: Config = await bp.config.getModuleConfigForBot(MODULE_NAME, botId)
   const config = await bp.bots.getBotById(botId)
-  const channels = config.messaging.channels
+  const channels = config?.messaging?.channels
 
   if (!channels || !channels.messenger || !modConfig.enabled || !modConfig.messenger) {
     return
