@@ -1,6 +1,6 @@
   /**
-   * Increments a metric in the bot_analytics table
-   * @title Increment Metric in bot_analytics
+   * Increments a metric
+   * @title Increment Metric
    * @category Custom
    * @author Botpress
    * @param metric {string} the name of the metric to increment
@@ -8,48 +8,57 @@
    */
 
   async function getNewLeads(botId, date, metric) {
-    var new_leads = await bp.database.raw(
-      `SELECT * FROM bot_analytics WHERE 
-     botId='${botId}' AND
-     date = '${date}' AND
-     channel = '${event.channel}' AND
-     metric = '${metric}' AND
-     subMetric = 'n/a'`
-    )
+    let new_leads = await bp.database
+      .select('*')
+      .from('bot_analytics')
+      .where({
+        botId: botId,
+        date: date,
+        channel: event.channel,
+        metric: metric,
+        subMetric: 'n/a'
+      })
+
     try {
+      bp.logger.info('New leads: ' + new_leads[0])
       return new_leads[0]
     } catch (error) {
+      bp.logger.error('Something happened! ' + error)
       return undefined
     }
   }
 
-  const myAction = async (metric, n) => {
+  const incrementMetric = async (metric, n) => {
     let date = event.createdOn.toISOString().split('T')[0]
-    bp.logger.info(date)
 
     var new_leads = await getNewLeads(event.botId, date, metric)
     if (new_leads) {
       new_leads = { ...new_leads, value: new_leads.value + n } // Increment the value
-      await bp.database.raw(
-        //Update the database
-        `UPDATE bot_analytics
-      SET value = ${new_leads.value}
-      WHERE botId='${event.botId}' AND
-      date = '${date}' AND
-      channel = '${event.channel}' AND
-      metric = '${metric}' AND
-      subMetric = 'n/a'`
-      )
+
+      await bp
+        .database('bot_analytics')
+        .where({
+          botId: event.botId,
+          date: date,
+          channel: event.channel,
+          metric: metric,
+          subMetric: 'n/a'
+        })
+        .update({
+          value: new_leads.value
+        })
     } else {
-      await bp.database.insertAndRetrieve('bot_analytics', {
-        botId: event.botId,
-        date: date,
-        channel: event.channel,
-        metric: metric,
-        subMetric: 'n/a',
-        value: 1
-      })
+      await bp.database
+        .insert({
+          botId: event.botId,
+          date: date,
+          channel: event.channel,
+          metric: metric,
+          subMetric: 'n/a',
+          value: 1
+        })
+        .into('bot_analytics')
     }
   }
 
-  return myAction(args.metric, parseInt(args.n))
+  return incrementMetric(args.metric, parseInt(args.n))
